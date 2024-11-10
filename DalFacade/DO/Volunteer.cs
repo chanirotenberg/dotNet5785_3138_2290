@@ -24,13 +24,13 @@ public record Volunteer
     string Name,
     string Phone,
     string Email,   
-    string Password="",
-    string Address="",
-    double Latitude=0,
-    double Longitude=0,
-     Jobs Jobs = Jobs.Worker,    
+    string? Password=null,
+    string? Address= null,
+    double? Latitude= null,
+    double? Longitude= null,
+    Jobs Jobs = Jobs.Worker,    
     bool active=false,
-    double MaxDistance = 0,
+    double? MaxDistance = null,
     DistanceType DistanceType=DistanceType.AirDistance
 )
 {

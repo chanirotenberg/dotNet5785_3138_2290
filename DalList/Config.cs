@@ -28,15 +28,17 @@ internal static class Config
     internal static int NextAssignmentId { get => nextAssignmentId++; }
 
     internal static DateTime Clock { get; set; } = DateTime.Now;
-    //...
+
+    internal static TimeSpan RiskRange=TimeSpan.Zero;
 
     internal static void Reset()
     {
         nextAssignmentId = startAssignmentId;
         nextCallId = startCallId;
-        //...
+        
         Clock = DateTime.Now;
-        //...
+
+        RiskRange = TimeSpan.Zero;
     }
 }
 
