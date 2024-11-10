@@ -15,23 +15,28 @@ namespace Dal;
 //    TimeSpan RiskRange;
 //}
 
-public class Config
+
+internal static class Config
 {
-    private static int NextCallId = 1;
-    private static int NextAssignmentId = 1;
-    private static DateTime Clock;
-    private static TimeSpan RiskRange;
+    internal const int startCallId = 1;
+    private static int nextCallId = startCallId;
+    internal static int NextCallId { get => nextCallId++; }
+    
 
+    internal const int startAssignmentId = 1;
+    private static int nextAssignmentId = startAssignmentId;
+    internal static int NextAssignmentId { get => nextAssignmentId++; }
 
-    // קבלת מספר רץ חדש עבור סוג ישות מסוים
-    public static int GetNextId(string entityType)
+    internal static DateTime Clock { get; set; } = DateTime.Now;
+    //...
+
+    internal static void Reset()
     {
-        return entityType switch
-        {
-            "Call" => NextCallId++,
-            "Assignment" => NextAssignmentId++,
-            _ => throw new ArgumentException("Unknown entity type")
-        };
+        nextAssignmentId = startAssignmentId;
+        nextCallId = startCallId;
+        //...
+        Clock = DateTime.Now;
+        //...
     }
 
 }
