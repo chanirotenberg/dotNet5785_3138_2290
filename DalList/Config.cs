@@ -40,6 +40,7 @@ internal static class Config
 
         RiskRange = TimeSpan.Zero;
     }
+
 }
 
 
