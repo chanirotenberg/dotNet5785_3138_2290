@@ -33,6 +33,7 @@ public class Config
             _ => throw new ArgumentException("Unknown entity type")
         };
     }
+
 }
 
 
