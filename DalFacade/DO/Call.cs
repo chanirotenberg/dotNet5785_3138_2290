@@ -15,10 +15,13 @@ public record Call
 (
     int Id,
     CallType CallType,
-    string VerbalDescription,
+    string? VerbalDescription,
     string address,
     double Latitude,
     double Longitude,
     DateTime OpeningTime,
     DateTime MaximumTime
-);
+)
+{
+public Call() : this(0, CallType.Transport, null, "", 0, 0, DateTime.Now, DateTime.Now) { }
+}
