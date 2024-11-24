@@ -16,7 +16,7 @@ namespace Dal;
 //}
 
 
-internal static class Config
+internal static class Config:
 {
     internal const int startCallId = 1;
     private static int nextCallId = startCallId;
@@ -29,7 +29,7 @@ internal static class Config
 
     internal static DateTime Clock { get; set; } = DateTime.Now;
 
-    internal static TimeSpan RiskRange=TimeSpan.Zero;
+    internal static TimeSpan RiskRange = TimeSpan.Zero;
 
     internal static void Reset()
     {

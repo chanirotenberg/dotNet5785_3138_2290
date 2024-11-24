@@ -1,4 +1,5 @@
 ﻿// Module Assignment.cs
+
 namespace DO;
 /// <summary>
 /// 
@@ -15,6 +16,9 @@ public record Assignment
     int CallId,
     int VolunteerId,
     DateTime EntryTime,
-    DateTime ActualEndTime,
-    EndType EndType
-);
+    DateTime? ActualEndTime,
+    EndType? EndType
+)
+{
+ public Assignment() : this(0, 0, 0, DateTime.Now, null, null) { }
+}
