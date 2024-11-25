@@ -14,7 +14,7 @@ public class CallImplementation : ICall
         if (this.Read(item.Id) is not null)
             throw new Exception("An call with this ID already exists.");
         int newId = Config.NextCallId;
-        Call newCall = item with { Id = newId };
+        Call newCall = item with { Id = newId};
         DataSource.Calls.Add(newCall);
     }
 
@@ -70,7 +70,7 @@ public class CallImplementation : ICall
         {
             CallType = item.CallType,
             VerbalDescription = item.VerbalDescription,
-            address = item.address,
+            Address = item.Address,
             Latitude = item.Latitude,
             Longitude = item.Longitude,
             OpeningTime = item.OpeningTime,

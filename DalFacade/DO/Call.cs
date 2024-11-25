@@ -15,18 +15,18 @@ namespace DO;
 /// <param name="MaximumTime">The maximum allowable time to handle the call, or null if not applicable.</param>
 public record Call
 (
-    int Id,
     CallType CallType,
     string? VerbalDescription,
-    string address,
+    string Address,
     double Latitude,
     double Longitude,
     DateTime OpeningTime,
     DateTime? MaximumTime
 )
 {
+    public int Id {  get; set; }
     /// <summary>
     /// Default constructor for the Call record, initializing default values.
     /// </summary>
-    public Call() : this(0, CallType.Transport, null, "", 0, 0, DateTime.Now, DateTime.Now) { }
+    public Call() : this( CallType.Transport, null, "", 0, 0, DateTime.Now, null) { }
 }

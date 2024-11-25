@@ -13,7 +13,6 @@ namespace DO;
 /// <param name="EndType">The type of ending for the assignment, or null if not applicable.</param>
 public record Assignment
 (
-    int Id,
     int CallId,
     int VolunteerId,
     DateTime EntryTime,
@@ -21,8 +20,9 @@ public record Assignment
     EndType? EndType
 )
 {
+    public int Id { get; set; }
     /// <summary>
     /// Default constructor for the Assignment record, initializing default values.
     /// </summary>
-    public Assignment() : this(0, 0, 0, DateTime.Now, null, null) { }
+    public Assignment() : this( 0, 0, DateTime.Now, null, null) { }
 }

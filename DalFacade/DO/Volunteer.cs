@@ -34,5 +34,5 @@ public record Volunteer
     /// <summary>
     /// Default constructor for creating an empty volunteer record (used for stage 4).
     /// </summary>
-    public Volunteer() : this(0, "", "", "") { } // empty ctor for stage 4
+    public Volunteer() : this(0, "", "", "") { }
 }

@@ -1,13 +1,15 @@
 ﻿namespace DalTest;
+
+using Dal;
 using DalApi;
 using DO;
 
 public static class Initialization
 {
-    private static IAssignment? s_dalAssignment; //stage 1
-    private static ICall? s_dalCall; //stage 1
-    private static IVolunteer? s_dalVolunteer; //stage 1
-    private static IConfig? s_dalConfig; //stage 1
+    private static IAssignment? s_dalAssignment;
+    private static ICall? s_dalCall;
+    private static IVolunteer? s_dalVolunteer;
+    private static IConfig? s_dalConfig;
     private static readonly Random s_rand = new();
 
     /// <summary>
@@ -115,7 +117,7 @@ public static class Initialization
         Console.WriteLine("Initializing Calls...");
         for (int i = 0; i < 50; i++) // At least 50 calls
         {
-            DateTime openingTime = DateTime.Now.AddMinutes(s_rand.Next(-1000, -1)); // Opening time before current time
+            DateTime openingTime = s_dalConfig!.Clock.AddMinutes(s_rand.Next(-1000, -1)); // Opening time before current time
             DateTime? maximumTime = s_rand.NextDouble() > 0.5 ? openingTime.AddMinutes(s_rand.Next(10, 120)) : null;
 
             // Select random call description
@@ -133,22 +135,13 @@ public static class Initialization
             {
                 CallType = callType,  // Selected call type
                 VerbalDescription = description,
-                address = address,
+                Address = address,
                 Latitude = latitude,
                 Longitude = longitude,
                 OpeningTime = openingTime,
                 MaximumTime = maximumTime
             });
         }
-    }
-
-    /// <summary>
-    /// Generates a unique ID.
-    /// </summary>
-    /// <returns>A unique ID.</returns>
-    private static int GenerateUniqueId()
-    {
-        return s_rand.Next(200000000, 400000000); // ID in range
     }
 
     /// <summary>
@@ -193,7 +186,6 @@ public static class Initialization
                 {
                     CallId = call.Id, // Existing call ID
                     VolunteerId = volunteer.Id, // Existing volunteer ID
-                    EntryTime = entryTime,
                     ActualEndTime = actualEndTime,
                     EndType = endType
                 });
