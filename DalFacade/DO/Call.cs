@@ -1,16 +1,18 @@
 ﻿// Module Call.cs
+
 namespace DO;
+
 /// <summary>
-/// 
+/// Represents a call entity, detailing information about a call for assistance.
 /// </summary>
-/// <param name="Id"></param>
-/// <param name="CallType"></param>
-/// <param name="VerbalDescription"></param>
-/// <param name="address"></param>
-/// <param name="Latitude"></param>
-/// <param name="Longitude"></param>
-/// <param name="OpeningTime"></param>
-/// <param name="MaximumTime"></param>
+/// <param name="Id">The unique identifier for the call.</param>
+/// <param name="CallType">The type of the call (e.g., transport, medical).</param>
+/// <param name="VerbalDescription">A description of the call, providing additional details. Nullable.</param>
+/// <param name="address">The address where the call is located.</param>
+/// <param name="Latitude">The latitude of the call's location.</param>
+/// <param name="Longitude">The longitude of the call's location.</param>
+/// <param name="OpeningTime">The time when the call was opened.</param>
+/// <param name="MaximumTime">The maximum allowable time to handle the call, or null if not applicable.</param>
 public record Call
 (
     int Id,
@@ -20,8 +22,11 @@ public record Call
     double Latitude,
     double Longitude,
     DateTime OpeningTime,
-    DateTime MaximumTime
+    DateTime? MaximumTime
 )
 {
-public Call() : this(0, CallType.Transport, null, "", 0, 0, DateTime.Now, DateTime.Now) { }
+    /// <summary>
+    /// Default constructor for the Call record, initializing default values.
+    /// </summary>
+    public Call() : this(0, CallType.Transport, null, "", 0, 0, DateTime.Now, DateTime.Now) { }
 }

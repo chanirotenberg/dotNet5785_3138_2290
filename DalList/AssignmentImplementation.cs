@@ -1,62 +1,72 @@
-﻿
-
-namespace Dal;
+﻿namespace Dal;
 using DalApi;
 using DO;
-using System.Collections.Generic;
 
 public class AssignmentImplementation : IAssignment
 {
-    private readonly List<Assignment> assignments = DataSource.Assignments;
-
-    // יצירת משימה חדשה
+    /// <summary>
+    /// Creates a new assignment.
+    /// </summary>
+    /// <param name="item">The assignment to be created.</param>
+    /// <exception cref="Exception">Thrown if an assignment with the given ID already exists.</exception>
     public void Create(Assignment item)
     {
-        if (assignments.Any(a => a.Id == item.Id))
+        if (DataSource.Assignments.Any(a => a.Id == item.Id))
             throw new Exception("An assignment with this ID already exists.");
-
-        assignments.Add(item);
+        int newId = Config.NextAssignmentId;
+        Assignment newAssignments = item with { Id = newId };
+        DataSource.Assignments.Add(newAssignments);
     }
 
-    // מחיקת משימה לפי מזהה
+    /// <summary>
+    /// Deletes an assignment by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the assignment to be deleted.</param>
+    /// <exception cref="Exception">Thrown if the assignment with the given ID does not exist.</exception>
     public void Delete(int id)
     {
-        Assignment? assignment = assignments.FirstOrDefault(a => a.Id == id);
-        if (assignment == null)
-            throw new Exception("Assignment not found.");
-
-        assignments.Remove(assignment);
+        Assignment? assignment = DataSource.Assignments.FirstOrDefault(a => a.Id == id) ?? throw new Exception($"Assignment Object with {id} doesn't exist");
+        DataSource.Assignments.Remove(assignment);
     }
 
-    // מחיקת כל המשימות
+    /// <summary>
+    /// Deletes all assignments.
+    /// </summary>
     public void DeleteAll()
     {
-        assignments.Clear();
+        DataSource.Assignments.Clear();
     }
 
-    // קריאת (חיפוש) משימה לפי מזהה
+    /// <summary>
+    /// Reads (retrieves) an assignment by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the assignment to be retrieved.</param>
+    /// <returns>The assignment object if found; otherwise, null.</returns>
     public Assignment? Read(int id)
     {
-        return assignments.FirstOrDefault(a => a.Id == id);
+        return DataSource.Assignments.FirstOrDefault(a => a.Id == id);
     }
 
-    // קריאת כל המשימות
+    /// <summary>
+    /// Reads all assignments.
+    /// </summary>
+    /// <returns>A list of all assignment objects.</returns>
     public List<Assignment> ReadAll()
     {
-        return assignments;
+        return new List<Assignment>(DataSource.Assignments);
     }
 
-    // עדכון משימה קיימת
+    /// <summary>
+    /// Updates an existing assignment with new values.
+    /// </summary>
+    /// <param name="item">The assignment object with updated values.</param>
+    /// <exception cref="Exception">Thrown if the assignment with the given ID does not exist.</exception>
     public void Update(Assignment item)
     {
-        // חיפוש משימה קיימת לפי מזהה
-        Assignment? existingAssignment = assignments.FirstOrDefault(a => a.Id == item.Id);
+        // Search for an existing assignment by ID
+        Assignment? existingAssignment = DataSource.Assignments.FirstOrDefault(a => a.Id == item.Id) ?? throw new Exception($"Assignment Object with id: {item.Id} doesn't exist");
 
-        // אם המשימה לא נמצאה, נזרוק חריגה
-        if (existingAssignment == null)
-            throw new Exception("Assignment not found.");
-
-        // יצירת אובייקט חדש של Assignment עם הערכים המעודכנים
+        // Create a new assignment object with the updated values
         Assignment? updatedAssignment = existingAssignment with
         {
             CallId = item.CallId,
@@ -66,11 +76,10 @@ public class AssignmentImplementation : IAssignment
             EndType = item.EndType
         };
 
-        // מחיקת המשימה הישנה
-        assignments.Remove(existingAssignment);
+        // Remove the old assignment
+        DataSource.Assignments.Remove(existingAssignment);
 
-        // הוספת המשימה המעודכנת
-        assignments.Add(updatedAssignment);
+        // Add the updated assignment
+        DataSource.Assignments.Add(updatedAssignment);
     }
 }
-

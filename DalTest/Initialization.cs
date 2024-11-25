@@ -1,8 +1,5 @@
-﻿
-namespace DalTest;
+﻿namespace DalTest;
 using DalApi;
-//using Dal;
-
 using DO;
 
 public static class Initialization
@@ -13,49 +10,45 @@ public static class Initialization
     private static IConfig? s_dalConfig; //stage 1
     private static readonly Random s_rand = new();
 
-
-
     /// <summary>
-    /// איפוס נתונים ותצורה
+    /// Resets all data and configuration.
     /// </summary>
     private static void ResetData()
     {
         Console.WriteLine("Resetting all data...");
-        s_dalConfig?.Reset();        // איפוס תצורה
-        s_dalVolunteer?.DeleteAll(); // מחיקת כל המתנדבים
-        s_dalAssignment?.DeleteAll(); // מחיקת כל ההקצאות
-        s_dalCall?.DeleteAll();      // מחיקת כל הקריאות
+        s_dalConfig?.Reset();        // Reset configuration
+        s_dalVolunteer?.DeleteAll(); // Delete all volunteers
+        s_dalAssignment?.DeleteAll(); // Delete all assignments
+        s_dalCall?.DeleteAll();      // Delete all calls
     }
 
     /// <summary>
-    /// אתחול רשימת מתנדבים
+    /// Initializes the volunteer list.
     /// </summary>
-    /// 
-    // אוסף כתובות רנדומליות (לדוגמה עם קווי אורך ורוחב)
     private static readonly List<(string address, double latitude, double longitude)> s_addresses = new()
     {
-            ("123 Main St, Cityville", 32.0853, 34.7818),
-            ("456 Elm St, Townburg", 31.7683, 35.2137),
-            ("789 Oak St, Villagetown", 29.5575, 34.9522)
+        ("123 Main St, Cityville", 32.0853, 34.7818),
+        ("456 Elm St, Townburg", 31.7683, 35.2137),
+        ("789 Oak St, Villagetown", 29.5575, 34.9522)
     };
+
     /// <summary>
-    /// יוצר סיסמה מותאמת המבוססת על שם או מספר טלפון
+    /// Generates a custom password based on the volunteer's name and phone number.
     /// </summary>
-    /// <param name="name">שם המתנדב</param>
-    /// <param name="phone">מספר הטלפון של המתנדב</param>
-    /// <returns>סיסמה מותאמת</returns>
+    /// <param name="name">The volunteer's name.</param>
+    /// <param name="phone">The volunteer's phone number.</param>
+    /// <returns>A custom password.</returns>
     private static string GenerateCustomPassword(string name, string phone)
     {
-        // קיצוץ השם למקסימום 3 אותיות ראשונות
-        string namePart = name.Replace(" ", "").Substring(0, Math.Min(3, name.Length));
-
-        // קיצור מספר הטלפון לשלוש הספרות האחרונות
-        string phonePart = phone.Substring(Math.Max(0, phone.Length - 3));
-
-        // הרכבת הסיסמה
-        return $"{namePart}{phonePart}";
+        string namePart = name.Replace(" ", "").Substring(0, Math.Min(3, name.Length)); // Truncate name to max 3 characters
+        string phonePart = phone.Substring(Math.Max(0, phone.Length - 3)); // Truncate phone number to last 3 digits
+        return $"{namePart}{phonePart}"; // Combine name and phone parts
     }
-    private static void createVolunteers()
+
+    /// <summary>
+    /// Initializes volunteers.
+    /// </summary>
+    private static void CreateVolunteers()
     {
         Console.WriteLine("Initializing Volunteers...");
         string[] volunteerNames = {
@@ -75,7 +68,7 @@ public static class Initialization
             string email = $"{name.Replace(" ", "").ToLower()}@gmail.com";
             string password = GenerateCustomPassword(name, phone);
             string address = s_addresses[s_rand.Next(s_addresses.Count)].address;
-            bool isActive = s_rand.NextDouble() > 0.2;/////
+            bool isActive = s_rand.NextDouble() > 0.2;
             double maxDistance = s_rand.Next(10, 50);
             Jobs job = (name == volunteerNames[0]) ? Jobs.Administrator : Jobs.Worker;
 
@@ -89,54 +82,56 @@ public static class Initialization
                 Password = password,
                 Address = address,
                 Latitude = s_addresses[s_rand.Next(s_addresses.Count)].latitude,
-                Longitude = s_addresses[s_rand.Next(s_addresses.Count)].longitude,  
-                Jobs=job,
-                MaxDistance=maxDistance,
+                Longitude = s_addresses[s_rand.Next(s_addresses.Count)].longitude,
+                Jobs = job,
+                MaxDistance = maxDistance,
                 DistanceType = DistanceType.AirDistance
             });
         }
     }
 
-    // אוסף תיאורי קריאות רנדומליים
+    /// <summary>
+    /// Initializes call descriptions.
+    /// </summary>
     private static readonly string[] callDescriptions = new string[]
     {
-    "Airport ride, taxi needed at a specific time in the morning",
-    "Ride to a family event, group pick-up in the city center",
-    "Urgent ride to the hospital, needs immediate attention",
-    "Business meeting ride, heading to the industrial area in the north",
-    "Ride from a fancy restaurant to a hotel downtown",
-    "Shopping trip, taxi ride to the big mall for two hours",
-    "Ride to the beach, needs to arrive by early evening",
-    "Ride to the north, a stop for refueling along the way",
-    "Medical ride, heading to a clinic for an important appointment",
-    "Festival ride in the city, picking up a group from two locations"
+        "Airport ride, taxi needed at a specific time in the morning",
+        "Ride to a family event, group pick-up in the city center",
+        "Urgent ride to the hospital, needs immediate attention",
+        "Business meeting ride, heading to the industrial area in the north",
+        "Ride from a fancy restaurant to a hotel downtown",
+        "Shopping trip, taxi ride to the big mall for two hours",
+        "Ride to the beach, needs to arrive by early evening",
+        "Ride to the north, a stop for refueling along the way",
+        "Medical ride, heading to a clinic for an important appointment",
+        "Festival ride in the city, picking up a group from two locations"
     };
 
-    // פונקציה לאתחול קריאות
-    private static void InitializeCalls()
+    /// <summary>
+    /// Initializes calls.
+    /// </summary>
+    private static void CreateCalls()
     {
         Console.WriteLine("Initializing Calls...");
-        for (int i = 0; i < 50; i++) // לפחות 50 קריאות
+        for (int i = 0; i < 50; i++) // At least 50 calls
         {
-            int id = s_dalConfig?.NextCallId ?? 0;  // ID רנדומלי מתוך התצורה
-            DateTime openingTime = DateTime.Now.AddMinutes(s_rand.Next(-1000, -1));  // זמן פתיחה לפני הזמן הנוכחי
-            DateTime? maximumTime = s_rand.NextDouble() > 0.5 ? openingTime.AddMinutes(s_rand.Next(10, 120)) : null; // זמן סיום רנדומלי או null
+            DateTime openingTime = DateTime.Now.AddMinutes(s_rand.Next(-1000, -1)); // Opening time before current time
+            DateTime? maximumTime = s_rand.NextDouble() > 0.5 ? openingTime.AddMinutes(s_rand.Next(10, 120)) : null;
 
-            // בחר תיאור רנדומלי לקריאה
+            // Select random call description
             string description = callDescriptions[s_rand.Next(callDescriptions.Length)];
 
-            // בחירה אקראית של סוג קריאה - 70% יהיה Transport, 30% PickUp
+            // Randomly select call type - 70% will be Transport, 30% PickUp
             CallType callType = s_rand.NextDouble() < 0.7 ? CallType.PickUp : CallType.Transport;
 
-            // בחר כתובת רנדומלית מתוך הכתובות שהגדרת
+            // Select random address from predefined addresses
             string address = s_addresses[s_rand.Next(s_addresses.Count)].address;
             double latitude = s_addresses[s_rand.Next(s_addresses.Count)].latitude;
             double longitude = s_addresses[s_rand.Next(s_addresses.Count)].longitude;
 
             s_dalCall?.Create(new Call
             {
-                Id = id,
-                CallType = callType,  // סוג הקריאה שנבחר על פי אחוזים
+                CallType = callType,  // Selected call type
                 VerbalDescription = description,
                 address = address,
                 Latitude = latitude,
@@ -147,78 +142,57 @@ public static class Initialization
         }
     }
 
-
-    
-
-        /// <summary>
-        /// יוצר מספר מזהה ייחודי
-        /// </summary>
-        /// <returns></returns>
-        private static int GenerateUniqueId()
-        {
-            return s_rand.next(200000000, 400000000); // מזהה בטווח
-        }
-
-        /// <summary>
-        /// יוצר מספר טלפון רנדומלי
-        /// </summary>
-        /// <returns></returns>
-        private static string GeneratePhoneNumber()
-        {
-            return $"050-{s_rand.Next(1000000, 9999999)}";
-        }
-
     /// <summary>
-    /// יוצר סוג קריאה רנדומלי
+    /// Generates a unique ID.
     /// </summary>
-    private static string GenerateCallType()
+    /// <returns>A unique ID.</returns>
+    private static int GenerateUniqueId()
     {
-        string[] callTypes = { "Medical", "Transport", "Delivery", "Emergency" };
-        return callTypes[s_rand.Next(callTypes.Length)];
+        return s_rand.Next(200000000, 400000000); // ID in range
     }
 
-    // פונקציה לאתחול הקצאות
-    private static void InitializeAssignments()
+    /// <summary>
+    /// Generates a random phone number.
+    /// </summary>
+    /// <returns>A random phone number.</returns>
+    private static string GeneratePhoneNumber()
+    {
+        return $"050-{s_rand.Next(1000000, 9999999)}";
+    }
+
+    /// <summary>
+    /// Initializes assignments.
+    /// </summary>
+    private static void CreateAssignments()
     {
         Console.WriteLine("Initializing Assignments...");
-
-        // רשימות מתנדבים וקריאות
         var volunteers = s_dalVolunteer?.ReadAll() ?? new List<Volunteer>();
         var calls = s_dalCall?.ReadAll() ?? new List<Call>();
 
-        // חלוקה של מתנדבים: 20% לא יקבלו קריאות
+        // 20% of volunteers will not have any assignments
         int volunteersWithNoAssignments = (int)(volunteers.Count * 0.2);
         var volunteersWithAssignments = volunteers.Skip(volunteersWithNoAssignments).ToList();
 
         foreach (var volunteer in volunteersWithAssignments)
         {
-            // כמות קריאות למתנדב: בין 1 ל-10
-            int numberOfAssignments = s_rand.Next(1, 11);
+            // Random number of assignments for the volunteer: between 5 and 10
+            int numberOfAssignments = s_rand.Next(5, 11);
 
             for (int i = 0; i < numberOfAssignments; i++)
             {
-                // בחירת קריאה רנדומלית
                 var call = calls[s_rand.Next(calls.Count)];
 
-                // זמן כניסה לטיפול: לאחר זמן פתיחת הקריאה
                 DateTime entryTime = call.OpeningTime.AddMinutes(s_rand.Next(1, 60));
+                DateTime? actualEndTime = s_rand.NextDouble() > 0.5 ? entryTime.AddMinutes(s_rand.Next(10, 120)) : null;
 
-                // זמן סיום: ייתכן null או זמן רנדומלי
-                DateTime? actualEndTime = s_rand.NextDouble() > 0.5
-                    ? entryTime.AddMinutes(s_rand.Next(10, 120))
-                    : null;
-
-                // סוג סיום טיפול
                 EndType? endType = actualEndTime.HasValue
                     ? (s_rand.NextDouble() < 0.8 ? EndType.cared : EndType.selfCancellation)
                     : EndType.AdministratorCancellation;
 
-                // יצירת הקצאה
                 s_dalAssignment?.Create(new Assignment
                 {
-                    Id = s_dalConfig?.NextAssignmentId ?? 0, // ID מתוך התצורה
-                    CallId = call.Id, // ID של קריאה קיימת
-                    VolunteerId = volunteer.Id, // ID של מתנדב קיים
+                    CallId = call.Id, // Existing call ID
+                    VolunteerId = volunteer.Id, // Existing volunteer ID
                     EntryTime = entryTime,
                     ActualEndTime = actualEndTime,
                     EndType = endType
@@ -226,17 +200,15 @@ public static class Initialization
             }
         }
 
-        // טיפול בקריאות שלא טופלו ועברו זמן סיום
+        // Handle calls that were not assigned and passed their maximum time
         foreach (var call in calls)
         {
             if (call.MaximumTime < DateTime.Now)
             {
-                // קריאה שלא טופלה ועברה את זמן הסיום
                 s_dalAssignment?.Create(new Assignment
                 {
-                    Id = s_dalConfig?.NextAssignmentId ?? 0,
                     CallId = call.Id,
-                    VolunteerId = 0, // לא הוקצה מתנדב
+                    VolunteerId = 0, // No volunteer assigned
                     EntryTime = call.OpeningTime,
                     ActualEndTime = null,
                     EndType = EndType.ExpiredCancellation
@@ -244,27 +216,31 @@ public static class Initialization
             }
         }
     }
+
+    /// <summary>
+    /// Initializes all data (volunteers, calls, assignments).
+    /// </summary>
+    /// <param name="dalVolunteer">Volunteer DAL.</param>
+    /// <param name="dalAssignment">Assignment DAL.</param>
+    /// <param name="dalCall">Call DAL.</param>
+    /// <param name="dalConfig">Config DAL.</param>
     public static void Do(
-    IVolunteer? dalVolunteer,
-    IAssignment? dalAssignment,
-    ICall? dalCall,
-    IConfig? dalConfig)
+        IVolunteer? dalVolunteer,
+        IAssignment? dalAssignment,
+        ICall? dalCall,
+        IConfig? dalConfig)
     {
-        // וידוא שממשקי הגישה אינם null
         s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("Volunteer DAL cannot be null!");
         s_dalAssignment = dalAssignment ?? throw new NullReferenceException("Assignment DAL cannot be null!");
         s_dalCall = dalCall ?? throw new NullReferenceException("Call DAL cannot be null!");
         s_dalConfig = dalConfig ?? throw new NullReferenceException("Config DAL cannot be null!");
 
-        // שלב 1: איפוס נתונים
         Console.WriteLine("Resetting configuration and clearing all data...");
         ResetData();
 
-        // שלב 2: אתחול הרשימות
         Console.WriteLine("Initializing data...");
-        InitializeVolunteers();    // אתחול מתנדבים
-        InitializeCalls();         // אתחול קריאות
-        InitializeAssignments();   // אתחול הקצאות
+        CreateVolunteers();    // Initialize volunteers
+        CreateCalls();         // Initialize calls
+        CreateAssignments();   // Initialize assignments
     }
-
 }

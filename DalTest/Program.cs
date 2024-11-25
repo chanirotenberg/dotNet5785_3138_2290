@@ -1,245 +1,308 @@
-﻿using DalApi;
+﻿using System;
+using Dal;
+using DalApi;
 using DO;
-using System;
 
-namespace DalTest;
-
-public static class Program
+namespace DalTest
 {
-    // שדות סטטיים עבור ממשקי הנתונים
-    private static IVolunteer? s_dalVolunteer = new VolunteerImplementation();
-    private static IAssignment? s_dalAssignment = new AssignmentImplementation();
-    private static ICall? s_dalCall = new CallImplementation();
-    private static IConfig? s_dalConfig = new ConfigImplementation();
-
-    public static void Main(string[] args)
+    public static class Program
     {
-        try
-        {
-            Console.WriteLine("Welcome to DalTest Program");
-            RunMainMenu();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
-        }
-    }
+        // Static fields for interfaces
+        private static IVolunteer? s_dalVolunteer = new VolunteerImplementation();
+        private static IAssignment? s_dalAssignment = new AssignmentImplementation();
+        private static ICall? s_dalCall = new CallImplementation();
+        private static IConfig? s_dalConfig = new ConfigImplementation();
 
-    /// <summary>
-    /// הצגת תפריט ראשי בלולאה
-    /// </summary>
-    private static void RunMainMenu()
-    {
-        while (true)
+        public static void Main(string[] args)
         {
-            Console.WriteLine("\n--- Main Menu ---");
-            Console.WriteLine("1. Initialize Data");
-            Console.WriteLine("2. Manage Volunteers");
-            Console.WriteLine("3. Manage Calls");
-            Console.WriteLine("4. Manage Assignments");
-            Console.WriteLine("5. Manage Configuration");
-            Console.WriteLine("0. Exit");
-
-            Console.Write("Choose an option: ");
-            if (!int.TryParse(Console.ReadLine(), out int choice)) continue;
-
-            switch (choice)
+            try
             {
-                case 1:
-                    InitializeData();
-                    break;
-                case 2:
-                    RunEntityMenu("Volunteers", ManageVolunteers);
-                    break;
-                case 3:
-                    RunEntityMenu("Calls", ManageCalls);
-                    break;
-                case 4:
-                    RunEntityMenu("Assignments", ManageAssignments);
-                    break;
-                case 5:
-                    ManageConfiguration();
-                    break;
-                case 0:
-                    Console.WriteLine("Exiting program. Goodbye!");
-                    return;
-                default:
-                    Console.WriteLine("Invalid choice. Try again.");
-                    break;
+                Console.WriteLine("Welcome to DalTest Program");
+                RunMainMenu();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
             }
         }
-    }
 
-    /// <summary>
-    /// אתחול בסיס נתונים
-    /// </summary>
-    private static void InitializeData()
-    {
-        try
+        /// <summary>
+        /// Main menu
+        /// </summary>
+        private static void RunMainMenu()
         {
-            Console.WriteLine("Initializing data...");
-            Initialization.Do(s_dalVolunteer, s_dalAssignment, s_dalCall, s_dalConfig);
-            Console.WriteLine("Data initialized successfully.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error initializing data: {ex.Message}");
-        }
-    }
-
-    /// <summary>
-    /// ניהול תפריט ישויות
-    /// </summary>
-    private static void RunEntityMenu(string entityName, Action manageEntityAction)
-    {
-        try
-        {
-            Console.WriteLine($"\n--- Manage {entityName} ---");
-            manageEntityAction();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error managing {entityName}: {ex.Message}");
-        }
-    }
-
-    /// <summary>
-    /// תת-תפריט לניהול מתנדבים
-    /// </summary>
-    private static void ManageVolunteers()
-    {
-        while (true)
-        {
-            Console.WriteLine("\n--- Volunteers Menu ---");
-            Console.WriteLine("1. Add Volunteer");
-            Console.WriteLine("2. View Volunteer by ID");
-            Console.WriteLine("3. View All Volunteers");
-            Console.WriteLine("4. Update Volunteer");
-            Console.WriteLine("5. Delete Volunteer");
-            Console.WriteLine("6. Delete All Volunteers");
-            Console.WriteLine("0. Back to Main Menu");
-
-            Console.Write("Choose an option: ");
-            if (!int.TryParse(Console.ReadLine(), out int choice)) continue;
-
-            switch (choice)
+            while (true)
             {
-                case 1:
-                    AddVolunteer();
-                    break;
-                case 2:
-                    ViewVolunteerById();
-                    break;
-                case 3:
-                    ViewAllVolunteers();
-                    break;
-                case 4:
-                    UpdateVolunteer();
-                    break;
-                case 5:
-                    DeleteVolunteer();
-                    break;
-                case 6:
-                    DeleteAllVolunteers();
-                    break;
-                case 0:
-                    return;
-                default:
-                    Console.WriteLine("Invalid choice. Try again.");
-                    break;
+                Console.WriteLine("\n--- Main Menu ---");
+                Console.WriteLine("1. Initialize Data");
+                Console.WriteLine("2. Manage Volunteers");
+                Console.WriteLine("3. Manage Calls");
+                Console.WriteLine("4. Manage Assignments");
+                Console.WriteLine("5. Manage Configuration");
+                Console.WriteLine("0. Exit");
+
+                Console.Write("Choose an option: ");
+                if (!int.TryParse(Console.ReadLine(), out int choice)) continue;
+
+                switch (choice)
+                {
+                    case 1:
+                        InitializeData();
+                        break;
+                    case 2:
+                        ManageVolunteersMenu();
+                        break;
+                    case 3:
+                        ManageCallsMenu();
+                        break;
+                    case 4:
+                        ManageAssignmentsMenu();
+                        break;
+                    case 5:
+                        ManageConfigurationMenu();
+                        break;
+                    case 0:
+                        Console.WriteLine("Exiting program. Goodbye!");
+                        return;
+                    default:
+                        Console.WriteLine("Invalid choice. Try again.");
+                        break;
+                }
             }
         }
-    }
 
-    /// <summary>
-    /// הוספת מתנדב
-    /// </summary>
-    private static void AddVolunteer()
-    {
-        try
+        /// <summary>
+        /// Initializes data
+        /// </summary>
+        private static void InitializeData()
         {
-            Console.WriteLine("Enter Volunteer Details:");
-            Console.Write("ID: ");
-            int id = int.Parse(Console.ReadLine()!);
-            Console.Write("Name: ");
-            string name = Console.ReadLine()!;
-            Console.Write("Phone: ");
-            string phone = Console.ReadLine()!;
-            Console.Write("Email: ");
-            string email = Console.ReadLine()!;
-            Console.Write("Active (true/false): ");
-            bool active = bool.Parse(Console.ReadLine()!);
-
-            Volunteer volunteer = new Volunteer
+            try
             {
-                Id = id,
-                Name = name,
-                Phone = phone,
-                Email = email,
-                active = active
-            };
+                Console.WriteLine("Initializing data...");
+                Initialization.Do(s_dalVolunteer, s_dalAssignment, s_dalCall, s_dalConfig);
+                Console.WriteLine("Data initialized successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error initializing data: {ex.Message}");
+            }
+        }
 
-            s_dalVolunteer?.Create(volunteer);
-            Console.WriteLine("Volunteer added successfully.");
-        }
-        catch (Exception ex)
+        /// <summary>
+        /// Volunteers management menu
+        /// </summary>
+        private static void ManageVolunteersMenu()
         {
-            Console.WriteLine($"Error adding volunteer: {ex.Message}");
+            ManageEntityMenu(
+                "Volunteers",
+                s_dalVolunteer,
+                () => new Volunteer
+                {
+                    Id = PromptInt("Enter Volunteer ID: "),
+                    Name = PromptString("Enter Name: "),
+                    Phone = PromptString("Enter Phone: "),
+                    Email = PromptString("Enter Email: "),
+                    active = PromptBool("Is Active (true/false): "),
+                    Password = PromptString("Enter Password: "),
+                    MaxDistance = PromptDouble("Enter Max Distance: ")
+                }
+            );
         }
-    }
 
-    /// <summary>
-    /// הצגת מתנדב לפי מזהה
-    /// </summary>
-    private static void ViewVolunteerById()
-    {
-        try
+        /// <summary>
+        /// Calls management menu
+        /// </summary>
+        private static void ManageCallsMenu()
         {
-            Console.Write("Enter Volunteer ID: ");
-            int id = int.Parse(Console.ReadLine()!);
-            Volunteer? volunteer = s_dalVolunteer?.Read(id);
+            ManageEntityMenu(
+                "Calls",
+                s_dalCall,
+                () => new Call
+                {
+                    Id = PromptInt("Enter Call ID: "),
+                    CallType = PromptEnum<CallType>("Enter Call Type (Transport/PickUp): "),
+                    VerbalDescription = PromptString("Enter Verbal Description: "),
+                    address = PromptString("Enter Address: "),
+                    Latitude = PromptDouble("Enter Latitude: "),
+                    Longitude = PromptDouble("Enter Longitude: "),
+                    OpeningTime = PromptDateTime("Enter Opening Time: "),
+                    MaximumTime = PromptDateTime("Enter Maximum Time: ")
+                }
+            );
+        }
 
-            if (volunteer != null)
-                Console.WriteLine(volunteer);
-            else
-                Console.WriteLine("Volunteer not found.");
-        }
-        catch (Exception ex)
+        /// <summary>
+        /// Assignments management menu
+        /// </summary>
+        private static void ManageAssignmentsMenu()
         {
-            Console.WriteLine($"Error viewing volunteer: {ex.Message}");
+            ManageEntityMenu(
+                "Assignments",
+                s_dalAssignment,
+                () => new Assignment
+                {
+                    Id = PromptInt("Enter Assignment ID: "),
+                    CallId = PromptInt("Enter Call ID: "),
+                    VolunteerId = PromptInt("Enter Volunteer ID: "),
+                    EntryTime = PromptDateTime("Enter Entry Time: "),
+                    ActualEndTime = PromptDateTime("Enter Actual End Time: "),
+                    EndType = PromptEnum<EndType>("Enter End Type (cared/selfCancellation/AdministratorCancellation/ExpiredCancellation): ")
+                }
+            );
         }
-    }
 
-    /// <summary>
-    /// הצגת כל המתנדבים
-    /// </summary>
-    private static void ViewAllVolunteers()
-    {
-        try
+        /// <summary>
+        /// Configuration management menu
+        /// </summary>
+        private static void ManageConfigurationMenu()
         {
-            foreach (var volunteer in s_dalVolunteer?.ReadAll() ?? new List<Volunteer>())
-                Console.WriteLine(volunteer);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error viewing volunteers: {ex.Message}");
-        }
-    }
+            while (true)
+            {
+                Console.WriteLine("\n--- Configuration Menu ---");
+                Console.WriteLine("1. Show Current Clock");
+                Console.WriteLine("2. Advance Clock by 1 Minute");
+                Console.WriteLine("3. Advance Clock by 1 Hour");
+                Console.WriteLine("4. Reset Configuration");
+                Console.WriteLine("0. Back to Main Menu");
 
-    /// <summary>
-    /// מחיקת כל המתנדבים
-    /// </summary>
-    private static void DeleteAllVolunteers()
-    {
-        try
-        {
-            s_dalVolunteer?.DeleteAll();
-            Console.WriteLine("All volunteers deleted successfully.");
+                Console.Write("Choose an option: ");
+                if (!int.TryParse(Console.ReadLine(), out int choice)) continue;
+
+                switch (choice)
+                {
+                    case 1:
+                        Console.WriteLine($"Current Clock: {s_dalConfig?.Clock}");
+                        break;
+                    case 2:
+                        if (s_dalConfig != null) s_dalConfig.Clock = s_dalConfig.Clock.AddMinutes(1);
+                        Console.WriteLine("Clock advanced by 1 minute.");
+                        break;
+                    case 3:
+                        if (s_dalConfig != null) s_dalConfig.Clock = s_dalConfig.Clock.AddHours(1);
+                        Console.WriteLine("Clock advanced by 1 hour.");
+                        break;
+                    case 4:
+                        s_dalConfig?.Reset();
+                        Console.WriteLine("Configuration reset.");
+                        break;
+                    case 0:
+                        return;
+                    default:
+                        Console.WriteLine("Invalid choice. Try again.");
+                        break;
+                }
+            }
         }
-        catch (Exception ex)
+
+        /// <summary>
+        /// General entity management menu
+        /// </summary>
+        private static void ManageEntityMenu<T>(string entityName, dynamic dal, Func<T> createEntity) where T : class
         {
-            Console.WriteLine($"Error deleting volunteers: {ex.Message}");
+            while (true)
+            {
+                Console.WriteLine($"\n--- {entityName} Menu ---");
+                Console.WriteLine("1. Add Entity");
+                Console.WriteLine("2. View Entity by ID");
+                Console.WriteLine("3. View All Entities");
+                Console.WriteLine("4. Update Entity");
+                Console.WriteLine("5. Delete Entity");
+                Console.WriteLine("6. Delete All Entities");
+                Console.WriteLine("0. Back to Main Menu");
+
+                Console.Write("Choose an option: ");
+                if (!int.TryParse(Console.ReadLine(), out int choice)) continue;
+
+                try
+                {
+                    switch (choice)
+                    {
+                        case 1:
+                            dal.Create(createEntity());
+                            Console.WriteLine($"{entityName} added successfully.");
+                            break;
+                        case 2:
+                            Console.WriteLine(dal.Read(PromptInt("Enter ID: ")));
+                            break;
+                        case 3:
+                            foreach (var item in dal.ReadAll())
+                                Console.WriteLine(item);
+                            break;
+                        case 4:
+                            int id = PromptInt("Enter ID to update: ");
+                            var entityToUpdate = dal.Read(id);
+                            if (entityToUpdate == null)
+                            {
+                                Console.WriteLine($"{entityName} not found.");
+                                break;
+                            }
+                            Console.WriteLine($"Current Data: {entityToUpdate}");
+                            dal.Update(createEntity());
+                            Console.WriteLine($"{entityName} updated successfully.");
+                            break;
+                        case 5:
+                            dal.Delete(PromptInt("Enter ID to delete: "));
+                            Console.WriteLine($"{entityName} deleted successfully.");
+                            break;
+                        case 6:
+                            dal.DeleteAll();
+                            Console.WriteLine("All entities deleted successfully.");
+                            break;
+                        case 0:
+                            return;
+                        default:
+                            Console.WriteLine("Invalid choice. Try again.");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error managing {entityName}: {ex.Message}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Helper method for reading an integer input
+        /// </summary>
+        private static int PromptInt(string prompt)
+        {
+            Console.Write(prompt);
+            return int.Parse(Console.ReadLine()!);
+        }
+
+        private static string PromptString(string prompt)
+        {
+            Console.Write(prompt);
+            return Console.ReadLine()!;
+        }
+
+        private static bool PromptBool(string prompt)
+        {
+            Console.Write(prompt);
+            return bool.Parse(Console.ReadLine()!);
+        }
+
+        private static double PromptDouble(string prompt)
+        {
+            Console.Write(prompt);
+            return double.Parse(Console.ReadLine()!);
+        }
+
+        private static DateTime PromptDateTime(string prompt)
+        {
+            Console.Write(prompt);
+            if (!DateTime.TryParse(Console.ReadLine(), out var date))
+                throw new FormatException("Invalid date format.");
+            return date;
+        }
+
+        private static TEnum PromptEnum<TEnum>(string prompt) where TEnum : struct
+        {
+            Console.Write(prompt);
+            if (!Enum.TryParse(Console.ReadLine(), true, out TEnum result))
+                throw new FormatException($"Invalid {typeof(TEnum).Name} value.");
+            return result;
         }
     }
 }
-

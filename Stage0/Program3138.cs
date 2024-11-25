@@ -16,8 +16,8 @@ namespace Stage0
         private static void Welcome3138()
         {
             Console.WriteLine("Enter your name:");
-            string x = Console.ReadLine();
-            Console.WriteLine("{0}, welcome to my first console ", x);
+          //  string x = Console.ReadLine();
+           // Console.WriteLine("{0}, welcome to my first console ", x);
         }
     }
 }
