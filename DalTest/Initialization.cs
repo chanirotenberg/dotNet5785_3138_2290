@@ -118,7 +118,7 @@ public static class Initialization
         for (int i = 0; i < 50; i++) // At least 50 calls
         {
             DateTime openingTime = s_dalConfig!.Clock.AddMinutes(s_rand.Next(-1000, -1)); // Opening time before current time
-            DateTime? maximumTime = s_rand.NextDouble() > 0.5 ? openingTime.AddMinutes(s_rand.Next(10, 120)) : null;
+            DateTime? maximumTime = s_rand.NextDouble() > 0.3 ? openingTime.AddMinutes(s_rand.Next(10, 120)) : null;
 
             // Select random call description
             string description = callDescriptions[s_rand.Next(callDescriptions.Length)];
@@ -160,7 +160,7 @@ public static class Initialization
     {
         Console.WriteLine("Initializing Assignments...");
         var volunteers = s_dalVolunteer?.ReadAll() ?? new List<Volunteer>();
-        var calls = s_dalCall?.ReadAll() ?? new List<Call>();
+        var calls = s_dalCall?.ReadAll().Take(s_dalCall.ReadAll().Count() - 15).ToList() ?? new List<Call>();
 
         // 20% of volunteers will not have any assignments
         int volunteersWithNoAssignments = (int)(volunteers.Count * 0.2);
@@ -193,20 +193,20 @@ public static class Initialization
         }
 
         // Handle calls that were not assigned and passed their maximum time
-        foreach (var call in calls)
-        {
-            if (call.MaximumTime < DateTime.Now)
-            {
-                s_dalAssignment?.Create(new Assignment
-                {
-                    CallId = call.Id,
-                    VolunteerId = 0, // No volunteer assigned
-                    EntryTime = call.OpeningTime,
-                    ActualEndTime = null,
-                    EndType = EndType.ExpiredCancellation
-                });
-            }
-        }
+        //foreach (var call in calls)
+        //{
+        //    if (call.MaximumTime < DateTime.Now)
+        //    {
+        //        s_dalAssignment?.Create(new Assignment
+        //        {
+        //            CallId = call.Id,
+        //            VolunteerId = 0, // No volunteer assigned
+        //            EntryTime = call.OpeningTime,
+        //            ActualEndTime = null,
+        //            EndType = EndType.ExpiredCancellation
+        //        });
+        //    }
+        //}
     }
 
     /// <summary>

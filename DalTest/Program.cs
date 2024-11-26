@@ -1,4 +1,5 @@
-﻿using Dal;
+﻿
+using Dal;
 using DalApi;
 using DO;
 
@@ -12,6 +13,9 @@ public static class Program
     private static ICall? s_dalCall = new CallImplementation();
     private static IConfig? s_dalConfig = new ConfigImplementation();
 
+    /// <summary>
+    /// Main entry point of the program.
+    /// </summary>
     public static void Main(string[] args)
     {
         try
@@ -26,7 +30,7 @@ public static class Program
     }
 
     /// <summary>
-    /// Main menu
+    /// Displays the main menu and handles the user input for main actions.
     /// </summary>
     private static void RunMainMenu()
     {
@@ -71,7 +75,7 @@ public static class Program
     }
 
     /// <summary>
-    /// Initializes data
+    /// Initializes the data using the Initialization class.
     /// </summary>
     private static void InitializeData()
     {
@@ -88,11 +92,10 @@ public static class Program
     }
 
     /// <summary>
-    /// Volunteers management menu
+    /// Menu for managing volunteer entities.
     /// </summary>
     private static void ManageVolunteersMenu()
     {
-
         if (s_dalVolunteer == null)
         {
             Console.WriteLine("Volunteer DAL is not initialized.");
@@ -116,7 +119,7 @@ public static class Program
     }
 
     /// <summary>
-    /// Calls management menu
+    /// Menu for managing call entities.
     /// </summary>
     private static void ManageCallsMenu()
     {
@@ -143,11 +146,10 @@ public static class Program
     }
 
     /// <summary>
-    /// Assignments management menu
+    /// Menu for managing assignment entities.
     /// </summary>
     private static void ManageAssignmentsMenu()
     {
-
         if (s_dalAssignment == null)
         {
             Console.WriteLine("Assignment DAL is not initialized.");
@@ -169,7 +171,7 @@ public static class Program
     }
 
     /// <summary>
-    /// Configuration management menu
+    /// Menu for managing configuration settings such as clock.
     /// </summary>
     private static void ManageConfigurationMenu()
     {
@@ -212,7 +214,7 @@ public static class Program
     }
 
     /// <summary>
-    /// General entity management menu
+    /// General menu for managing entities like volunteers, calls, assignments.
     /// </summary>
     private static void ManageEntityMenu<T>(string entityName, dynamic dal, Func<T> createEntity) where T : class
     {
@@ -246,16 +248,7 @@ public static class Program
                             Console.WriteLine(item);
                         break;
                     case 4:
-                        int id = PromptInt("Enter ID to update: ");
-                        var entityToUpdate = dal.Read(id);
-                        if (entityToUpdate == null)
-                        {
-                            Console.WriteLine($"{entityName} not found.");
-                            break;
-                        }
-                        Console.WriteLine($"Current Data: {entityToUpdate}");
-                        dal.Update(createEntity());
-                        Console.WriteLine($"{entityName} updated successfully.");
+                        UpdateEntity(dal, entityName);
                         break;
                     case 5:
                         dal.Delete(PromptInt("Enter ID to delete: "));
@@ -280,7 +273,45 @@ public static class Program
     }
 
     /// <summary>
-    /// Helper method for reading an integer input
+    /// Update the specified entity by its ID.
+    /// </summary>
+    private static void UpdateEntity(dynamic dal, string entityName)
+    {
+        int id = PromptInt("Enter ID to update: ");
+        var entityToUpdate = dal.Read(id);
+        if (entityToUpdate == null)
+        {
+            Console.WriteLine($"{entityName} not found.");
+            return;
+        }
+
+        Console.WriteLine($"Current Data: {entityToUpdate}");
+        foreach (var property in entityToUpdate.GetType().GetProperties())
+        {
+            if (property.Name.Equals("Id", StringComparison.OrdinalIgnoreCase)) continue;
+
+            Console.Write($"Enter new value for {property.Name} (leave empty to keep current): ");
+            string? input = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                try
+                {
+                    var convertedValue = Convert.ChangeType(input, property.PropertyType);
+                    property.SetValue(entityToUpdate, convertedValue);
+                }
+                catch
+                {
+                    Console.WriteLine($"Invalid input for {property.Name}. Keeping the current value.");
+                }
+            }
+        }
+
+        dal.Update(entityToUpdate);
+        Console.WriteLine($"{entityName} updated successfully.");
+    }
+
+    /// <summary>
+    /// Prompt for integer input from the user.
     /// </summary>
     private static int PromptInt(string prompt)
     {
@@ -288,24 +319,36 @@ public static class Program
         return int.Parse(Console.ReadLine()!);
     }
 
+    /// <summary>
+    /// Prompt for string input from the user.
+    /// </summary>
     private static string PromptString(string prompt)
     {
         Console.Write(prompt);
         return Console.ReadLine()!;
     }
 
+    /// <summary>
+    /// Prompt for boolean input from the user.
+    /// </summary>
     private static bool PromptBool(string prompt)
     {
         Console.Write(prompt);
         return bool.Parse(Console.ReadLine()!);
     }
 
+    /// <summary>
+    /// Prompt for double input from the user.
+    /// </summary>
     private static double PromptDouble(string prompt)
     {
         Console.Write(prompt);
         return double.Parse(Console.ReadLine()!);
     }
 
+    /// <summary>
+    /// Prompt for DateTime input from the user.
+    /// </summary>
     private static DateTime PromptDateTime(string prompt)
     {
         Console.Write(prompt);
@@ -314,6 +357,9 @@ public static class Program
         return date;
     }
 
+    /// <summary>
+    /// Prompt for an enum value from the user.
+    /// </summary>
     private static TEnum PromptEnum<TEnum>(string prompt) where TEnum : struct
     {
         Console.Write(prompt);
