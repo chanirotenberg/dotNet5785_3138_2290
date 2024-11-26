@@ -118,7 +118,7 @@ public static class Initialization
         for (int i = 0; i < 50; i++) // At least 50 calls
         {
             DateTime openingTime = s_dalConfig!.Clock.AddMinutes(s_rand.Next(-1000, -1)); // Opening time before current time
-            DateTime? maximumTime = s_rand.NextDouble() > 0.5 ? openingTime.AddMinutes(s_rand.Next(10, 120)) : null;
+            DateTime? maximumTime = s_rand.NextDouble() > 0.3 ? openingTime.AddMinutes(s_rand.Next(10, 120)) : null;
 
             // Select random call description
             string description = callDescriptions[s_rand.Next(callDescriptions.Length)];
