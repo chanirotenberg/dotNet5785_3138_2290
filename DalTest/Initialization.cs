@@ -191,22 +191,6 @@ public static class Initialization
                 });
             }
         }
-
-        // Handle calls that were not assigned and passed their maximum time
-        //foreach (var call in calls)
-        //{
-        //    if (call.MaximumTime < DateTime.Now)
-        //    {
-        //        s_dalAssignment?.Create(new Assignment
-        //        {
-        //            CallId = call.Id,
-        //            VolunteerId = 0, // No volunteer assigned
-        //            EntryTime = call.OpeningTime,
-        //            ActualEndTime = null,
-        //            EndType = EndType.ExpiredCancellation
-        //        });
-        //    }
-        //}
     }
 
     /// <summary>
