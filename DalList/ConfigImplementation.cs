@@ -2,7 +2,7 @@
 
 namespace Dal;
 
-public class ConfigImplementation : IConfig
+internal class ConfigImplementation : IConfig
 {
     /// <summary>
     /// Gets or sets the system clock representing the current date and time.

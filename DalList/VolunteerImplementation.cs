@@ -2,7 +2,7 @@
 using DalApi;
 using DO;
 
-public class VolunteerImplementation : IVolunteer
+internal class VolunteerImplementation : IVolunteer
 {
     /// <summary>
     /// Creates a new volunteer.

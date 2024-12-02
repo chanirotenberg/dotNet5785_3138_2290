@@ -6,23 +6,9 @@ using DO;
 
 public static class Initialization
 {
-    private static IAssignment? s_dalAssignment;
-    private static ICall? s_dalCall;
-    private static IVolunteer? s_dalVolunteer;
-    private static IConfig? s_dalConfig;
-    private static readonly Random s_rand = new();
+    private static IDal? s_dal; //stage 2
 
-    /// <summary>
-    /// Resets all data and configuration.
-    /// </summary>
-    private static void ResetData()
-    {
-        Console.WriteLine("Resetting all data...");
-        s_dalConfig?.Reset();        // Reset configuration
-        s_dalVolunteer?.DeleteAll(); // Delete all volunteers
-        s_dalAssignment?.DeleteAll(); // Delete all assignments
-        s_dalCall?.DeleteAll();      // Delete all calls
-    }
+    private static readonly Random s_rand = new();
 
     /// <summary>
     /// Initializes the volunteer list.
@@ -65,7 +51,7 @@ public static class Initialization
             int id;
             do
                 id = s_rand.Next(200000000, 400000000);
-            while (s_dalVolunteer!.Read(id) != null);
+            while (s_dal!.Volunteer.Read(id) != null);
             string phone = GeneratePhoneNumber();
             string email = $"{name.Replace(" ", "").ToLower()}@gmail.com";
             string password = GenerateCustomPassword(name, phone);
@@ -74,7 +60,7 @@ public static class Initialization
             double maxDistance = s_rand.Next(10, 50);
             Jobs job = (name == volunteerNames[0]) ? Jobs.Administrator : Jobs.Worker;
 
-            s_dalVolunteer?.Create(new Volunteer
+            s_dal?.Volunteer.Create(new Volunteer
             {
                 Id = id,
                 Name = name,
@@ -117,7 +103,7 @@ public static class Initialization
         Console.WriteLine("Initializing Calls...");
         for (int i = 0; i < 50; i++) // At least 50 calls
         {
-            DateTime openingTime = s_dalConfig!.Clock.AddMinutes(s_rand.Next(-1000, -1)); // Opening time before current time
+            DateTime openingTime = s_dal!.Config.Clock.AddMinutes(s_rand.Next(-1000, -1)); // Opening time before current time
             DateTime? maximumTime = s_rand.NextDouble() > 0.3 ? openingTime.AddMinutes(s_rand.Next(10, 120)) : null;
 
             // Select random call description
@@ -131,7 +117,7 @@ public static class Initialization
             double latitude = s_addresses[s_rand.Next(s_addresses.Count)].latitude;
             double longitude = s_addresses[s_rand.Next(s_addresses.Count)].longitude;
 
-            s_dalCall?.Create(new Call
+            s_dal?.Call.Create(new Call
             {
                 CallType = callType,  // Selected call type
                 VerbalDescription = description,
@@ -159,8 +145,8 @@ public static class Initialization
     private static void CreateAssignments()
     {
         Console.WriteLine("Initializing Assignments...");
-        var volunteers = s_dalVolunteer?.ReadAll() ?? new List<Volunteer>();
-        var calls = s_dalCall?.ReadAll().Take(s_dalCall.ReadAll().Count() - 15).ToList() ?? new List<Call>();
+        var volunteers = s_dal?.Volunteer.ReadAll() ?? new List<Volunteer>();
+        var calls = s_dal?.Call.ReadAll().Take(s_dal.Call.ReadAll().Count() - 15).ToList() ?? new List<Call>();
 
         // 20% of volunteers will not have any assignments
         int volunteersWithNoAssignments = (int)(volunteers.Count * 0.2);
@@ -182,7 +168,7 @@ public static class Initialization
                     ? (s_rand.NextDouble() < 0.8 ? EndType.cared : EndType.selfCancellation)
                     : EndType.AdministratorCancellation;
 
-                s_dalAssignment?.Create(new Assignment
+                s_dal?.Assignment.Create(new Assignment
                 {
                     CallId = call.Id, // Existing call ID
                     VolunteerId = volunteer.Id, // Existing volunteer ID
@@ -200,19 +186,12 @@ public static class Initialization
     /// <param name="dalAssignment">Assignment DAL.</param>
     /// <param name="dalCall">Call DAL.</param>
     /// <param name="dalConfig">Config DAL.</param>
-    public static void Do(
-        IVolunteer? dalVolunteer,
-        IAssignment? dalAssignment,
-        ICall? dalCall,
-        IConfig? dalConfig)
+    public static void Do(IDal dal)
     {
-        s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("Volunteer DAL cannot be null!");
-        s_dalAssignment = dalAssignment ?? throw new NullReferenceException("Assignment DAL cannot be null!");
-        s_dalCall = dalCall ?? throw new NullReferenceException("Call DAL cannot be null!");
-        s_dalConfig = dalConfig ?? throw new NullReferenceException("Config DAL cannot be null!");
+        s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); // stage 2
 
         Console.WriteLine("Resetting configuration and clearing all data...");
-        ResetData();
+        s_dal.ResetDB();
 
         Console.WriteLine("Initializing data...");
         CreateVolunteers();    // Initialize volunteers
