@@ -2,20 +2,22 @@
 using DalApi;
 using DO;
 
+/// <summary>
+/// Implementation of assignment-related operations.
+/// </summary>
 internal class AssignmentImplementation : IAssignment
 {
     /// <summary>
     /// Creates a new assignment.
     /// </summary>
     /// <param name="item">The assignment to be created.</param>
-    /// <exception cref="Exception">Thrown if an assignment with the given ID already exists.</exception>
-
+    /// <exception cref="DalAlreadyExistsException">Thrown if an assignment with the given ID already exists.</exception>
     public void Create(Assignment item)
     {
         if (DataSource.Assignments.Any(a => a.Id == item.Id))
-            throw new Exception("An assignment with this ID already exists.");
+            throw new DalAlreadyExistsException($"Assignment with ID={item.Id} already exists");
         int newId = Config.NextAssignmentId;
-        Assignment newAssignments = item with { Id = newId};
+        Assignment newAssignments = item with { Id = newId };
         DataSource.Assignments.Add(newAssignments);
     }
 
@@ -23,10 +25,10 @@ internal class AssignmentImplementation : IAssignment
     /// Deletes an assignment by its ID.
     /// </summary>
     /// <param name="id">The ID of the assignment to be deleted.</param>
-    /// <exception cref="Exception">Thrown if the assignment with the given ID does not exist.</exception>
+    /// <exception cref="DalDoesNotExistException">Thrown if the assignment with the given ID does not exist.</exception>
     public void Delete(int id)
     {
-        Assignment? assignment = DataSource.Assignments.FirstOrDefault(a => a.Id == id) ?? throw new Exception($"Assignment Object with {id} doesn't exist");
+        Assignment? assignment = DataSource.Assignments.FirstOrDefault(a => a.Id == id) ?? throw new DalDoesNotExistException($"Assignment Object with {id} doesn't exist");
         DataSource.Assignments.Remove(assignment);
     }
 
@@ -49,6 +51,16 @@ internal class AssignmentImplementation : IAssignment
     }
 
     /// <summary>
+    /// Reads (retrieves) the first assignment that matches a specific filter.
+    /// </summary>
+    /// <param name="filter">The filter function to apply.</param>
+    /// <returns>The assignment object if a match is found; otherwise, null.</returns>
+    public Assignment? Read(Func<Assignment, bool> filter)
+    {
+        return DataSource.Assignments.FirstOrDefault(filter);
+    }
+
+    /// <summary>
     /// Reads all assignments.
     /// </summary>
     /// <returns>A list of all assignment objects.</returns>
@@ -58,14 +70,24 @@ internal class AssignmentImplementation : IAssignment
     }
 
     /// <summary>
+    /// Reads all assignments with an optional filter.
+    /// </summary>
+    /// <param name="filter">The optional filter function to apply.</param>
+    /// <returns>An enumerable of assignments that match the filter, or all assignments if no filter is provided.</returns>
+    public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null) //stage 2
+        => filter == null
+            ? DataSource.Assignments.Select(item => item)
+            : DataSource.Assignments.Where(filter);
+
+    /// <summary>
     /// Updates an existing assignment with new values.
     /// </summary>
     /// <param name="item">The assignment object with updated values.</param>
-    /// <exception cref="Exception">Thrown if the assignment with the given ID does not exist.</exception>
+    /// <exception cref="DalDoesNotExistException">Thrown if the assignment with the given ID does not exist.</exception>
     public void Update(Assignment item)
     {
         // Search for an existing assignment by ID
-        Assignment? existingAssignment = DataSource.Assignments.FirstOrDefault(a => a.Id == item.Id) ?? throw new Exception($"Assignment Object with id: {item.Id} doesn't exist");
+        Assignment? existingAssignment = DataSource.Assignments.FirstOrDefault(a => a.Id == item.Id) ?? throw new DalDoesNotExistException($"Assignment Object with id: {item.Id} doesn't exist");
 
         // Create a new assignment object with the updated values
         Assignment? updatedAssignment = existingAssignment with

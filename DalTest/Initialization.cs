@@ -11,7 +11,7 @@ public static class Initialization
     private static readonly Random s_rand = new();
 
     /// <summary>
-    /// Initializes the volunteer list.
+    /// List of addresses with latitude and longitude for random assignment to volunteers and calls.
     /// </summary>
     private static readonly List<(string address, double latitude, double longitude)> s_addresses = new()
     {
@@ -21,20 +21,20 @@ public static class Initialization
     };
 
     /// <summary>
-    /// Generates a custom password based on the volunteer's name and phone number.
+    /// Generates a custom password for volunteers based on their name and phone number.
     /// </summary>
     /// <param name="name">The volunteer's name.</param>
     /// <param name="phone">The volunteer's phone number.</param>
-    /// <returns>A custom password.</returns>
+    /// <returns>A custom password in the format of first 3 characters of name and last 3 digits of phone number.</returns>
     private static string GenerateCustomPassword(string name, string phone)
     {
         string namePart = name.Replace(" ", "").Substring(0, Math.Min(3, name.Length)); // Truncate name to max 3 characters
         string phonePart = phone.Substring(Math.Max(0, phone.Length - 3)); // Truncate phone number to last 3 digits
-        return $"{namePart}{phonePart}"; // Combine name and phone parts
+        return $"{namePart}{phonePart}"; // Combine name and phone parts for password
     }
 
     /// <summary>
-    /// Initializes volunteers.
+    /// Initializes volunteers by creating a list of volunteer data and assigning unique attributes.
     /// </summary>
     private static void CreateVolunteers()
     {
@@ -51,14 +51,14 @@ public static class Initialization
             int id;
             do
                 id = s_rand.Next(200000000, 400000000);
-            while (s_dal!.Volunteer.Read(id) != null);
+            while (s_dal!.Volunteer.Read(id) != null);  // Ensure unique ID for each volunteer
             string phone = GeneratePhoneNumber();
             string email = $"{name.Replace(" ", "").ToLower()}@gmail.com";
             string password = GenerateCustomPassword(name, phone);
             string address = s_addresses[s_rand.Next(s_addresses.Count)].address;
-            bool isActive = s_rand.NextDouble() > 0.2;
-            double maxDistance = s_rand.Next(10, 50);
-            Jobs job = (name == volunteerNames[0]) ? Jobs.Administrator : Jobs.Worker;
+            bool isActive = s_rand.NextDouble() > 0.2;  // 80% chance of being active
+            double maxDistance = s_rand.Next(10, 50);  // Max distance between 10 and 50 km
+            Jobs job = (name == volunteerNames[0]) ? Jobs.Administrator : Jobs.Worker;  // First volunteer is Admin
 
             s_dal?.Volunteer.Create(new Volunteer
             {
@@ -79,10 +79,9 @@ public static class Initialization
     }
 
     /// <summary>
-    /// Initializes call descriptions.
+    /// List of descriptions for calls, such as transport or medical ride requests.
     /// </summary>
-    private static readonly string[] callDescriptions = new string[]
-    {
+    private static readonly string[] callDescriptions = new string[] {
         "Airport ride, taxi needed at a specific time in the morning",
         "Ride to a family event, group pick-up in the city center",
         "Urgent ride to the hospital, needs immediate attention",
@@ -96,23 +95,23 @@ public static class Initialization
     };
 
     /// <summary>
-    /// Initializes calls.
+    /// Initializes a list of calls with random descriptions, locations, and time ranges.
     /// </summary>
     private static void CreateCalls()
     {
         Console.WriteLine("Initializing Calls...");
         for (int i = 0; i < 50; i++) // At least 50 calls
         {
-            DateTime openingTime = s_dal!.Config.Clock.AddMinutes(s_rand.Next(-1000, -1)); // Opening time before current time
-            DateTime? maximumTime = s_rand.NextDouble() > 0.3 ? openingTime.AddMinutes(s_rand.Next(10, 120)) : null;
+            DateTime openingTime = s_dal!.Config.Clock.AddMinutes(s_rand.Next(-1000, -1));  // Opening time before the current time
+            DateTime? maximumTime = s_rand.NextDouble() > 0.3 ? openingTime.AddMinutes(s_rand.Next(10, 120)) : null;  // Random max time
 
             // Select random call description
             string description = callDescriptions[s_rand.Next(callDescriptions.Length)];
 
-            // Randomly select call type - 70% will be Transport, 30% PickUp
+            // Randomly select call type (70% Transport, 30% PickUp)
             CallType callType = s_rand.NextDouble() < 0.7 ? CallType.PickUp : CallType.Transport;
 
-            // Select random address from predefined addresses
+            // Select random address from predefined list
             string address = s_addresses[s_rand.Next(s_addresses.Count)].address;
             double latitude = s_addresses[s_rand.Next(s_addresses.Count)].latitude;
             double longitude = s_addresses[s_rand.Next(s_addresses.Count)].longitude;
@@ -133,23 +132,23 @@ public static class Initialization
     /// <summary>
     /// Generates a random phone number.
     /// </summary>
-    /// <returns>A random phone number.</returns>
+    /// <returns>A random phone number in the format '050-XXXXXXX'.</returns>
     private static string GeneratePhoneNumber()
     {
-        return $"050-{s_rand.Next(1000000, 9999999)}";
+        return $"050-{s_rand.Next(1000000, 9999999)}";  // Random phone number generation
     }
 
     /// <summary>
-    /// Initializes assignments.
+    /// Initializes assignments by creating random assignments for volunteers to calls.
     /// </summary>
     private static void CreateAssignments()
     {
         Console.WriteLine("Initializing Assignments...");
         var volunteers = s_dal?.Volunteer.ReadAll() ?? new List<Volunteer>();
-        var calls = s_dal?.Call.ReadAll().Take(s_dal.Call.ReadAll().Count() - 15).ToList() ?? new List<Call>();
+        var calls = s_dal?.Call.ReadAll().Take(s_dal.Call.ReadAll().Count() - 15).ToList() ?? new List<Call>(); // Removing last 15 calls
 
         // 20% of volunteers will not have any assignments
-        int volunteersWithNoAssignments = (int)(volunteers.Count * 0.2);
+        int volunteersWithNoAssignments = (int)(volunteers.Count() * 0.2);
         var volunteersWithAssignments = volunteers.Skip(volunteersWithNoAssignments).ToList();
 
         foreach (var volunteer in volunteersWithAssignments)
@@ -161,12 +160,12 @@ public static class Initialization
             {
                 var call = calls[s_rand.Next(calls.Count)];
 
-                DateTime entryTime = call.OpeningTime.AddMinutes(s_rand.Next(1, 60));
-                DateTime? actualEndTime = s_rand.NextDouble() > 0.5 ? entryTime.AddMinutes(s_rand.Next(10, 120)) : null;
+                DateTime entryTime = call.OpeningTime.AddMinutes(s_rand.Next(1, 60));  // Entry time after call opening
+                DateTime? actualEndTime = s_rand.NextDouble() > 0.5 ? entryTime.AddMinutes(s_rand.Next(10, 120)) : null;  // Random end time
 
                 EndType? endType = actualEndTime.HasValue
                     ? (s_rand.NextDouble() < 0.8 ? EndType.cared : EndType.selfCancellation)
-                    : EndType.AdministratorCancellation;
+                    : EndType.AdministratorCancellation;  // Random end type
 
                 s_dal?.Assignment.Create(new Assignment
                 {
@@ -180,15 +179,12 @@ public static class Initialization
     }
 
     /// <summary>
-    /// Initializes all data (volunteers, calls, assignments).
+    /// Initializes all data by resetting the database and creating volunteers, calls, and assignments.
     /// </summary>
-    /// <param name="dalVolunteer">Volunteer DAL.</param>
-    /// <param name="dalAssignment">Assignment DAL.</param>
-    /// <param name="dalCall">Call DAL.</param>
-    /// <param name="dalConfig">Config DAL.</param>
+    /// <param name="dal">The IDal instance for accessing data layer methods.</param>
     public static void Do(IDal dal)
     {
-        s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); // stage 2
+        s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); // Ensure DAL is initialized
 
         Console.WriteLine("Resetting configuration and clearing all data...");
         s_dal.ResetDB();

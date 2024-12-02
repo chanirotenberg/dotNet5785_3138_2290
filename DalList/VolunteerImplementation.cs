@@ -12,7 +12,7 @@ internal class VolunteerImplementation : IVolunteer
     public void Create(Volunteer item)
     {
         if (this.Read(item.Id) is not null)
-            throw new Exception($"Volunteer Object with {item.Id} already exists");
+            throw new DalAlreadyExistsException($"Volunteer Object with {item.Id} already exists");
         DataSource.Volunteers.Add(item);
     }
 
@@ -30,10 +30,10 @@ internal class VolunteerImplementation : IVolunteer
     /// Reads all volunteers.
     /// </summary>
     /// <returns>A list of all volunteer objects.</returns>
-    public List<Volunteer> ReadAll()
-    {
-        return new List<Volunteer>(DataSource.Volunteers);
-    }
+    public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null) //stage 2
+      => filter == null
+          ? DataSource.Volunteers.Select(item => item)
+          : DataSource.Volunteers.Where(filter);
 
     /// <summary>
     /// Deletes a volunteer by ID.
@@ -42,7 +42,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="Exception">Thrown if the volunteer with the given ID does not exist.</exception>
     public void Delete(int id)
     {
-        Volunteer? existingVolunteer = DataSource.Volunteers.FirstOrDefault(v => v.Id == id) ?? throw new Exception($"Volunteer Object with {id} doesn't exist");
+        Volunteer? existingVolunteer = DataSource.Volunteers.FirstOrDefault(v => v.Id == id) ?? throw new DalDoesNotExistException($"Volunteer Object with {id} doesn't exist");
         DataSource.Volunteers.Remove(existingVolunteer);
     }
 
@@ -61,7 +61,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="Exception">Thrown if the volunteer with the given ID does not exist.</exception>
     public void Update(Volunteer item)
     {
-        Volunteer? existingVolunteer = DataSource.Volunteers.FirstOrDefault(v => v.Id == item.Id) ?? throw new Exception($"Volunteer Object with {item.Id} doesn't exist");
+        Volunteer? existingVolunteer = DataSource.Volunteers.FirstOrDefault(v => v.Id == item.Id) ?? throw new DalDoesNotExistException($"Volunteer Object with {item.Id} doesn't exist");
 
         // Create a new volunteer record with updated values
         Volunteer updatedVolunteer = existingVolunteer with
@@ -82,5 +82,10 @@ internal class VolunteerImplementation : IVolunteer
         // Remove the old volunteer and add the updated one
         DataSource.Volunteers.Remove(existingVolunteer);
         DataSource.Volunteers.Add(updatedVolunteer);
+    }
+
+    public Volunteer? Read(Func<Volunteer, bool> filter)
+    {
+        return DataSource.Volunteers.FirstOrDefault(filter);
     }
 }

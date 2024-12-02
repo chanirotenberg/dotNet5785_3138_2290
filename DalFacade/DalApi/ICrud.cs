@@ -1,14 +1,41 @@
-﻿
-using DO;
+﻿using DO;
 
 namespace DalApi;
 
 public interface ICrud<T> where T : class
 {
-    void Create(T item); //Creates new entity object in DAL
-    T? Read(int id); //Reads entity object by its ID 
-    List<T> ReadAll(); //stage 1 only, Reads all entity objects
-    void Update(T item); //Updates entity object
-    void Delete(int id); //Deletes an object by its Id
-    void DeleteAll(); //Delete all entity objects
+    /// <summary>
+    /// Creates a new entity in the DAL.
+    /// </summary>
+    void Create(T item);
+
+    /// <summary>
+    /// Reads an entity by its ID.
+    /// </summary>
+    T? Read(int id);
+
+    /// <summary>
+    /// Reads all entities, optionally filtered.
+    /// </summary>
+    IEnumerable<T> ReadAll(Func<T, bool>? filter = null);
+
+    /// <summary>
+    /// Updates an existing entity.
+    /// </summary>
+    void Update(T item);
+
+    /// <summary>
+    /// Deletes an entity by its ID.
+    /// </summary>
+    void Delete(int id);
+
+    /// <summary>
+    /// Deletes all entities.
+    /// </summary>
+    void DeleteAll();
+
+    /// <summary>
+    /// Reads an entity based on a filter function.
+    /// </summary>
+    T? Read(Func<T, bool> filter);
 }
