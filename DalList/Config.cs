@@ -14,7 +14,6 @@ internal static class Config
     /// The starting value for the Call ID.
     /// </summary>
     internal const int startCallId = 1;
-
     private static int nextCallId = startCallId;
 
     /// <summary>
