@@ -25,4 +25,5 @@ public record Assignment
     /// Default constructor for the Assignment record, initializing default values.
     /// </summary>
     public Assignment() : this( 0, 0, DateTime.Now, null, null) { }
+
 }

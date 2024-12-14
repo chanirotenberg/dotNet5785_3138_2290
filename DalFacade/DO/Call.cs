@@ -28,5 +28,5 @@ public record Call
     /// <summary>
     /// Default constructor for the Call record, initializing default values.
     /// </summary>
-    public Call() : this( CallType.Transport, null, "", 0, 0, DateTime.Now, null) { }
+    public Call() : this(CallType.Transport, null, "", 0, 0, DateTime.Now, null) { }
 }
