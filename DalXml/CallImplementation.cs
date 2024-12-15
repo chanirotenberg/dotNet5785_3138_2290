@@ -1,5 +1,4 @@
-﻿
-    namespace Dal;
+﻿namespace Dal;
 using DalApi;
 using DO;
 using System.Linq;
@@ -7,7 +6,12 @@ using System.Xml.Linq;
 
 internal class CallImplementation : ICall
 {
-
+    /// <summary>
+    /// Converts an XElement to a Call object.
+    /// </summary>
+    /// <param name="s">The XElement to convert.</param>
+    /// <returns>A Call object.</returns>
+    /// <exception cref="FormatException">Thrown if required fields are missing or invalid.</exception>
     static Call getCall(XElement s)
     {
         return new Call
@@ -23,35 +27,32 @@ internal class CallImplementation : ICall
         };
     }
 
-
     /// <summary>
-    /// יוצרת קריאה חדשה.
+    /// Creates a new call.
     /// </summary>
-    /// <param name="item">אובייקט הקריאה שנוצר.</param>
-    /// <exception cref="DalAlreadyExistsException">נזרקת אם קריאה עם ה-ID הנתון כבר קיימת.</exception>
-    
+    /// <param name="item">The call object to create.</param>
+    /// <exception cref="DalAlreadyExistsException">Thrown if a call with the given ID already exists.</exception>
     public void Create(Call item)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(Config.s_calls_xml);
 
-        // בדיקה האם יש ID כפול
+        // Check for duplicate ID
         if (callsRootElem.Elements().Any(c => (int?)c.Element("Id") == item.Id))
             throw new DalAlreadyExistsException($"Call with ID={item.Id} already exists");
 
         int newId = Config.NextCallId;
         Call newCall = item with { Id = newId };
 
-        // יצירת אלמנט XML מתאים עבור ה-Call
+        // Create an XML element for the new call and add it to the root
         callsRootElem.Add(createCallElement(newCall));
         XMLTools.SaveListToXMLElement(callsRootElem, Config.s_calls_xml);
     }
 
-
     /// <summary>
-    /// קורא (מאחזר) קריאה לפי ID.
+    /// Reads a call by its ID.
     /// </summary>
-    /// <param name="id">ה-ID של הקריאה שיש לאחזר.</param>
-    /// <returns>אובייקט הקריאה אם נמצא; אחרת, null.</returns>
+    /// <param name="id">The ID of the call to retrieve.</param>
+    /// <returns>The call object if found; otherwise, null.</returns>
     public Call? Read(int id)
     {
         XElement? callElem = XMLTools.LoadListFromXMLElement(Config.s_calls_xml)
@@ -62,10 +63,10 @@ internal class CallImplementation : ICall
     }
 
     /// <summary>
-    /// קורא קריאה לפי מסנן מותאם אישית.
+    /// Reads a call that matches the given filter.
     /// </summary>
-    /// <param name="filter">מסנן מותאם אישית לקריאה.</param>
-    /// <returns>האובייקט הראשון שעונה על המסנן, או null אם לא נמצא.</returns>
+    /// <param name="filter">A predicate to filter the calls.</param>
+    /// <returns>The first call that matches the filter; otherwise, null.</returns>
     public Call? Read(Func<Call, bool> filter)
     {
         return XMLTools.LoadListFromXMLElement(Config.s_calls_xml)
@@ -75,8 +76,10 @@ internal class CallImplementation : ICall
     }
 
     /// <summary>
-    /// קורא את כל הקריאות עם מסנן אופציונלי.
+    /// Reads all calls, optionally filtered by a predicate.
     /// </summary>
+    /// <param name="filter">An optional filter to apply.</param>
+    /// <returns>An enumerable of calls.</returns>
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
     {
         var calls = XMLTools.LoadListFromXMLElement(Config.s_calls_xml)
@@ -87,15 +90,16 @@ internal class CallImplementation : ICall
     }
 
     /// <summary>
-    /// מעדכן קריאה קיימת עם ערכים חדשים.
+    /// Updates an existing call with new values.
     /// </summary>
-
+    /// <param name="item">The updated call object.</param>
+    /// <exception cref="DalDoesNotExistException">Thrown if no call with the given ID exists.</exception>
     public void Update(Call item)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(Config.s_calls_xml);
 
         (callsRootElem.Elements().FirstOrDefault(st => (int?)st.Element("Id") == item.Id)
-        ?? throw new DO.DalDoesNotExistException($"Call with ID={item.Id} does Not exist"))
+        ?? throw new DalDoesNotExistException($"Call with ID={item.Id} does Not exist"))
                 .Remove();
 
         callsRootElem.Add(new XElement("Call", createCallElement(item)));
@@ -103,10 +107,11 @@ internal class CallImplementation : ICall
         XMLTools.SaveListToXMLElement(callsRootElem, Config.s_calls_xml);
     }
 
-
     /// <summary>
-    /// מוחקת קריאה לפי ID.
+    /// Deletes a call by its ID.
     /// </summary>
+    /// <param name="id">The ID of the call to delete.</param>
+    /// <exception cref="DalDoesNotExistException">Thrown if no call with the given ID exists.</exception>
     public void Delete(int id)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(Config.s_calls_xml);
@@ -120,7 +125,7 @@ internal class CallImplementation : ICall
     }
 
     /// <summary>
-    /// מוחקת את כל הקריאות.
+    /// Deletes all calls.
     /// </summary>
     public void DeleteAll()
     {
@@ -128,10 +133,11 @@ internal class CallImplementation : ICall
         XMLTools.SaveListToXMLElement(callsRootElem, Config.s_calls_xml);
     }
 
-
     /// <summary>
-    /// ממיר אובייקט Call ל-XElement.
+    /// Converts a Call object into an XElement.
     /// </summary>
+    /// <param name="call">The call object to convert.</param>
+    /// <returns>An XElement representing the call.</returns>
     private static XElement createCallElement(Call call)
     {
         return new XElement("Call",
