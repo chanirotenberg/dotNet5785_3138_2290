@@ -7,9 +7,6 @@ using System.Collections.Generic;
 
 internal class AssignmentImplementation : IAssignment
 {
-
-
-
     public void Delete(int id)
     {
         List<Assignment> Assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
@@ -32,16 +29,22 @@ internal class AssignmentImplementation : IAssignment
     }
 
 
+    
+
     public void Create(Assignment item)
     {
         List<Assignment> Assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
+
         if (Assignments.Any(a => a.Id == item.Id))
             throw new DalAlreadyExistsException($"Assignment with ID={item.Id} already exists");
+
         int newId = Config.NextAssignmentId;
-        Assignment newAssignments = item with { Id = newId };
-        Assignments.Add(newAssignments);
+        Assignment newAssignment = item with { Id = newId };
+
+        Assignments.Add(newAssignment);
         XMLTools.SaveListToXMLSerializer(Assignments, Config.s_assignments_xml);
     }
+
 
 
     public Assignment? Read(int id)

@@ -1,13 +1,15 @@
 ﻿using Dal;
 using DalApi;
-using DO;
 
 namespace DalTest;
+using DO;
+using Dal;
 
 public static class Program
 {
     // Static field for the data access layer
-    static readonly IDal s_dal = new DalList(); //stage 2
+    //static readonly IDal s_dal = new DalList(); //stage 2
+    static readonly IDal s_dal = new DalXml(); //stage 3
 
     /// <summary>
     /// Main entry point of the program. Initializes the application and displays the main menu.

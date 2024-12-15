@@ -1,76 +1,4 @@
 ﻿
-//namespace Dal;
-//using DalApi;
-//using DO;
-//using System;
-//using System.Collections.Generic;
-//using System.Xml.Linq;
-
-//internal class CallImplementation : ICall
-//{
-//    public void Create(Call item)
-//    {
-//        throw new NotImplementedException();
-//    }
-
-//    public void Delete(int id)
-//    {
-//        throw new NotImplementedException();
-//    }
-
-//    public void DeleteAll()
-//    {
-//        throw new NotImplementedException();
-//    }
-
-
-//    public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
-//    {
-//        throw new NotImplementedException();
-//    }
-
-
-//    static Call getCalls(XElement s)
-//    {
-//        return new Call
-//        {
-//            Id = s.ToIntNullable("Id") ?? throw new FormatException("Invalid or missing Id"),
-//            CallType = s.ToEnumNullable<CallType>("CallType") ?? CallType.Transport,
-//            VerbalDescription = (string?)s.Element("VerbalDescription")??null,
-//            Address = (string?)s.Element("Address") ?? "",
-//            Latitude = s.ToDoubleNullable("Latitude") ?? 0,
-//            Longitude = s.ToDoubleNullable("Longitude") ?? 0,
-//            OpeningTime = s.ToDateTimeNullable("OpeningTime") ?? DateTime.Now,
-//            MaximumTime = s.ToDateTimeNullable("MaximumTime")?? null
-//        };
-//    }
-
-
-
-//    public Call? Read(int id)
-//    {
-//        XElement? studentElem =
-//    XMLTools.LoadListFromXMLElement(Config.s_calls_xml).Elements().FirstOrDefault(st => (int?)st.Element("Id") == id);
-//        return studentElem is null ? null : getCalls(studentElem);
-//    }
-
-//    public Call? Read(Func<Call, bool> filter)
-//    {
-//        return XMLTools.LoadListFromXMLElement(Config.s_calls_xml).Elements().Select(s => getCalls(s)).FirstOrDefault(filter);
-//    }
-
-//    public void Update(Call item)
-//    {
-//        XElement studentsRootElem = XMLTools.LoadListFromXMLElement(Config.s_calls_xml);
-
-//        (studentsRootElem.Elements().FirstOrDefault(st => (int?)st.Element("Id") == item.Id)
-//        ?? throw new DO.DalDoesNotExistException($"Student with ID={item.Id} does Not exist"))
-//                .Remove();
-
-//        studentsRootElem.Add(new XElement("Student", createStudentElement(item)));
-
-//        XMLTools.SaveListToXMLElement(studentsRootElem, Config.s_calls_xml);
-//    }
     namespace Dal;
 using DalApi;
 using DO;
@@ -101,18 +29,23 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="item">אובייקט הקריאה שנוצר.</param>
     /// <exception cref="DalAlreadyExistsException">נזרקת אם קריאה עם ה-ID הנתון כבר קיימת.</exception>
+    
     public void Create(Call item)
     {
         XElement callsRootElem = XMLTools.LoadListFromXMLElement(Config.s_calls_xml);
 
+        // בדיקה האם יש ID כפול
         if (callsRootElem.Elements().Any(c => (int?)c.Element("Id") == item.Id))
             throw new DalAlreadyExistsException($"Call with ID={item.Id} already exists");
 
         int newId = Config.NextCallId;
         Call newCall = item with { Id = newId };
+
+        // יצירת אלמנט XML מתאים עבור ה-Call
         callsRootElem.Add(createCallElement(newCall));
         XMLTools.SaveListToXMLElement(callsRootElem, Config.s_calls_xml);
     }
+
 
     /// <summary>
     /// קורא (מאחזר) קריאה לפי ID.
@@ -191,7 +124,7 @@ internal class CallImplementation : ICall
     /// </summary>
     public void DeleteAll()
     {
-        XElement callsRootElem = new XElement("Calls");
+        XElement callsRootElem = new XElement("ArrayOfCall");
         XMLTools.SaveListToXMLElement(callsRootElem, Config.s_calls_xml);
     }
 
@@ -212,4 +145,3 @@ internal class CallImplementation : ICall
             new XElement("MaximumTime", call.MaximumTime));
     }
 }
-
