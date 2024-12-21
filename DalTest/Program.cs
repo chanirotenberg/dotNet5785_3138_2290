@@ -1,6 +1,5 @@
 ﻿namespace DalTest;
 using DO;
-using Dal;
 using DalApi;
 
 public static class Program

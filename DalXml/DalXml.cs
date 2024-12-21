@@ -1,8 +1,10 @@
 ﻿namespace Dal;
 using DalApi;
 
-sealed public class DalXml: IDal
+sealed internal class DalXml: IDal
 {
+    public static IDal Instance { get; } = new DalXml();
+    private DalXml() { }
     /// <summary>
     /// Gets the IAssignment implementation for managing assignments.
     /// </summary>
