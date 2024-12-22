@@ -69,7 +69,7 @@ internal static class Config
     /// </summary>
     /// <remarks>
     /// Sets the NextCallId and NextAssignmentId to 1000, initializes the system clock to the current time,
-    /// and sets RiskRange to a default of 1 hour.
+    /// and sets RiskRange to a default of 1 hour
     /// </remarks>
     internal static void Reset()
     {
