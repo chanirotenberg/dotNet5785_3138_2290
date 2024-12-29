@@ -1,7 +1,7 @@
 ﻿namespace Dal;
 using DalApi;
 
-sealed internal class DalXml: IDal
+sealed internal class DalXml : IDal
 {
     public static IDal Instance { get; } = new DalXml();
     private DalXml() { }

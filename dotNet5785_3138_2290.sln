@@ -27,6 +27,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{8136F113-18F
 		xml\volunteers.xml = xml\volunteers.xml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL", "BL\BL.csproj", "{99017DF8-813D-4E28-B7E1-5A7CC63AF994}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlTest", "BlTest\BlTest.csproj", "{F57385DD-25BD-454F-AB3E-211A7C79CA6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +57,14 @@ Global
 		{05063EF6-29B4-4326-9723-7E1B69749DC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05063EF6-29B4-4326-9723-7E1B69749DC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05063EF6-29B4-4326-9723-7E1B69749DC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99017DF8-813D-4E28-B7E1-5A7CC63AF994}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99017DF8-813D-4E28-B7E1-5A7CC63AF994}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99017DF8-813D-4E28-B7E1-5A7CC63AF994}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99017DF8-813D-4E28-B7E1-5A7CC63AF994}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F57385DD-25BD-454F-AB3E-211A7C79CA6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F57385DD-25BD-454F-AB3E-211A7C79CA6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F57385DD-25BD-454F-AB3E-211A7C79CA6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F57385DD-25BD-454F-AB3E-211A7C79CA6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

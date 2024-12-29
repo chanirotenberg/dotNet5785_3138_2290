@@ -182,9 +182,10 @@ public static class Initialization
     /// Initializes all data by resetting the database and creating volunteers, calls, and assignments.
     /// </summary>
     /// <param name="dal">The IDal instance for accessing data layer methods.</param>
-    public static void Do(IDal dal)
+    public static void Do()
     {
-        s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); // Ensure DAL is initialized
+        //s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); // Ensure DAL is initialized
+        s_dal = DalApi.Factory.Get; //stage 4
 
         Console.WriteLine("Resetting configuration and clearing all data...");
         s_dal.ResetDB();

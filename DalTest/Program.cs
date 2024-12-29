@@ -1,12 +1,14 @@
 ﻿namespace DalTest;
 using DO;
 using DalApi;
+using System.Diagnostics;
 
 public static class Program
 {
     // Static field for the data access layer
     //static readonly IDal s_dal = new DalList(); //stage 2
-    static readonly IDal s_dal = new DalXml(); //stage 3
+    //static readonly IDal s_dal = new DalXml(); //stage 3
+    static readonly IDal s_dal = Factory.Get; //stage 4
 
     /// <summary>
     /// Main entry point of the program. Initializes the application and displays the main menu.
@@ -77,7 +79,8 @@ public static class Program
         try
         {
             Console.WriteLine("Initializing data...");
-            Initialization.Do(s_dal); // Calls the Initialization class to populate data
+            //Initialization.Do(s_dal); // Calls the Initialization class to populate data
+            Initialization.Do(); //stage 4
             Console.WriteLine("Data initialized successfully.");
         }
         catch (Exception ex)
