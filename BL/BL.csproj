@@ -20,9 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
     <Folder Include="BlImplementation\" />
-    <Folder Include="BlApi\" />
   </ItemGroup>
 
 </Project>

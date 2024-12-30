@@ -1,4 +1,6 @@
-﻿namespace BO;
+﻿using Helpers;
+
+namespace BO;
 
 /// <summary>
 /// Represents a call assignment in the list (for view only).
@@ -29,5 +31,5 @@ public class CallAssignInList
     /// The type of treatment completion (e.g., Completed, Canceled due to expiration).
     /// </summary>
     public EndType? EndType { get; init; }
-
+    public override string ToString() => this.ToStringProperty();
 }

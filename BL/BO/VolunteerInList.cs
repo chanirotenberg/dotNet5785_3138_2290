@@ -1,4 +1,6 @@
-﻿namespace BO;
+﻿using Helpers;
+
+namespace BO;
 
 /// <summary>
 /// Represents a volunteer in the list view.
@@ -44,4 +46,5 @@ public class VolunteerInList
     /// The type of call currently being handled by the volunteer.
     /// </summary>
     public CallType CallType { get; init; } = CallType.None;
+    public override string ToString() => this.ToStringProperty();
 }
