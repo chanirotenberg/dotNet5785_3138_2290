@@ -86,5 +86,5 @@ public class Volunteer
     /// The call currently in progress with the volunteer (if any).
     /// </summary>
     public BO.CallInProgress? CallInProgress { get; set; }
-    public override string ToString() => this.ToStringProperty();
+    public override string ToString() => this.ToStringProperty();    
 }
