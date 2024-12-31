@@ -1,4 +1,6 @@
-﻿namespace BO;
+﻿using Helpers;
+
+namespace BO;
 
 /// <summary>
 /// Represents an open call in the list view, available for volunteer selection.
@@ -39,4 +41,5 @@ public class OpenCallInList
     /// The distance from the volunteer to the call location.
     /// </summary>
     public double DistanceFromVolunteer { get; init; }
+    public override string ToString() => this.ToStringProperty();
 }

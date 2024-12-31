@@ -1,4 +1,6 @@
-﻿namespace BO;
+﻿using Helpers;
+
+namespace BO;
 
 /// <summary>
 /// Represents a call entity that includes details about a call and its assignments.
@@ -65,4 +67,5 @@ public class Call
     /// Nullable.
     /// </summary>
     public List<BO.CallAssignInList>? Assignments { get; set; }
+    public override string ToString() => this.ToStringProperty();
 }

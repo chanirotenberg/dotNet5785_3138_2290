@@ -1,4 +1,6 @@
-﻿namespace BO;
+﻿using Helpers;
+
+namespace BO;
 
 /// <summary>
 /// Represents a closed call in the list view.
@@ -39,4 +41,5 @@ public class ClosedCallInList
     /// The type of end status for the call (nullable).
     /// </summary>
     public EndType? EndType { get; init; }
+    public override string ToString() => this.ToStringProperty();
 }

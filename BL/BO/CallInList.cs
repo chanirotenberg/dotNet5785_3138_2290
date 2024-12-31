@@ -1,4 +1,6 @@
-﻿namespace BO;
+﻿using Helpers;
+
+namespace BO;
 
 /// <summary>
 /// Represents a call currently in the list (for view only).
@@ -49,5 +51,5 @@ public class CallInList
     /// The total number of assignments for this call.
     /// </summary>
     public int SumOfAssignments { get; init; }
-
+    public override string ToString() => this.ToStringProperty();
 }

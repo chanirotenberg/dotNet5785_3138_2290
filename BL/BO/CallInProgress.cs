@@ -1,4 +1,6 @@
-﻿namespace BO;
+﻿using Helpers;
+
+namespace BO;
 
 /// <summary>
 /// Represents a call currently being handled by a volunteer.
@@ -54,4 +56,5 @@ public class CallInProgress
     /// The current status of the call (InProgress, AtRisk, etc.).
     /// </summary>
     public CallStatus Status { get; init; }
+    public override string ToString() => this.ToStringProperty();
 }
