@@ -5,8 +5,8 @@ namespace DO;
 /// </summary>
 public enum EndType
 {
-    cared,
-    selfCancellation,
+    Cared,
+    SelfCancellation,
     AdministratorCancellation,
     ExpiredCancellation
 }
@@ -16,7 +16,8 @@ public enum EndType
 public enum CallType
 {
     Transport,
-    PickUp
+    PickUp,
+    None
 }
 /// <summary>
 /// Enum representing different job roles.
