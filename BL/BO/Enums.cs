@@ -5,8 +5,8 @@ namespace BO;
 /// </summary>
 public enum EndType
 {
-    cared,
-    selfCancellation,
+    Cared,
+    SelfCancellation,
     AdministratorCancellation,
     ExpiredCancellation
 }
@@ -19,6 +19,7 @@ public enum CallType
     PickUp,
     None
 }
+
 /// <summary>
 /// Enum representing different job roles.
 /// </summary>
