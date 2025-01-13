@@ -1,48 +1,6 @@
 ﻿namespace BlImplementation;
 using BlApi;
-using BO;
-using System.Collections.Generic;
-
-//internal class VolunteerImplementation : IVolunteer
-//{
-//    private readonly DalApi.IDal _dal = DalApi.Factory.Get;
-//    public void AddVolunteer(Volunteer volunteer)
-//    {
-//        throw new NotImplementedException();
-//    }
-
-//    public void DeleteVolunteer(int id)
-//    {
-//        throw new NotImplementedException();
-//    }
-
-//    public Volunteer GetVolunteerDetails(int id)
-//    {
-//        throw new NotImplementedException();
-//    }
-
-//    public IEnumerable<VolunteerInList> GetVolunteerList(bool? isActive = null, VolunteerSortField? sortBy = null)
-//    {
-//        throw new NotImplementedException();
-//    }
-
-//    public string Login(string username, string password)
-//    {
-//        throw new NotImplementedException();
-//    }
-
-//    public void UpdateVolunteer(int id, Volunteer volunteer)
-//    {
-//        throw new NotImplementedException();
-//    }
-//    public  IVolunteer Volunteer { get; } = new VolunteerImplementation();
-//}
-
-
-namespace BlImplementation;
-using BlApi;
-using DO;
-using System.Xml.Linq;
+using Helpers;
 
 internal class VolunteerImplementation : IVolunteer
 {
@@ -55,7 +13,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <param name="password">The password of the volunteer.</param>
     /// <returns>The role of the volunteer as a string.</returns>
     /// <exception cref="BO.VolunteerNotFoundException">Thrown if the volunteer is not found or the password is incorrect.</exception>
-    public string Login(string username, string password)
+    public BO.Jobs Login(string username, string password)
     {
         try
         {
@@ -66,7 +24,7 @@ internal class VolunteerImplementation : IVolunteer
                 throw new BO.InvalidPasswordException("Invalid password.");
 
             // Return the volunteer's role as a string
-            return volunteer.Jobs.ToString();
+            return volunteer.Jobs;
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -81,49 +39,58 @@ internal class VolunteerImplementation : IVolunteer
     /// <param name="isActive">Filter for active or inactive volunteers.</param>
     /// <param name="sortBy">Field to sort by.</param>
     /// <returns>A list of BO.VolunteerInList objects.</returns>
-    public IEnumerable<BO.VolunteerInList> GetVolunteersList(bool? isActive = null, BO.VolunteerSortField? sortBy = null)
+    public IEnumerable<BO.VolunteerInList> GetVolunteerList(bool? isActive = null, BO.VolunteerSortField? sortBy = null)
     {
         try
-        {
-            var volunteers = _dal.Volunteer.ReadAll();
-            if (isActive.HasValue)
-                volunteers = volunteers.Where(v => v.active == isActive.Value);
-
-            var volunteerList = volunteers.Select(v =>
             {
-                var currentAssignment = _dal.Assignment.Read(a => a.VolunteerId == v.Id && a.EntryTime != null && a.ActualEndTime == null);
-                var currentCallId = currentAssignment?.CallId;
+                var volunteers = _dal.Volunteer.ReadAll()
+                    .Select(v =>
+                    {
+                        var currentCallId = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndType == null)
+                            .Select(a => (int?)a.CallId).FirstOrDefault();
 
-                return new BO.VolunteerInList
+                        BO.CallType callType;
+                        if (!currentCallId.HasValue)
+                        {
+                            callType = BO.CallType.None;
+                        }
+                        else
+                        {
+                            var call = _dal.Call.Read(currentCallId.Value);
+                            callType = call != null ? (BO.CallType)call.CallType : BO.CallType.None;
+                        }
+
+                        return new BO.VolunteerInList
+                        {
+                            Id = v.Id,
+                            Name = v.Name,
+                            IsActive = v.active,
+                            TotalHandledCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndType == DO.EndType.Cared).Count(),
+                            TotalCanceledCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndType == DO.EndType.AdministratorCancellation).Count(),
+                            TotalExpiredCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndType == DO.EndType.ExpiredCancellation).Count(),
+                            CurrentCallId = currentCallId,
+                            CallType = callType
+                        };
+                    });
+
+                if (isActive.HasValue)
+                    volunteers = volunteers.Where(v => v.IsActive == isActive);
+
+                return sortBy switch
                 {
-                    Id = v.Id,
-                    Name = v.Name,
-                    IsActive = v.active,
-                    TotalHandledCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndType == DO.EndType.Cared).Count(),
-                    TotalCanceledCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndType == DO.EndType.AdministratorCancellation).Count(),
-                    TotalExpiredCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndType == DO.EndType.ExpiredCancellation).Count(),
-                    CurrentCallId = currentCallId,
-                    CallType = currentCallId.HasValue
-                       ? (BO.CallType)(_dal.Call.Read(currentCallId.Value)?.CallType ?? DO.CallType.None)
-                        : BO.CallType.None
-
+                    BO.VolunteerSortField.Name => volunteers.OrderBy(v => v.Name),
+                    BO.VolunteerSortField.SumOfCalls => volunteers.OrderByDescending(v => v.TotalHandledCalls),
+                    BO.VolunteerSortField.SumOfCancellation => volunteers.OrderByDescending(v => v.TotalCanceledCalls),
+                    BO.VolunteerSortField.SumOfExpiredCalls => volunteers.OrderByDescending(v => v.TotalExpiredCalls),
+                    _ => volunteers.OrderBy(v => v.Id),
                 };
-            });
-
-
-            return sortBy switch
+            }
+            catch (Exception ex)
             {
-                BO.VolunteerSortField.SumOfCalls => volunteerList.OrderBy(v => v.TotalHandledCalls),
-                BO.VolunteerSortField.SumOfCancellation => volunteerList.OrderBy(v => v.TotalCanceledCalls),
-                BO.VolunteerSortField.SumOfExpiredCalls => volunteerList.OrderBy(v => v.TotalExpiredCalls),            
-                _ => volunteerList.OrderBy(v => v.Id)
-            };
+                throw new BO.BlException("An error occurred while retrieving the volunteers.", ex);
+            }
         }
-        catch (DO.DalDoesNotExistException ex)
-        {
-            throw new BO.DataAccessException("Error accessing data.", ex);
-        }
-    }
+
 
     /// <summary>
     /// Retrieves detailed information about a volunteer.
@@ -134,33 +101,48 @@ internal class VolunteerImplementation : IVolunteer
     {
         try
         {
-            var doVolunteer = _dal.Volunteer.Read(id) ?? throw new BO.VolunteerNotFoundException("Volunteer not found.");
-            var currentAssignment = _dal.Assignment.Read(a => a.VolunteerId == id && a.EntryTime != null && a.ActualEndTime == null);
-            var currentCallId = currentAssignment?.CallId;
+            var doVolunteer = _dal.Volunteer.Read(id) ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does not exist.");
+
+            var currentAssignment = _dal.Assignment.ReadAll(a => a.VolunteerId == id && a.EndType == null).FirstOrDefault();
+            var callInProgress = currentAssignment != null
+                ? new BO.CallInProgress
+                {
+                    Id = currentAssignment.CallId,
+                    CallId = currentAssignment.CallId,
+                    CallType = (BO.CallType)(_dal.Call.Read(currentAssignment.CallId)?.CallType ?? DO.CallType.None),
+                    VerbalDescription = _dal.Call.Read(currentAssignment.CallId)?.VerbalDescription,
+                    Address = _dal.Call.Read(currentAssignment.CallId)?.Address,
+                    OpeningTime = _dal.Call.Read(currentAssignment.CallId)?.OpeningTime ?? DateTime.MinValue,
+                    MaximumTime = _dal.Call.Read(currentAssignment.CallId)?.MaximumTime,
+                    EntryTime = currentAssignment.EntryTime,
+                    Distance = VolunteerManager.CalculateAirDistance(doVolunteer.Latitude.Value, doVolunteer.Longitude.Value, _dal.Call.Read(currentAssignment.CallId)?.Latitude ?? 0, _dal.Call.Read(currentAssignment.CallId)?.Longitude ?? 0),
+                    Status = BO.CallStatus.InTreatment
+                }
+                : null;
+
             return new BO.Volunteer
             {
                 Id = doVolunteer.Id,
                 Name = doVolunteer.Name,
                 Phone = doVolunteer.Phone,
                 Email = doVolunteer.Email,
+                Password = doVolunteer.Password,
+                Address = doVolunteer.Address,
+                Latitude = doVolunteer.Latitude,
+                Longitude = doVolunteer.Longitude,
+                Jobs = (BO.Jobs)doVolunteer.Jobs,
                 IsActive = doVolunteer.active,
-                CallInProgress = _dal.Assignment.Read(a => a.VolunteerId == id && a.EntryTime != null && a.ActualEndTime == null) is { } assignment
-                    ? new BO.CallInProgress
-                    {
-                        CallId = assignment.CallId,
-                        CallType = currentCallId.HasValue
-                       ? (BO.CallType)(_dal.Call.Read(currentCallId.Value)?.CallType ?? DO.CallType.None)
-                        : BO.CallType.None,
-                        Address = _dal.Call.Read(assignment.CallId)?.Address ?? string.Empty,
-                        OpeningTime = _dal.Call.Read(assignment.CallId)?.OpeningTime ?? DateTime.MinValue,
-                        MaximumTime = _dal.Call.Read(assignment.CallId)?.MaximumTime
-                    }
-                    : null
+                MaxDistance = doVolunteer.MaxDistance,
+                DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
+                SumOfCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == id && a.EndType == DO.EndType.Cared).Count(),
+                SumOfCancellation = _dal.Assignment.ReadAll(a => a.VolunteerId == id && a.EndType == DO.EndType.AdministratorCancellation).Count(),
+                SumOfExpiredCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == id && a.EndType == DO.EndType.ExpiredCancellation).Count(),
+                CallInProgress = callInProgress
             };
         }
-        catch (DO.DalDoesNotExistException ex)
+        catch (Exception ex)
         {
-            throw new BO.VolunteerNotFoundException("Volunteer not found.", ex);
+            throw new BO.BlException($"An error occurred while retrieving details for volunteer with ID={id}.", ex);
         }
     }
 
@@ -170,9 +152,41 @@ internal class VolunteerImplementation : IVolunteer
     /// <param name="id">The ID of the volunteer.</param>
     /// <param name="volunteer">The updated BO.Volunteer object.</param>
     /// <exception cref="BO.VolunteerNotFoundException">Thrown if the volunteer is not found.</exception>
-    public void UpdateVolunteer(int id, BO.Volunteer volunteer)
+    public void UpdateVolunteer(int requesterId, BO.Volunteer boVolunteer)
     {
-        // Implementation for updating volunteer details
+        try
+        {
+            var requester = _dal.Volunteer.Read(requesterId) ?? throw new BO.BlDoesNotExistException($"Requester with ID={requesterId} does not exist.");
+
+            if (requesterId != boVolunteer.Id && requester.Jobs != DO.Jobs.Administrator)
+                throw new BO.BlUnauthorizedAccessException("Only administrators can update other volunteers.");
+
+            // Validate input...
+            VolunteerManager.ValidateVolunteer(boVolunteer);
+
+            var doVolunteer = _dal.Volunteer.Read(boVolunteer.Id) ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={boVolunteer.Id} does not exist.");
+
+            var updatedVolunteer = doVolunteer with
+            {
+                Name = boVolunteer.Name,
+                Phone = boVolunteer.Phone,
+                Email = boVolunteer.Email,
+                Password = boVolunteer.Password,
+                Address = boVolunteer.Address,
+                Latitude = boVolunteer.Latitude,
+                Longitude = boVolunteer.Longitude,
+                Jobs = (DO.Jobs)boVolunteer.Jobs,
+                active = boVolunteer.IsActive,
+                MaxDistance = boVolunteer.MaxDistance,
+                DistanceType = (DO.DistanceType)boVolunteer.DistanceType
+            };
+
+            _dal.Volunteer.Update(updatedVolunteer);
+        }
+        catch (Exception ex)
+        {
+            throw new BO.BlException($"An error occurred while updating volunteer with ID={boVolunteer.Id}.", ex);
+        }
     }
 
     /// <summary>
@@ -182,18 +196,59 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="BO.VolunteerNotFoundException">Thrown if the volunteer is not found.</exception>
     public void DeleteVolunteer(int id)
     {
-        // Implementation for deleting a volunteer
+        try
+        {
+            var volunteer = _dal.Volunteer.Read(id) ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does not exist.");
+
+            var hasCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == id).Any();
+            if (hasCalls)
+                throw new BO.BlDeletionImpossibleException($"Cannot delete volunteer with ID={id} as they have associated assignments.");
+
+            _dal.Volunteer.Delete(id);
+        }
+        catch (Exception ex)
+        {
+            throw new BO.BlException($"An error occurred while deleting volunteer with ID={id}.", ex);
+        }
     }
+
 
     /// <summary>
     /// Adds a new volunteer.
     /// </summary>
     /// <param name="volunteer">The BO.Volunteer object to add.</param>
     /// <exception cref="BO.DuplicateVolunteerException">Thrown if a volunteer with the same ID already exists.</exception>
-    public void AddVolunteer(BO.Volunteer volunteer)
+    public void CreateVolunteer(BO.Volunteer boVolunteer)
     {
-        // Implementation for adding a new volunteer
-    }
+        try
+        {
+            VolunteerManager.ValidateVolunteer(boVolunteer);
+
+            var doVolunteer = new DO.Volunteer
+            {
+                Id = boVolunteer.Id,
+                Name = boVolunteer.Name,
+                Phone = boVolunteer.Phone,
+                Email = boVolunteer.Email,
+                Password = boVolunteer.Password,
+                Address = boVolunteer.Address,
+                Latitude = boVolunteer.Latitude,
+                Longitude = boVolunteer.Longitude,
+                Jobs = (DO.Jobs)boVolunteer.Jobs,
+                active = boVolunteer.IsActive,
+                MaxDistance = boVolunteer.MaxDistance,
+                DistanceType = (DO.DistanceType)boVolunteer.DistanceType
+            };
+
+            _dal.Volunteer.Create(doVolunteer);
+        }
+        catch (Exception ex)
+        {
+            throw new BO.BlException("An error occurred while creating a new volunteer.", ex);
+        }
+    }  
+
+    public IVolunteer Volunteer { get; } = new VolunteerImplementation();
 }
 
 

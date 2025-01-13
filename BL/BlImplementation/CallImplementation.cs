@@ -5,32 +5,25 @@ using System.Collections.Generic;
 
 internal class CallImplementation : ICall
 {
-    public void AddCall(Call call)
-    {
-        throw new NotImplementedException();
-    }
+        private readonly DalApi.IDal _dal = DalApi.Factory.Get;
 
-    public void AssignCallToVolunteer(int volunteerId, int callId)
-    {
-        throw new NotImplementedException();
-    }
+        public int[] GetCallCountsByStatus()
+        {
+            try
+            {
+                return _dal.Call.ReadAll()
+                    .GroupBy(c => (int)c.Status)
+                    .OrderBy(g => g.Key)
+                    .Select(g => g.Count())
+                    .ToArray();
+            }
+            catch (Exception ex)
+            {
+                throw new BO.BlException("Failed to calculate call quantities by status.", ex);
+            }
+        }
 
-    public void CancelCall(int requesterId, int assignmentId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void CloseCall(int volunteerId, int assignmentId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void DeleteCall(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public int[] GetCallCountsByStatus()
+    public IEnumerable<CallInList> GetCallList(CallFilterField? filterField = null, object? filterValue = null, CallSortField? sortBy = null)
     {
         throw new NotImplementedException();
     }
@@ -40,7 +33,17 @@ internal class CallImplementation : ICall
         throw new NotImplementedException();
     }
 
-    public IEnumerable<CallInList> GetCallList(CallFilterField? filterField = null, object? filterValue = null, CallSortField? sortBy = null)
+    public void UpdateCall(Call call)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DeleteCall(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddCall(Call call)
     {
         throw new NotImplementedException();
     }
@@ -55,9 +58,20 @@ internal class CallImplementation : ICall
         throw new NotImplementedException();
     }
 
-    public void UpdateCall(Call call)
+    public void CloseCall(int volunteerId, int assignmentId)
     {
         throw new NotImplementedException();
     }
+
+    public void CancelCall(int requesterId, int assignmentId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AssignCallToVolunteer(int volunteerId, int callId)
+    {
+        throw new NotImplementedException();
+    }
+
     public ICall Call { get; } = new CallImplementation();
 }
