@@ -19,7 +19,7 @@ public interface ICall
     /// <param name="filterValue">Value to filter by (nullable).</param>
     /// <param name="sortBy">Field to sort the list by (nullable).</param>
     /// <returns>A collection of calls represented by CallInList.</returns>
-    IEnumerable<BO.CallInList> GetCallList(BO.CallFilterField? filterField = null, object? filterValue = null, BO.CallSortField? sortBy = null);
+    public IEnumerable<BO.CallInList> GetCallList(BO.CallSortField? filterField = null, object? filterValue = null, BO.CallSortField? sortField = null);
 
     /// <summary>
     /// Retrieves detailed information about a specific call by its ID.

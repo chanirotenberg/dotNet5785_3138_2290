@@ -40,8 +40,12 @@ public enum DistanceType
 
 public enum CallStatus
 {
+    Open,
     InTreatment,
-    InRiskTreatment
+    Closed,
+    Expired,
+    InRiskTreatment,
+    OpenInRisk
 }
 
 /// <summary>

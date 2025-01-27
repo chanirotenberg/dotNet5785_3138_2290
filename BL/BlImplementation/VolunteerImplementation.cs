@@ -1,5 +1,6 @@
 ﻿namespace BlImplementation;
 using BlApi;
+using BO;
 using Helpers;
 
 internal class VolunteerImplementation : IVolunteer
@@ -246,7 +247,7 @@ internal class VolunteerImplementation : IVolunteer
         {
             throw new BO.BlException("An error occurred while creating a new volunteer.", ex);
         }
-    }  
+    }
 
     public IVolunteer Volunteer { get; } = new VolunteerImplementation();
 }

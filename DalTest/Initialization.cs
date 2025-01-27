@@ -164,7 +164,7 @@ public static class Initialization
                 DateTime? actualEndTime = s_rand.NextDouble() > 0.5 ? entryTime.AddMinutes(s_rand.Next(10, 120)) : null;  // Random end time
 
                 EndType? endType = actualEndTime.HasValue
-                    ? (s_rand.NextDouble() < 0.8 ? EndType.cared : EndType.selfCancellation)
+                    ? (s_rand.NextDouble() < 0.8 ? EndType.Cared : EndType.SelfCancellation)
                     : EndType.AdministratorCancellation;  // Random end type
 
                 s_dal?.Assignment.Create(new Assignment
