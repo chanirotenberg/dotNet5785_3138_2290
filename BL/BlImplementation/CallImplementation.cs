@@ -113,7 +113,7 @@ internal class CallImplementation : ICall
                 OpeningTime = doCall.OpeningTime,
                 MaximumTime = doCall.MaximumTime,
                 Assignments = assignments,
-                Status = (BO.CallStatus)CallManager.DetermineCallStatus(doCall) // Add derived status
+                Status = (BO.CallStatus)CallManager.DetermineCallStatus(doCall.Id) // Add derived status
             };
         }
         catch (Exception ex)
@@ -165,7 +165,7 @@ internal class CallImplementation : ICall
             var call = _dal.Call.Read(callId) ?? throw new BO.BlDoesNotExistException($"Call with ID={callId} does not exist.");
             var hasAssignments = _dal.Assignment.ReadAll(a => a.CallId == callId).Any();
 
-            if (CallManager.DetermineCallStatus(call) != 0 || hasAssignments) // Only delete if not in treatment or in risk
+            if (CallManager.DetermineCallStatus(call.Id) != 0 || hasAssignments) // Only delete if not in treatment or in risk
                 throw new BO.BlDeletionImpossibleException($"Cannot delete call with ID={callId} as it is either in treatment or in risk.");
 
             _dal.Call.Delete(callId);
@@ -351,7 +351,7 @@ internal class CallImplementation : ICall
             var call = _dal.Call.Read(callId)
                 ?? throw new BO.BlDoesNotExistException($"Call with ID={callId} does not exist.");
 
-            var isCallOpen = CallManager.DetermineCallStatus(call) == 0 || CallManager.DetermineCallStatus(call) == 5;
+            var isCallOpen = CallManager.DetermineCallStatus(call.Id) == 0 || CallManager.DetermineCallStatus(call.Id) == 5;
             if (!isCallOpen)
                 throw new BO.BlLogicException($"Call with ID={callId} is not open for assignment.");
 
@@ -376,6 +376,5 @@ internal class CallImplementation : ICall
         }
     }
 
-
-    public ICall Call { get; } = new CallImplementation();
+    //public ICall Call { get; } = new CallImplementation();
 }

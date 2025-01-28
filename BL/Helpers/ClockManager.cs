@@ -26,85 +26,79 @@ internal static class ClockManager //stage 4
         // }).Start(); // stage 7 as above
     }
 
-    private static void updateClock(DateTime newClock) // prepared for stage 7 as DRY to eliminate needless repetition
+    private static void updateClock(DateTime newClock)
     {
-        var oldClock = _dal.Config.Clock; //stage 4
-        _dal.Config.Clock = newClock; //stage 4
+        var oldClock = _dal.Config.Clock;
+        _dal.Config.Clock = newClock;
 
-        //TO_DO:
-        //Add calls here to any logic method that should be called periodically,
-        //after each clock update
-        //for example, Periodic students' updates:
-        //Go through all students to update properties that are affected by the clock update
-        //(students becomes not active after 5 years etc.)
-        
-        VolunteerManager.PeriodicStudentsUpdates(oldClock, newClock); //stage 4
-        //etc ...
+        // קריאה למתודת עדכון הקריאות הפתוחות
+        CallManager.PeriodicCallsUpdate(oldClock, newClock);
 
-        //Calling all the observers of clock update
-        ClockUpdatedObservers?.Invoke(); //prepared for stage 5
+        // קריאה לדלגט עדכון השעון
+        //ClockUpdatedObservers?.Invoke();
     }
+
     #endregion Stage 4
 
 
-    #region Stage 5
+    //#region Stage 5
 
-    internal static event Action? ClockUpdatedObservers; //prepared for stage 5 - for clock update observers
+    //internal static event Action? ClockUpdatedObservers; //prepared for stage 5 - for clock update observers
 
-    #endregion Stage 5
+    //#endregion Stage 5
 
 
-    #region Stage 7 base
-    internal static readonly object blMutex = new();
-    private static Thread? s_thread;
-    private static int s_interval { get; set; } = 1; //in minutes by second    
-    private static volatile bool s_stop = false;
-    private static object mutex = new();
+    //#region Stage 7 base
+    //internal static readonly object blMutex = new();
+    //private static Thread? s_thread;
+    //private static int s_interval { get; set; } = 1; //in minutes by second    
+    //private static volatile bool s_stop = false;
+    //private static object mutex = new();
 
-    internal static void Start(int interval)
-    {
-        lock (mutex)
-            if (s_thread == null)
-            {
-                s_interval = interval;
-                s_stop = false;
-                s_thread = new Thread(clockRunner);
-                s_thread.Start();
-            }
-    }
+    //internal static void Start(int interval)
+    //{
+    //    lock (mutex)
+    //        if (s_thread == null)
+    //        {
+    //            s_interval = interval;
+    //            s_stop = false;
+    //            s_thread = new Thread(clockRunner);
+    //            s_thread.Start();
+    //        }
+    //}
 
-    internal static void Stop()
-    {
-        lock (mutex)
-            if (s_thread != null)
-            {
-                s_stop = true;
-                s_thread?.Interrupt();
-                s_thread = null;
-            }
-    }
+    //internal static void Stop()
+    //{
+    //    lock (mutex)
+    //        if (s_thread != null)
+    //        {
+    //            s_stop = true;
+    //            s_thread?.Interrupt();
+    //            s_thread = null;
+    //        }
+    //}
 
-    private static void clockRunner()
-    {
-        while (!s_stop)
-        {
-            UpdateClock(Now.AddMinutes(s_interval));
+    //private static void clockRunner()
+    //{
+    //    while (!s_stop)
+    //    {
+    //        UpdateClock(Now.AddMinutes(s_interval));
 
-            #region Stage 7
-            //TO_DO:
-            //Add calls here to any logic simulation that was required in stage 7
-            //for example: course registration simulation
-            StudentManager.SimulateCourseRegistrationAndGrade(); //stage 7
+    //        #region Stage 7
+    //        //TO_DO:
+    //        //Add calls here to any logic simulation that was required in stage 7
+    //        //for example: course registration simulation
+    //        StudentManager.SimulateCourseRegistrationAndGrade(); //stage 7
 
-            //etc...
-            #endregion Stage 7
+    //        //etc...
+    //        #endregion Stage 7
 
-            try
-            {
-                Thread.Sleep(1000); // 1 second
-            }
-            catch (ThreadInterruptedException) { }
-        }
-    }
-    #endregion Stage 7 base
+    //        try
+    //        {
+    //            Thread.Sleep(1000); // 1 second
+    //        }
+    //        catch (ThreadInterruptedException) { }
+    //    }
+    //}
+    ////#endregion Stage 7 base
 }
