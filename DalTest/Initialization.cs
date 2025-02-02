@@ -15,9 +15,17 @@ public static class Initialization
     /// </summary>
     private static readonly List<(string address, double latitude, double longitude)> s_addresses = new()
     {
-        ("123 Main St, Cityville", 32.0853, 34.7818),
-        ("456 Elm St, Townburg", 31.7683, 35.2137),
-        ("789 Oak St, Villagetown", 29.5575, 34.9522)
+        ("1600 Amphitheatre Parkway, Mountain View, CA, USA", 37.4220, -122.0841),
+        ("221B Baker Street, London, NW1 6XE, UK", 51.5238, -0.1586),
+        ("Kikar Rabin, Tel Aviv-Yafo, Israel", 32.0809, 34.7806),
+        ("5th Avenue, New York, NY, USA", 40.7750, -73.9654),
+        ("Eiffel Tower, Champ de Mars, Paris, France", 48.8584, 2.2945),
+        ("Brandenburg Gate, Berlin, Germany", 52.5163, 13.3777),
+        ("Sagrada Familia, Barcelona, Spain", 41.4036, 2.1744),
+        ("Sydney Opera House, Sydney, Australia", -33.8568, 151.2153),
+        ("Tokyo Tower, Tokyo, Japan", 35.6586, 139.7454),
+        ("Taj Mahal, Agra, India", 27.1751, 78.0421)
+
     };
 
     /// <summary>
@@ -50,8 +58,8 @@ public static class Initialization
         {
             int id;
             do
-                id = s_rand.Next(200000000, 400000000);
-            while (s_dal!.Volunteer.Read(id) != null);  // Ensure unique ID for each volunteer
+                id = GenerateValidIsraeliId();
+            while (s_dal!.Volunteer.Read(id) != null);
             string phone = GeneratePhoneNumber();
             string email = $"{name.Replace(" ", "").ToLower()}@gmail.com";
             string password = GenerateCustomPassword(name, phone);
@@ -77,6 +85,36 @@ public static class Initialization
             });
         }
     }
+
+    /// <summary>
+    /// Generates a valid Israeli ID number within the range of 200,000,000 to 400,000,000,
+    /// ensuring it has a correct check digit.
+    /// </summary>
+    /// <returns>A valid 9-digit Israeli ID number.</returns>
+    private static int GenerateValidIsraeliId()
+    {
+        Random rand = new Random();
+        int baseId;
+
+        baseId = rand.Next(20000000, 40000000); // Ensure it's within the correct range    
+
+        int[] idArray = baseId.ToString().Select(c => c - '0').ToArray(); // Convert to digit array
+
+        // Calculate check digit
+        int sum = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            int digit = idArray[i] * ((i % 2) + 1); // Multiply by 1 or 2 alternately
+            sum += (digit > 9) ? digit - 9 : digit; // Sum the digits if the result is >9
+        }
+
+        int checkDigit = (10 - (sum % 10)) % 10; // Compute the final check digit
+
+        // Convert back to integer
+        return int.Parse(baseId.ToString() + checkDigit);
+    }
+
+
 
     /// <summary>
     /// List of descriptions for calls, such as transport or medical ride requests.
@@ -160,12 +198,32 @@ public static class Initialization
             {
                 var call = calls[s_rand.Next(calls.Count)];
 
-                DateTime entryTime = call.OpeningTime.AddMinutes(s_rand.Next(1, 60));  // Entry time after call opening
-                DateTime? actualEndTime = s_rand.NextDouble() > 0.5 ? entryTime.AddMinutes(s_rand.Next(10, 120)) : null;  // Random end time
+                DateTime entryTime = call.OpeningTime.AddMinutes(s_rand.Next(1, 60));  // זמן כניסה לאחר פתיחת הקריאה
+                DateTime? actualEndTime = s_rand.NextDouble() > 0.5 ? entryTime.AddMinutes(s_rand.Next(10, 120)) : null;  // זמן סיום רנדומלי
 
-                EndType? endType = actualEndTime.HasValue
-                    ? (s_rand.NextDouble() < 0.8 ? EndType.Cared : EndType.SelfCancellation)
-                    : EndType.AdministratorCancellation;  // Random end type
+                // סוג סיום הטיפול
+                EndType? endType;
+
+                if (actualEndTime.HasValue) // אם הקריאה נסגרה
+                {
+                    double chance = s_rand.NextDouble();
+                    if (chance < 0.8)
+                        endType = EndType.Cared; // 80% טופלה
+                    else if (chance < 0.9)
+                        endType = EndType.SelfCancellation; // 10% ביטול עצמי
+                    else
+                        endType = EndType.AdministratorCancellation; // 10% ביטול מנהל
+                }
+                else if (call.MaximumTime.HasValue && call.MaximumTime < s_dal.Config.Clock) // אם הקריאה עדיין פתוחה אבל עבר זמן הסיום
+                {
+                    endType = EndType.ExpiredCancellation; // הקריאה פג תוקף
+                    actualEndTime = s_dal.Config.Clock; // קובעים את זמן הסיום כרגע
+                }
+                else
+                {
+                    endType = null; // עדיין פתוח לטיפול
+                }
+
 
                 s_dal?.Assignment.Create(new Assignment
                 {

@@ -1,12 +1,23 @@
 ﻿namespace BlImplementation;
 using BlApi;
-using BO;
 using Helpers;
 
+/// <summary>
+/// Implementation of volunteer-related operations in the business logic layer.
+/// </summary>
 internal class VolunteerImplementation : IVolunteer
 {
+    /// <summary>
+    /// Data access layer instance.
+    /// </summary>
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
 
+    /// <summary>
+    /// Logs a volunteer into the system.
+    /// </summary>
+    /// <param name="username">The volunteer's username.</param>
+    /// <param name="password">The volunteer's password.</param>
+    /// <returns>The job type of the logged-in volunteer.</returns>
     public BO.Jobs Login(string username, string password)
     {
         try
@@ -29,6 +40,12 @@ internal class VolunteerImplementation : IVolunteer
         }
     }
 
+    /// <summary>
+    /// Retrieves a list of volunteers with optional filtering and sorting.
+    /// </summary>
+    /// <param name="isActive">Filter by active status (true for active, false for inactive, null for all).</param>
+    /// <param name="sortBy">Sorting field for volunteers.</param>
+    /// <returns>A list of volunteers matching the filter criteria.</returns>
     public IEnumerable<BO.VolunteerInList> GetVolunteerList(bool? isActive = null, BO.VolunteerSortField? sortBy = null)
     {
         try
@@ -74,29 +91,57 @@ internal class VolunteerImplementation : IVolunteer
         }
     }
 
+    /// <summary>
+    /// Creates a new volunteer and adds them to the system.
+    /// </summary>
+    /// <param name="boVolunteer">The volunteer object containing the details to be added.</param>
+    public void CreateVolunteer(BO.Volunteer boVolunteer)
+    {
+        try
+        {
+            // Validate volunteer details
+            VolunteerManager.ValidateVolunteer(boVolunteer);
+
+            var doVolunteer = new DO.Volunteer
+            {
+                Id = boVolunteer.Id,
+                Name = boVolunteer.Name,
+                Phone = boVolunteer.Phone,
+                Email = boVolunteer.Email,
+                Password = boVolunteer.Password,
+                Address = boVolunteer.Address,
+                Latitude = boVolunteer.Latitude,
+                Longitude = boVolunteer.Longitude,
+                Jobs = (DO.Jobs)boVolunteer.Jobs,
+                active = boVolunteer.IsActive,
+                MaxDistance = boVolunteer.MaxDistance,
+                DistanceType = (DO.DistanceType)boVolunteer.DistanceType
+            };
+
+            // Create volunteer in the data layer
+            _dal.Volunteer.Create(doVolunteer);
+        }
+        catch (DO.DalAlreadyExistsException ex)
+        {
+            throw new BO.BlDuplicateEntityException($"Volunteer with ID={boVolunteer.Id} already exists.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new BO.BlException($"An error occurred while creating volunteer with ID={boVolunteer.Id}.", ex);
+        }
+    }
+
+    /// <summary>
+    /// Retrieves detailed information of a specific volunteer.
+    /// </summary>
+    /// <param name="id">The ID of the volunteer to retrieve.</param>
+    /// <returns>The volunteer details.</returns>
     public BO.Volunteer GetVolunteerDetails(int id)
     {
         try
         {
             var doVolunteer = _dal.Volunteer.Read(id)
                 ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does not exist.");
-
-            var currentAssignment = _dal.Assignment.ReadAll(a => a.VolunteerId == id && a.EndType == null).FirstOrDefault();
-            var callInProgress = currentAssignment != null
-                ? new BO.CallInProgress
-                {
-                    Id = currentAssignment.CallId,
-                    CallId = currentAssignment.CallId,
-                    CallType = (BO.CallType)(_dal.Call.Read(currentAssignment.CallId)?.CallType ?? DO.CallType.None),
-                    VerbalDescription = _dal.Call.Read(currentAssignment.CallId)?.VerbalDescription,
-                    Address = _dal.Call.Read(currentAssignment.CallId)?.Address,
-                    OpeningTime = _dal.Call.Read(currentAssignment.CallId)?.OpeningTime ?? DateTime.MinValue,
-                    MaximumTime = _dal.Call.Read(currentAssignment.CallId)?.MaximumTime,
-                    EntryTime = currentAssignment.EntryTime,
-                    Distance = VolunteerManager.CalculateAirDistance(doVolunteer.Address, _dal.Call.Read(currentAssignment.CallId)?.Address),
-                    Status = BO.CallStatus.InTreatment
-                }
-                : null;
 
             return new BO.Volunteer
             {
@@ -111,11 +156,7 @@ internal class VolunteerImplementation : IVolunteer
                 Jobs = (BO.Jobs)doVolunteer.Jobs,
                 IsActive = doVolunteer.active,
                 MaxDistance = doVolunteer.MaxDistance,
-                DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
-                SumOfCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == id && a.EndType == DO.EndType.Cared).Count(),
-                SumOfCancellation = _dal.Assignment.ReadAll(a => a.VolunteerId == id && a.EndType == DO.EndType.AdministratorCancellation).Count(),
-                SumOfExpiredCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == id && a.EndType == DO.EndType.ExpiredCancellation).Count(),
-                CallInProgress = callInProgress
+                DistanceType = (BO.DistanceType)doVolunteer.DistanceType
             };
         }
         catch (Exception ex)
@@ -124,44 +165,10 @@ internal class VolunteerImplementation : IVolunteer
         }
     }
 
-    public void UpdateVolunteer(int requesterId, BO.Volunteer boVolunteer)
-    {
-        try
-        {
-            var requester = _dal.Volunteer.Read(requesterId)
-                ?? throw new BO.BlDoesNotExistException($"Requester with ID={requesterId} does not exist.");
-
-            if (requesterId != boVolunteer.Id && requester.Jobs != DO.Jobs.Administrator)
-                throw new BO.BlAuthorizationException($"Requester with ID={requesterId} is not authorized to update volunteer with ID={boVolunteer.Id}.");
-
-            VolunteerManager.ValidateVolunteer(boVolunteer);
-
-            var doVolunteer = _dal.Volunteer.Read(boVolunteer.Id)
-                ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={boVolunteer.Id} does not exist.");
-
-            var updatedVolunteer = doVolunteer with
-            {
-                Name = boVolunteer.Name,
-                Phone = boVolunteer.Phone,
-                Email = boVolunteer.Email,
-                Password = boVolunteer.Password,
-                Address = boVolunteer.Address,
-                Latitude = boVolunteer.Latitude,
-                Longitude = boVolunteer.Longitude,
-                Jobs = (DO.Jobs)boVolunteer.Jobs,
-                active = boVolunteer.IsActive,
-                MaxDistance = boVolunteer.MaxDistance,
-                DistanceType = (DO.DistanceType)boVolunteer.DistanceType
-            };
-
-            _dal.Volunteer.Update(updatedVolunteer);
-        }
-        catch (Exception ex)
-        {
-            throw new BO.BlException($"An error occurred while updating volunteer with ID={boVolunteer.Id}.", ex);
-        }
-    }
-
+    /// <summary>
+    /// Deletes a volunteer by ID.
+    /// </summary>
+    /// <param name="id">The ID of the volunteer to delete.</param>
     public void DeleteVolunteer(int id)
     {
         try
@@ -181,37 +188,31 @@ internal class VolunteerImplementation : IVolunteer
         }
     }
 
-    public void CreateVolunteer(BO.Volunteer boVolunteer)
+    /// <summary>
+    /// Updates an existing volunteer's details.
+    /// </summary>
+    /// <param name="requesterId">The ID of the requester.</param>
+    /// <param name="boVolunteer">The updated volunteer details.</param>
+    public void UpdateVolunteer(int requesterId, BO.Volunteer boVolunteer)
     {
         try
         {
+            var requester = _dal.Volunteer.Read(requesterId)
+                ?? throw new BO.BlDoesNotExistException($"Requester with ID={requesterId} does not exist.");
+
+            if (requesterId != boVolunteer.Id && requester.Jobs != DO.Jobs.Administrator)
+                throw new BO.BlAuthorizationException($"Requester with ID={requesterId} is not authorized to update volunteer with ID={boVolunteer.Id}.");
+
             VolunteerManager.ValidateVolunteer(boVolunteer);
 
-            var doVolunteer = new DO.Volunteer
-            {
-                Id = boVolunteer.Id,
-                Name = boVolunteer.Name,
-                Phone = boVolunteer.Phone,
-                Email = boVolunteer.Email,
-                Password = boVolunteer.Password,
-                Address = boVolunteer.Address,
-                Latitude = boVolunteer.Latitude,
-                Longitude = boVolunteer.Longitude,
-                Jobs = (DO.Jobs)boVolunteer.Jobs,
-                active = boVolunteer.IsActive,
-                MaxDistance = boVolunteer.MaxDistance,
-                DistanceType = (DO.DistanceType)boVolunteer.DistanceType
-            };
+            var updatedVolunteer = _dal.Volunteer.Read(boVolunteer.Id)
+                ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={boVolunteer.Id} does not exist.");
 
-            _dal.Volunteer.Create(doVolunteer);
-        }
-        catch (DO.DalAlreadyExistsException ex)
-        {
-            throw new BO.BlDuplicateEntityException($"Volunteer with ID={boVolunteer.Id} already exists.", ex);
+            _dal.Volunteer.Update(updatedVolunteer);
         }
         catch (Exception ex)
         {
-            throw new BO.BlException($"An error occurred while creating volunteer with ID={boVolunteer.Id}.", ex);
+            throw new BO.BlException($"An error occurred while updating volunteer with ID={boVolunteer.Id}.", ex);
         }
     }
 }

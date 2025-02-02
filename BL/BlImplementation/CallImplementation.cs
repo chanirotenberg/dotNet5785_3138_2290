@@ -1,6 +1,5 @@
 ﻿namespace BlImplementation;
 using BlApi;
-using BO;
 using Helpers;
 using System.Collections.Generic;
 
@@ -28,11 +27,6 @@ internal class CallImplementation : ICall
             throw new BO.BlException("Failed to retrieve call quantities by derived status.", ex);
         }
     }
-
-    //public IEnumerable<CallInList> GetCallList(CallFilterField? filterField = null, object? filterValue = null, CallSortField? sortBy = null)
-    //{
-    //    throw new NotImplementedException();
-    //}
 
     /// <summary>
     /// Retrieves a filtered and sorted list of calls.
@@ -281,9 +275,12 @@ internal class CallImplementation : ICall
             throw new BO.BlException("Failed to retrieve open calls for volunteer.", ex);
         }
     }
-
-
-
+    /// <summary>
+    /// Closes a call by marking the assignment as completed.
+    /// </summary>
+    /// <param name="volunteerId">The ID of the volunteer closing the call.</param>
+    /// <param name="assignmentId">The ID of the assignment to be closed.</param>
+    
     public void CloseCall(int volunteerId, int assignmentId)
     {
         try
@@ -311,7 +308,12 @@ internal class CallImplementation : ICall
         }
     }
 
-
+    /// <summary>
+    /// Cancels an assignment for a call.
+    /// </summary>
+    /// <param name="requesterId">The ID of the user requesting the cancellation.</param>
+    /// <param name="assignmentId">The ID of the assignment to be canceled.</param>
+   
     public void CancelCall(int requesterId, int assignmentId)
     {
         try
@@ -343,7 +345,12 @@ internal class CallImplementation : ICall
         }
     }
 
-
+    /// <summary>
+    /// Assigns a call to a volunteer.
+    /// </summary>
+    /// <param name="volunteerId">The ID of the volunteer.</param>
+    /// <param name="callId">The ID of the call to be assigned.</param>
+    
     public void AssignCallToVolunteer(int volunteerId, int callId)
     {
         try
@@ -376,5 +383,4 @@ internal class CallImplementation : ICall
         }
     }
 
-    //public ICall Call { get; } = new CallImplementation();
 }

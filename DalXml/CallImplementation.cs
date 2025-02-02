@@ -102,7 +102,7 @@ internal class CallImplementation : ICall
         ?? throw new DalDoesNotExistException($"Call with ID={item.Id} does Not exist"))
                 .Remove();
 
-        callsRootElem.Add(new XElement("Call", createCallElement(item)));
+        callsRootElem.Add(new XElement(createCallElement(item)));
 
         XMLTools.SaveListToXMLElement(callsRootElem, Config.s_calls_xml);
     }

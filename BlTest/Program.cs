@@ -1,5 +1,4 @@
 ﻿namespace BlTest;
-
 using BlApi;
 using BO;
 
@@ -74,6 +73,7 @@ public static class Program
             Console.WriteLine("3. View All Volunteers");
             Console.WriteLine("4. Update Volunteer");
             Console.WriteLine("5. Delete Volunteer");
+            Console.WriteLine("6. Login Volunteer");
             Console.WriteLine("0. Back to Main Menu");
 
             Console.Write("Choose an option: ");
@@ -92,10 +92,10 @@ public static class Program
                             Email = PromptString("Enter Email: "),
                             Password = PromptString("Enter Password: "),
                             Address = PromptString("Enter Address: "),
-                            Latitude = PromptDouble("Enter Latitude: "),
-                            Longitude = PromptDouble("Enter Longitude: "),
-                            Jobs = PromptEnum<Jobs>("Enter Job (Volunteer/Administrator): "),
-                            IsActive = PromptBool("Is Active (true/false): ")
+                            MaxDistance=PromptDouble("Enter Max Distance: "),
+                            DistanceType= (DistanceType)PromptEnum<DistanceType>("Enter Distance Type (AirDistance, WalkingDistance, DrivingDistance): "),
+                            Jobs = (Jobs)PromptEnum<Jobs>("Enter Job (Volunteer/Administrator): "),
+                            IsActive = (bool)PromptBool("Is Active (true/false): ")
                         };
                         s_bl.Volunteer.CreateVolunteer(newVolunteer);
                         Console.WriteLine("Volunteer added successfully.");
@@ -108,39 +108,37 @@ public static class Program
                         foreach (var volunteer in s_bl.Volunteer.GetVolunteerList())
                             Console.WriteLine(volunteer);
                         break;
-                    case 4: // Update Volunteer
+                    case 4:
                         int updateId = PromptInt("Enter Volunteer ID to update: ");
                         var updatedVolunteer = s_bl.Volunteer.GetVolunteerDetails(updateId);
+                        Console.WriteLine("Update fields (leave empty to keep current value):");
 
-                        Console.WriteLine("Update the fields (leave empty to keep current value):");
+                        string? name = PromptString($"Name [{updatedVolunteer.Name}]: ");
+                        if (!string.IsNullOrWhiteSpace(name)) updatedVolunteer.Name = name;
 
-                        string name = PromptString($"Name [{updatedVolunteer.Name}]: ", true);
-                        if (!string.IsNullOrWhiteSpace(name))
-                            updatedVolunteer.Name = name;
+                        string? phone = PromptString($"Phone [{updatedVolunteer.Phone}]: ");
+                        if (!string.IsNullOrWhiteSpace(phone)) updatedVolunteer.Phone = phone;
 
-                        string phone = PromptString($"Phone [{updatedVolunteer.Phone}]: ", true);
-                        if (!string.IsNullOrWhiteSpace(phone))
-                            updatedVolunteer.Phone = phone;
+                        string? email = PromptString($"Email [{updatedVolunteer.Email}]: ");
+                        if (!string.IsNullOrWhiteSpace(email)) updatedVolunteer.Email = email;
 
-                        string email = PromptString($"Email [{updatedVolunteer.Email}]: ", true);
-                        if (!string.IsNullOrWhiteSpace(email))
-                            updatedVolunteer.Email = email;
+                        string? password = PromptString($"Password [{updatedVolunteer.Password ?? "Not Set"}]: ");
+                        if (!string.IsNullOrWhiteSpace(password)) updatedVolunteer.Password = password;
 
-                        string password = PromptString($"Password [{updatedVolunteer.Password}]: ", true);
-                        if (!string.IsNullOrWhiteSpace(password))
-                            updatedVolunteer.Password = password;
+                        string? address = PromptString($"Address [{updatedVolunteer.Address ?? "Not Set"}]: ");
+                        if (!string.IsNullOrWhiteSpace(address)) updatedVolunteer.Address = address;
 
-                        string address = PromptString($"Address [{updatedVolunteer.Address}]: ", true);
-                        if (!string.IsNullOrWhiteSpace(address))
-                            updatedVolunteer.Address = address;
+                        Jobs? job = PromptEnum<Jobs>($"Job [{updatedVolunteer.Jobs}]: ");
+                        if (job.HasValue) updatedVolunteer.Jobs = job.Value;
 
-                        double latitude = PromptDouble($"Latitude [{updatedVolunteer.Latitude}]: ");
-                        if (!double.IsNaN(latitude))
-                            updatedVolunteer.Latitude = latitude;
+                        bool? isActive = PromptBool($"Is Active [{updatedVolunteer.IsActive}]: ");
+                        if (isActive.HasValue) updatedVolunteer.IsActive = isActive.Value;
 
-                        double longitude = PromptDouble($"Longitude [{updatedVolunteer.Longitude}]: ");
-                        if (!double.IsNaN(longitude))
-                            updatedVolunteer.Longitude = longitude;
+                        double? maxDistance = PromptDouble($"Max Distance [{updatedVolunteer.MaxDistance ?? 0}]: ");
+                        if (maxDistance.HasValue) updatedVolunteer.MaxDistance = maxDistance.Value;
+
+                        DistanceType? distanceType = PromptEnum<DistanceType>($"Distance Type [{updatedVolunteer.DistanceType}]: ");
+                        if (distanceType.HasValue) updatedVolunteer.DistanceType = distanceType.Value;
 
                         s_bl.Volunteer.UpdateVolunteer(updateId, updatedVolunteer);
                         Console.WriteLine("Volunteer updated successfully.");
@@ -149,6 +147,12 @@ public static class Program
                         int deleteId = PromptInt("Enter Volunteer ID to delete: ");
                         s_bl.Volunteer.DeleteVolunteer(deleteId);
                         Console.WriteLine("Volunteer deleted successfully.");
+                        break;
+                    case 6:
+                        string username = PromptString("Enter Username: ");
+                        password = PromptString("Enter Password: ");
+                        job = s_bl.Volunteer.Login(username, password);
+                        Console.WriteLine($"Login successful. User role: {job}");
                         break;
                     case 0:
                         return;
@@ -175,7 +179,14 @@ public static class Program
             Console.WriteLine("1. Add Call");
             Console.WriteLine("2. View Call Details");
             Console.WriteLine("3. View All Calls");
-            Console.WriteLine("4. Delete Call");
+            Console.WriteLine("4. Update Call");
+            Console.WriteLine("5. Delete Call");
+            Console.WriteLine("6. Get Calls by Status");
+            Console.WriteLine("7. Get Closed Calls by Volunteer");
+            Console.WriteLine("8. Get Open Calls for Volunteer");
+            Console.WriteLine("9. Assign Call to Volunteer");
+            Console.WriteLine("10. Close Cared Call");
+            Console.WriteLine("11. Cancel Call");
             Console.WriteLine("0. Back to Main Menu");
 
             Console.Write("Choose an option: ");
@@ -188,32 +199,99 @@ public static class Program
                     case 1:
                         var newCall = new Call
                         {
-                            CallType = PromptEnum<CallType>("Enter Call Type (Transport/PickUp): "),
+                            CallType = (CallType)PromptEnum<CallType>("Enter Call Type (Transport/PickUp): "),
                             VerbalDescription = PromptString("Enter Verbal Description: "),
                             Address = PromptString("Enter Address: "),
-                            Latitude = PromptDouble("Enter Latitude: "),
-                            Longitude = PromptDouble("Enter Longitude: "),
-                            OpeningTime = PromptDateTime("Enter Opening Time: "),
+                            OpeningTime = (DateTime)PromptDateTime("Enter Opening Time: "),
                             MaximumTime = PromptDateTime("Enter Maximum Time: ")
                         };
                         s_bl.Call.AddCall(newCall);
                         Console.WriteLine("Call added successfully.");
                         break;
+
                     case 2:
                         int viewId = PromptInt("Enter Call ID: ");
                         Console.WriteLine(s_bl.Call.GetCallDetails(viewId));
                         break;
+
                     case 3:
                         foreach (var call in s_bl.Call.GetCallList())
                             Console.WriteLine(call);
                         break;
+
                     case 4:
+                        int updateId = PromptInt("Enter Call ID to update: ");
+                        var updatedCall = s_bl.Call.GetCallDetails(updateId);
+
+                        Console.WriteLine("Update fields (leave empty to keep current value):");
+
+                        var newCallType = PromptEnum<CallType>($"Call Type [{updatedCall.CallType}]: ");
+                        if (newCallType.HasValue) updatedCall.CallType = newCallType.Value;
+
+                        string? verbalDescription = PromptString($"Verbal Description [{updatedCall.VerbalDescription}]: ");
+                        if (verbalDescription != null) updatedCall.VerbalDescription = verbalDescription;
+
+                        string? address = PromptString($"Address [{updatedCall.Address}]: ");
+                        if (address != null) updatedCall.Address = address;
+
+                        DateTime? maximumTime = PromptDateTime($"Maximum Time [{updatedCall.MaximumTime}]: ");
+                        if (maximumTime.HasValue) updatedCall.MaximumTime = maximumTime.Value;
+
+                        s_bl.Call.UpdateCall(updatedCall);
+                        Console.WriteLine("Call updated successfully.");
+                        break;
+
+                    case 5:
                         int deleteId = PromptInt("Enter Call ID to delete: ");
                         s_bl.Call.DeleteCall(deleteId);
                         Console.WriteLine("Call deleted successfully.");
                         break;
+
+                    case 6:
+                        Console.WriteLine("Call Status Counts:");
+                        var statusCounts = s_bl.Call.GetCallCountsByStatus();
+                        for (int i = 0; i < statusCounts.Length; i++)
+                            Console.WriteLine($"Status {i}: {statusCounts[i]} calls");
+                        break;
+
+                    case 7:
+                        int volunteerId = PromptInt("Enter Volunteer ID: ");
+                        var closedCalls = s_bl.Call.GetClosedCallsByVolunteer(volunteerId);
+                        foreach (var call in closedCalls)
+                            Console.WriteLine(call);
+                        break;
+
+                    case 8:
+                        int volunteerId2 = PromptInt("Enter Volunteer ID: ");
+                        var openCalls = s_bl.Call.GetOpenCallsForVolunteer(volunteerId2);
+                        foreach (var call in openCalls)
+                            Console.WriteLine(call);
+                        break;
+
+                    case 9:
+                        int assignVolunteerId = PromptInt("Enter Volunteer ID: ");
+                        int assignCallId = PromptInt("Enter Call ID: ");
+                        s_bl.Call.AssignCallToVolunteer(assignVolunteerId, assignCallId);
+                        Console.WriteLine($"Call {assignCallId} assigned to volunteer {assignVolunteerId}.");
+                        break;
+
+                    case 10:
+                        int closeVolunteerId = PromptInt("Enter Volunteer ID: ");
+                        int closeAssignmentId = PromptInt("Enter Assignment ID: ");
+                        s_bl.Call.CloseCall(closeVolunteerId, closeAssignmentId);
+                        Console.WriteLine("Call closed successfully.");
+                        break;
+
+                    case 11:
+                        int cancelRequesterId = PromptInt("Enter Requester ID: ");
+                        int cancelAssignmentId = PromptInt("Enter Assignment ID: ");
+                        s_bl.Call.CancelCall(cancelRequesterId, cancelAssignmentId);
+                        Console.WriteLine("Call canceled successfully.");
+                        break;
+
                     case 0:
                         return;
+
                     default:
                         Console.WriteLine("Invalid choice. Try again.");
                         break;
@@ -238,7 +316,8 @@ public static class Program
             Console.WriteLine("2. Initialize Database");
             Console.WriteLine("3. Show Current Clock");
             Console.WriteLine("4. Advance Clock");
-            Console.WriteLine("5. Set Risk Range");
+            Console.WriteLine("5. Show Current Risk Range");
+            Console.WriteLine("6. Set Risk Range");
             Console.WriteLine("0. Back to Main Menu");
 
             Console.Write("Choose an option: ");
@@ -260,11 +339,14 @@ public static class Program
                         Console.WriteLine($"Current Clock: {s_bl.Admin.GetClock()}");
                         break;
                     case 4:
-                        var unit = PromptEnum<TimeUnit>("Enter Time Unit (Minute/Hour/Day/Month/Year): ");
+                        var unit = (TimeUnit)PromptEnum<TimeUnit>("Enter Time Unit (Minute/Hour/Day/Month/Year): ");
                         s_bl.Admin.AdvanceClock(unit);
                         Console.WriteLine("Clock advanced successfully.");
                         break;
                     case 5:
+                        Console.WriteLine($"Current Risk Range: {s_bl.Admin.GetRiskRange()}");
+                        break;
+                    case 6:
                         var riskRange = PromptTimeSpan("Enter Risk Range (hh:mm:ss): ");
                         s_bl.Admin.SetRiskRange(riskRange);
                         Console.WriteLine("Risk range updated successfully.");
@@ -283,9 +365,7 @@ public static class Program
         }
     }
 
-    /// <summary>
-    /// Handles exceptions and prints detailed error messages.
-    /// </summary>
+
     private static void HandleException(Exception ex)
     {
         Console.WriteLine($"Error: {ex.Message}");
@@ -296,18 +376,6 @@ public static class Program
     }
 
     /// <summary>
-    /// Prompt for TimeSpan input.
-    /// </summary>
-    private static TimeSpan PromptTimeSpan(string prompt)
-    {
-        Console.Write(prompt);
-        if (TimeSpan.TryParse(Console.ReadLine(), out TimeSpan result))
-            return result;
-
-        throw new FormatException("Invalid TimeSpan format.");
-    }
-
-    /// <summary>
     /// Prompt for integer input from the user.
     /// </summary>
     private static int PromptInt(string prompt)
@@ -315,7 +383,8 @@ public static class Program
         while (true)
         {
             Console.Write(prompt);
-            if (int.TryParse(Console.ReadLine(), out int result))
+            string? input = Console.ReadLine();
+            if (int.TryParse(input, out int result))
                 return result;
 
             Console.WriteLine("Invalid input. Please enter a valid integer.");
@@ -323,31 +392,28 @@ public static class Program
     }
 
     /// <summary>
-    /// Prompt for string input from the user.
+    /// Prompt for string input from the user. Returns null if left empty.
     /// </summary>
-    private static string PromptString(string prompt, bool allowEmpty = false)
+    private static string? PromptString(string prompt)
+    {
+        Console.Write(prompt);
+        string? input = Console.ReadLine();
+        return string.IsNullOrWhiteSpace(input) ? null : input;
+    }
+
+
+    /// <summary>
+    /// Prompt for boolean input from the user.
+    /// </summary>
+    private static bool? PromptBool(string prompt)
     {
         while (true)
         {
             Console.Write(prompt);
             string? input = Console.ReadLine();
-
-            if (!string.IsNullOrWhiteSpace(input) || allowEmpty)
-                return input ?? string.Empty;
-
-            Console.WriteLine("Invalid input. Please enter a valid string.");
-        }
-    }
-
-    /// <summary>
-    /// Prompt for boolean input from the user.
-    /// </summary>
-    private static bool PromptBool(string prompt)
-    {
-        while (true)
-        {
-            Console.Write(prompt);
-            if (bool.TryParse(Console.ReadLine(), out bool result))
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+            if (bool.TryParse(input, out bool result))
                 return result;
 
             Console.WriteLine("Invalid input. Please enter 'true' or 'false'.");
@@ -357,12 +423,15 @@ public static class Program
     /// <summary>
     /// Prompt for double input from the user.
     /// </summary>
-    private static double PromptDouble(string prompt)
+    private static double? PromptDouble(string prompt)
     {
         while (true)
         {
             Console.Write(prompt);
-            if (double.TryParse(Console.ReadLine(), out double result))
+            string? input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+            if (double.TryParse(input, out double result))
                 return result;
 
             Console.WriteLine("Invalid input. Please enter a valid number.");
@@ -370,33 +439,59 @@ public static class Program
     }
 
     /// <summary>
-    /// Prompt for DateTime input from the user.
+    /// Prompt for DateTime input from the user. Returns null if left empty.
     /// </summary>
-    private static DateTime PromptDateTime(string prompt)
+    private static DateTime? PromptDateTime(string prompt)
     {
         while (true)
         {
             Console.Write(prompt);
-            if (DateTime.TryParse(Console.ReadLine(), out DateTime result))
+            string? input = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+
+            if (DateTime.TryParse(input, out DateTime result))
                 return result;
 
             Console.WriteLine("Invalid input. Please enter a valid date and time (e.g., 'MM/dd/yyyy HH:mm').");
         }
     }
 
+
     /// <summary>
-    /// Prompt for an enum value from the user.
+    /// Prompt for a TimeSpan input from the user.
     /// </summary>
-    private static TEnum PromptEnum<TEnum>(string prompt) where TEnum : struct
+    private static TimeSpan PromptTimeSpan(string prompt)
     {
         while (true)
         {
             Console.Write(prompt);
-            if (Enum.TryParse(Console.ReadLine(), true, out TEnum result))
+            string? input = Console.ReadLine();
+            if (TimeSpan.TryParse(input, out TimeSpan result))
+                return result;
+
+            Console.WriteLine("Invalid input. Please enter a valid time span (hh:mm:ss).");
+        }
+    }
+
+    /// <summary>
+    /// Prompt for an enum value from the user. Returns null if left empty.
+    /// </summary>
+    private static TEnum? PromptEnum<TEnum>(string prompt) where TEnum : struct
+    {
+        while (true)
+        {
+            Console.Write(prompt);
+            string? input = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+
+            if (Enum.TryParse(input, true, out TEnum result))
                 return result;
 
             Console.WriteLine($"Invalid input. Please enter a valid {typeof(TEnum).Name} value.");
         }
-    }    
-
+    }
 }
