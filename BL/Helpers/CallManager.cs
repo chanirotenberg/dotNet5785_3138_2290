@@ -208,6 +208,83 @@ namespace Helpers
         }
 
         /// <summary>
+        /// Updates all open calls that have expired between oldClock and newClock.
+        /// </summary>
+        /// <param name="oldClock">The previous clock value.</param>
+        /// <param name="newClock">The updated clock value.</param>
+        public static void PeriodicCallsUpdate(DateTime oldClock, DateTime newClock)
+        {
+            try
+            {
+                // Retrieve all calls that have expired between oldClock and newClock
+                var expiredCalls = _dal.Call.ReadAll()
+                    .Where(c => c.MaximumTime.HasValue && c.MaximumTime > oldClock && c.MaximumTime <= newClock);
+
+                foreach (var call in expiredCalls)
+                {
+                    try
+                    {
+                        // Check if the call has any existing assignments
+                        var assignments = _dal.Assignment.ReadAll(a => a.CallId == call.Id).ToList();
+                        if (!assignments.Any())
+                        {
+                            // Create a new assignment for the expired call with "Expired Cancellation" status
+                            var expiredAssignment = new DO.Assignment
+                            {
+                                CallId = call.Id,
+                                VolunteerId = 0, // No volunteer assigned
+                                EntryTime = call.OpeningTime,
+                                ActualEndTime = newClock,
+                                EndType = DO.EndType.ExpiredCancellation
+                            };
+                            _dal.Assignment.Create(expiredAssignment);
+                        }
+                        else
+                        {
+                            // Update an existing assignment for the expired call
+                            var openAssignment = assignments.FirstOrDefault(a => a.ActualEndTime == null);
+                            if (openAssignment != null)
+                            {
+                                var updatedAssignment = openAssignment with
+                                {
+                                    ActualEndTime = newClock,
+                                    EndType = DO.EndType.ExpiredCancellation
+                                };
+                                _dal.Assignment.Update(updatedAssignment);
+                            }
+                        }
+
+                        // Notify observers of the specific call update (if applicable)
+                        if (SpecificCallObservers.TryGetValue(call.Id, out var specificCallObserver))
+                        {
+                            specificCallObserver?.Invoke();
+                        }
+                    }
+                    catch (DO.DalDoesNotExistException ex)
+                    {
+                        throw new BO.BlDoesNotExistException($"Call with ID={call.Id} does not exist.", ex);
+                    }
+                    catch (DO.DalAlreadyExistsException ex)
+                    {
+                        throw new BO.BlDuplicateEntityException($"Assignment for call ID={call.Id} already exists.", ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new BO.BlException($"An error occurred while processing call ID={call.Id}.", ex);
+                    }
+                }
+
+                // Notify observers that the call list has been updated
+                CallListUpdatedObserver?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                throw new BO.BlException("Failed to update periodic calls.", ex);
+            }
+        }
+
+
+        /// <summary>
         /// Event to notify observers about call list updates.
         /// </summary>
         public static event Action? CallListUpdatedObserver;
