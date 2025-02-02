@@ -1,4 +1,6 @@
-﻿using System.Web;
+﻿using System.Security.Cryptography;
+using System.Text;
+using System.Web;
 using System.Text.Json;
 
 namespace Helpers;
@@ -9,79 +11,10 @@ namespace Helpers;
 internal static class VolunteerManager
 {
     /// <summary>
-    /// API key for the LocationIQ mapping service.
-    /// </summary>
-    private const string LocationIqApiKey = "pk.e7a4b1005a41f28c0d56501fccf80b77"; // Replace with your LocationIQ API key
-
-    /// <summary>
-    /// Gets the coordinates (latitude and longitude) for a given address using LocationIQ API.
-    /// </summary>
-    /// <param name="address">The address to retrieve coordinates for.</param>
-    /// <returns>A tuple containing latitude and longitude.</returns>
-    private static (double Latitude, double Longitude) GetCoordinates(string address)
-    {
-        if (string.IsNullOrWhiteSpace(address))
-            throw new ArgumentException("Address cannot be null or empty.");
-
-        using var client = new HttpClient();
-        var url = $"https://us1.locationiq.com/v1/search.php?key={LocationIqApiKey}&q={HttpUtility.UrlEncode(address)}&format=json";
-
-        try
-        {
-            var response = client.GetAsync(url).Result; // Synchronous HTTP request
-            if (!response.IsSuccessStatusCode)
-                throw new Exception($"Failed to retrieve coordinates. Status: {response.StatusCode}");
-
-            var json = response.Content.ReadAsStringAsync().Result;
-            var results = JsonDocument.Parse(json).RootElement.EnumerateArray();
-            if (!results.MoveNext())
-                throw new Exception("No results found for the given address.");
-
-            var location = results.Current;
-            double latitude = double.Parse(location.GetProperty("lat").GetString());
-            double longitude = double.Parse(location.GetProperty("lon").GetString());
-            return (latitude, longitude);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Failed to retrieve coordinates for address: {address}. Details: {ex.Message}");
-        }
-    }
-
-    /// <summary>
-    /// Calculates the air distance (in kilometers) between two addresses.
-    /// </summary>
-    /// <param name="address1">The first address.</param>
-    /// <param name="address2">The second address.</param>
-    /// <returns>The air distance in kilometers.</returns>
-    public static double CalculateAirDistance(string address1, string address2)
-    {
-        try
-        {
-            var (lat1, lon1) = GetCoordinates(address1);
-            var (lat2, lon2) = GetCoordinates(address2);
-
-            const double R = 6371; // Earth's radius in kilometers
-            double dLat = DegreesToRadians(lat2 - lat1);
-            double dLon = DegreesToRadians(lon2 - lon1);
-
-            double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                       Math.Cos(DegreesToRadians(lat1)) * Math.Cos(DegreesToRadians(lat2)) *
-                       Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-            return R * c;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Failed to calculate air distance between addresses. Details: {ex.Message}");
-        }
-    }
-
-    /// <summary>
     /// Validates a volunteer object to ensure correct data input.
     /// </summary>
     /// <param name="volunteer">The volunteer object to validate.</param>
-    public static void ValidateVolunteer(BO.Volunteer volunteer)
+    public static void ValidateVolunteer(BO.Volunteer volunteer,string? oldPassword = null)
     {
         // Validate Name
         if (string.IsNullOrWhiteSpace(volunteer.Name) || volunteer.Name.Length < 2)
@@ -90,6 +23,16 @@ internal static class VolunteerManager
         // Validate Email format
         if (!volunteer.Email.Contains("@") || !volunteer.Email.Contains("."))
             throw new BO.BlValidationException("Invalid email format.");
+
+        if (volunteer.Password != oldPassword)
+        {
+            // Validate Password Strength
+            if (!IsStrongPassword(volunteer.Password, oldPassword))
+                throw new BO.BlValidationException("Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.");
+            // Encrypt the password before storing it
+            volunteer.Password = EncryptPassword(volunteer.Password);
+        }
+            
 
         // Validate Latitude and Longitude (if provided)
         if (volunteer.Latitude.HasValue && (volunteer.Latitude < -90 || volunteer.Latitude > 90))
@@ -118,7 +61,7 @@ internal static class VolunteerManager
         {
             try
             {
-                var (latitude, longitude) = GetCoordinates(volunteer.Address);
+                var (latitude, longitude) = Tools.GetCoordinates(volunteer.Address);
                 volunteer.Latitude = latitude;
                 volunteer.Longitude = longitude;
             }
@@ -126,6 +69,38 @@ internal static class VolunteerManager
             {
                 throw new BO.BlValidationException($"Invalid address: {volunteer.Address}. Details: {ex.Message}");
             }
+        }
+    }
+
+    /// <summary>
+    /// Checks if a password is strong.
+    /// </summary>
+    /// <param name="password">The password to check.</param>
+    /// <returns>True if the password is strong, otherwise false.</returns>
+    private static bool IsStrongPassword(string password,string oldPassword)
+    {
+        if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
+            return false;
+
+        bool hasUpper = password.Any(char.IsUpper);
+        bool hasLower = password.Any(char.IsLower);
+        bool hasDigit = password.Any(char.IsDigit);
+        bool hasSpecial = password.Any(ch => !char.IsLetterOrDigit(ch));
+
+        return hasUpper && hasLower && hasDigit && hasSpecial;
+    }    
+
+    /// <summary>
+    /// Encrypts a password using SHA-256.
+    /// </summary>
+    /// <param name="password">The password to encrypt.</param>
+    /// <returns>The encrypted password as a hexadecimal string.</returns>
+    public static string EncryptPassword(string password)
+    {
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
         }
     }
 
@@ -165,15 +140,5 @@ internal static class VolunteerManager
     private static bool IsPositiveInteger(string value)
     {
         return int.TryParse(value, out int result) && result > 0;
-    }
-
-    /// <summary>
-    /// Converts degrees to radians.
-    /// </summary>
-    /// <param name="degrees">Degrees to convert.</param>
-    /// <returns>Radians.</returns>
-    private static double DegreesToRadians(double degrees)
-    {
-        return degrees * (Math.PI / 180);
     }
 }

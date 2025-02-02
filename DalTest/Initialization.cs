@@ -1,8 +1,10 @@
 ﻿namespace DalTest;
 
-using Dal;
+
 using DalApi;
 using DO;
+using System.Text;
+using System.Security.Cryptography;
 
 public static class Initialization
 {
@@ -29,16 +31,42 @@ public static class Initialization
     };
 
     /// <summary>
-    /// Generates a custom password for volunteers based on their name and phone number.
+    /// Encrypts a password using SHA-256.
     /// </summary>
-    /// <param name="name">The volunteer's name.</param>
-    /// <param name="phone">The volunteer's phone number.</param>
-    /// <returns>A custom password in the format of first 3 characters of name and last 3 digits of phone number.</returns>
-    private static string GenerateCustomPassword(string name, string phone)
+    /// <param name="password">The password to encrypt.</param>
+    /// <returns>The encrypted password as a hexadecimal string.</returns>
+    public static string EncryptPassword(string password)
     {
-        string namePart = name.Replace(" ", "").Substring(0, Math.Min(3, name.Length)); // Truncate name to max 3 characters
-        string phonePart = phone.Substring(Math.Max(0, phone.Length - 3)); // Truncate phone number to last 3 digits
-        return $"{namePart}{phonePart}"; // Combine name and phone parts for password
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+        }
+    }
+
+    /// <summary>
+    /// Generates a strong password in the format: Uppercase letter, 7 random digits, lowercase letter, and a special character.
+    /// </summary>
+    /// <returns>A strong password.</returns>
+    private static string GenerateStrongPassword()
+    {
+        var random = new Random();
+
+        // Generate one uppercase letter
+        char upperCase = (char)random.Next('A', 'Z' + 1);
+
+        // Generate seven random digits
+        string digits = string.Concat(Enumerable.Range(0, 7).Select(_ => random.Next(0, 10).ToString()));
+
+        // Generate one lowercase letter
+        char lowerCase = (char)random.Next('a', 'z' + 1);
+
+        // Select a random special character
+        string specialCharacters = "!@#$%*+?";
+        char specialChar = specialCharacters[random.Next(specialCharacters.Length)];
+
+        // Combine all parts into a password
+        return EncryptPassword($"{upperCase}{digits}{lowerCase}{specialChar}");
     }
 
     /// <summary>
@@ -62,7 +90,7 @@ public static class Initialization
             while (s_dal!.Volunteer.Read(id) != null);
             string phone = GeneratePhoneNumber();
             string email = $"{name.Replace(" ", "").ToLower()}@gmail.com";
-            string password = GenerateCustomPassword(name, phone);
+            string password = GenerateStrongPassword();
             string address = s_addresses[s_rand.Next(s_addresses.Count)].address;
             bool isActive = s_rand.NextDouble() > 0.2;  // 80% chance of being active
             double maxDistance = s_rand.Next(10, 50);  // Max distance between 10 and 50 km
@@ -173,7 +201,7 @@ public static class Initialization
     /// <returns>A random phone number in the format '050-XXXXXXX'.</returns>
     private static string GeneratePhoneNumber()
     {
-        return $"050-{s_rand.Next(1000000, 9999999)}";  // Random phone number generation
+        return $"050{s_rand.Next(1000000, 9999999)}";  // Random phone number generation
     }
 
     /// <summary>

@@ -1,5 +1,7 @@
-﻿using System.Text.Json;
-using System.Web;
+﻿using System.Net.Mail;
+using System.Net;
+using System.Text.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Helpers
 {
@@ -12,74 +14,6 @@ namespace Helpers
         /// Data access layer instance.
         /// </summary>
         private static readonly DalApi.IDal _dal = DalApi.Factory.Get;
-
-        /// <summary>
-        /// API key for the LocationIQ mapping service.
-        /// </summary>
-        private const string LocationIqApiKey = "pk.e7a4b1005a41f28c0d56501fccf80b77";
-
-        /// <summary>
-        /// Cache for storing address coordinates to reduce API calls.
-        /// </summary>
-        private static readonly Dictionary<string, (double Latitude, double Longitude)> _addressCache = new();
-
-        /// <summary>
-        /// Retrieves the latitude and longitude coordinates for a given address.
-        /// </summary>
-        /// <param name="address">The address to fetch coordinates for.</param>
-        /// <returns>A tuple containing latitude and longitude.</returns>
-        private static (double Latitude, double Longitude) GetCoordinates(string address)
-        {
-            if (string.IsNullOrWhiteSpace(address))
-                throw new BO.BlValidationException("Address cannot be null or empty.");
-
-            // Check if the coordinates are cached
-            if (_addressCache.TryGetValue(address, out var cachedCoordinates))
-                return cachedCoordinates;
-
-            using var client = new HttpClient();
-            var url = $"https://us1.locationiq.com/v1/search.php?key={LocationIqApiKey}&q={HttpUtility.UrlEncode(address)}&format=json";
-
-            for (int i = 0; i < 3; i++) // Try up to 3 times if TooManyRequests is received
-            {
-                try
-                {
-                    var response = client.GetAsync(url).Result;
-
-                    if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-                    {
-                        if (i < 2) // If not the last attempt, wait and retry
-                        {
-                            Thread.Sleep(1000);
-                            continue;
-                        }
-                        throw new BO.BlException("Too many requests to the mapping service. Please try again later.");
-                    }
-
-                    if (!response.IsSuccessStatusCode)
-                        throw new BO.BlException($"Failed to retrieve coordinates. Status: {response.StatusCode}");
-
-                    var json = response.Content.ReadAsStringAsync().Result;
-                    var results = JsonDocument.Parse(json).RootElement.EnumerateArray();
-                    if (!results.MoveNext())
-                        throw new BO.BlException("No results found for the given address.");
-
-                    var location = results.Current;
-                    double latitude = double.Parse(location.GetProperty("lat").GetString());
-                    double longitude = double.Parse(location.GetProperty("lon").GetString());
-
-                    // Store the address in the cache
-                    _addressCache[address] = (latitude, longitude);
-                    return (latitude, longitude);
-                }
-                catch (Exception ex)
-                {
-                    throw new BO.BlException($"Failed to retrieve coordinates for address: {address}. Details: {ex.Message}");
-                }
-            }
-
-            throw new BO.BlException($"Failed to retrieve coordinates for address: {address}. Too many attempts.");
-        }
 
         /// <summary>
         /// Determines the status of a call based on its assignments and properties.
@@ -162,7 +96,7 @@ namespace Helpers
             {
                 try
                 {
-                    var (latitude, longitude) = GetCoordinates(call.Address);
+                    var (latitude, longitude) = Tools.GetCoordinates(call.Address);
                     call.Latitude = latitude;
                     call.Longitude = longitude;
                 }
@@ -174,14 +108,38 @@ namespace Helpers
         }
 
         /// <summary>
+        /// Calculates the distance based on the volunteer's chosen distance type.
+        /// </summary>
+        /// <param name="volunteer">The volunteer for whom the distance is calculated.</param>
+        /// <param name="callAddress">The address of the call.</param>
+        /// <returns>The calculated distance in kilometers.</returns>
+        public static double CalculateDistance(DO.Volunteer volunteer, string callAddress)
+        {
+            try
+            {
+                return volunteer.DistanceType switch
+                {
+                    DO.DistanceType.AirDistance => CalculateAirDistance(volunteer.Address, callAddress),
+                    DO.DistanceType.WalkingDistance => CalculateWalkingDistance(volunteer.Address, callAddress),
+                    DO.DistanceType.DrivingDistance => CalculateDrivingDistance(volunteer.Address, callAddress),
+                    _ => throw new BO.BlValidationException("Invalid distance type selected.")
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new BO.BlException($"Failed to calculate distance for volunteer ID={volunteer.Id}. Details: {ex.Message}");
+            }
+        }
+
+        /// <summary>
         /// Calculates the air distance between two addresses.
         /// </summary>
         public static double CalculateAirDistance(string address1, string address2)
         {
             try
             {
-                var (lat1, lon1) = GetCoordinates(address1);
-                var (lat2, lon2) = GetCoordinates(address2);
+                var (lat1, lon1) = Tools.GetCoordinates(address1);
+                var (lat2, lon2) = Tools.GetCoordinates(address2);
 
                 const double R = 6371; // Earth's radius in kilometers
                 double dLat = DegreesToRadians(lat2 - lat1);
@@ -200,12 +158,63 @@ namespace Helpers
         }
 
         /// <summary>
+        /// Calculates the walking distance between two addresses.
+        /// </summary>
+        public static double CalculateWalkingDistance(string address1, string address2)
+        {
+            return GetDistanceFromOsmApi(address1, address2, "foot");
+        }
+
+        /// <summary>
+        /// Calculates the driving distance between two addresses.
+        /// </summary>
+        public static double CalculateDrivingDistance(string address1, string address2)
+        {
+            return GetDistanceFromOsmApi(address1, address2, "driving");
+        }
+
+        /// <summary>
         /// Converts degrees to radians.
         /// </summary>
         private static double DegreesToRadians(double degrees)
         {
             return degrees * (Math.PI / 180);
         }
+
+        /// <summary>
+        /// Retrieves the distance between two addresses using OpenStreetMap API.
+        /// </summary>
+        private static double GetDistanceFromOsmApi(string address1, string address2, string mode)
+        {
+            try
+            {
+                var (lat1, lon1) = Tools.GetCoordinates(address1);
+                var (lat2, lon2) = Tools.GetCoordinates(address2);
+
+                using var client = new HttpClient();
+                var url = $"https://router.project-osrm.org/route/v1/{mode}/{lon1},{lat1};{lon2},{lat2}?overview=false";
+
+                var response = client.GetAsync(url).Result;
+                if (!response.IsSuccessStatusCode)
+                    throw new BO.BlException($"Failed to retrieve distance. Status: {response.StatusCode}");
+
+                var json = response.Content.ReadAsStringAsync().Result;
+                var jsonObject = JsonDocument.Parse(json).RootElement;
+
+                if (jsonObject.TryGetProperty("routes", out var routes) && routes.GetArrayLength() > 0)
+                {
+                    var distanceMeters = routes[0].GetProperty("distance").GetDouble();
+                    return distanceMeters / 1000.0; // Convert meters to kilometers
+                }
+
+                throw new BO.BlException("No route found between the given locations.");
+            }
+            catch (Exception ex)
+            {
+                throw new BO.BlException($"Failed to calculate {mode} distance using OpenStreetMap. Details: {ex.Message}");
+            }
+        }
+
 
         /// <summary>
         /// Updates all open calls that have expired between oldClock and newClock.
@@ -293,5 +302,64 @@ namespace Helpers
         /// Dictionary storing observers for specific calls.
         /// </summary>
         public static readonly Dictionary<int, Action?> SpecificCallObservers = new();
+
+
+        /// <summary>
+        /// Sends an email notification to volunteers about a new call.
+        /// </summary>
+        /// <param name="call">The call details.</param>
+        public static void SendNewCallEmail(BO.Call call)
+        {
+            var volunteers = _dal.Volunteer.ReadAll(v => CalculateDistance(v, call.Address) <= v.MaxDistance);
+            foreach (var volunteer in volunteers)
+            {
+                SendEmail(volunteer.Email, "New Call Alert", $"A new call is available at {call.Address}. Please log in to accept the task.");
+            }
+        }
+
+        /// <summary>
+        /// Sends an email notification to a volunteer when an assignment is canceled.
+        /// </summary>
+        /// <param name="volunteerEmail">The volunteer's email address.</param>
+        /// <param name="call">The call details.</param>
+        public static void SendCancellationEmail(string volunteerEmail, BO.Call call)
+        {
+            SendEmail(volunteerEmail, "Call Assignment Canceled", $"The call at {call.Address} has been reassigned. Please check the system for updates.");
+        }
+
+        /// <summary>
+        /// Sends an email using SMTP.
+        /// </summary>
+        /// <param name="to">Recipient email.</param>
+        /// <param name="subject">Email subject.</param>
+        /// <param name="body">Email body.</param>
+        private static void SendEmail(string to, string subject, string body)
+        {
+            try
+            {
+                using var smtpClient = new SmtpClient("sandbox.smtp.mailtrap.io")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential("aad9dab9cf8dc0", "a67d754639192a"),
+                    EnableSsl = true
+                };
+
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress("c0583212923@gmail.com"),
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = false
+                };
+                mailMessage.To.Add(to);
+
+                smtpClient.Send(mailMessage);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to send email to {to}. Details: {ex.Message}");
+            }
+        }
+
     }
 }

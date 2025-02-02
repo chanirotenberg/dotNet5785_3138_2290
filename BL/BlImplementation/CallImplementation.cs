@@ -193,6 +193,7 @@ internal class CallImplementation : ICall
             };
 
             _dal.Call.Create(doCall);
+            CallManager.SendNewCallEmail(call);
         }
         catch (Exception ex)
         {
@@ -263,7 +264,7 @@ internal class CallImplementation : ICall
                     Address = c.Address,
                     OpeningTime = c.OpeningTime,
                     MaximumTime = c.MaximumTime,
-                    DistanceFromVolunteer = CallManager.CalculateAirDistance(volunteer.Address, c.Address)
+                    DistanceFromVolunteer = CallManager.CalculateDistance(volunteer, c.Address)
                 });
 
             return sortBy.HasValue
@@ -313,7 +314,6 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="requesterId">The ID of the user requesting the cancellation.</param>
     /// <param name="assignmentId">The ID of the assignment to be canceled.</param>
-   
     public void CancelCall(int requesterId, int assignmentId)
     {
         try
@@ -338,6 +338,22 @@ internal class CallImplementation : ICall
             };
 
             _dal.Assignment.Update(assignment);
+
+            // If cancellation is done by an administrator, send an email notification
+            if (assignment.EndType == DO.EndType.AdministratorCancellation)
+            {
+                var volunteer = _dal.Volunteer.Read(assignment.VolunteerId)
+                    ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={assignment.VolunteerId} does not exist.");
+
+                var call = _dal.Call.Read(assignment.CallId)
+                    ?? throw new BO.BlDoesNotExistException($"Call with ID={assignment.CallId} does not exist.");
+
+                CallManager.SendCancellationEmail(volunteer.Email, new BO.Call
+                {
+                    Address = call.Address,
+                    VerbalDescription = call.VerbalDescription
+                });
+            }
         }
         catch (Exception ex)
         {
@@ -345,12 +361,13 @@ internal class CallImplementation : ICall
         }
     }
 
+
     /// <summary>
     /// Assigns a call to a volunteer.
     /// </summary>
     /// <param name="volunteerId">The ID of the volunteer.</param>
     /// <param name="callId">The ID of the call to be assigned.</param>
-    
+
     public void AssignCallToVolunteer(int volunteerId, int callId)
     {
         try

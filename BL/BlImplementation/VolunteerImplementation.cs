@@ -1,6 +1,7 @@
 ﻿namespace BlImplementation;
 using BlApi;
 using Helpers;
+using System.Xml.Linq;
 
 /// <summary>
 /// Implementation of volunteer-related operations in the business logic layer.
@@ -24,8 +25,9 @@ internal class VolunteerImplementation : IVolunteer
         {
             var volunteer = _dal.Volunteer.Read(v => v.Name == username)
                             ?? throw new BO.BlDoesNotExistException($"Volunteer with username '{username}' does not exist.");
+            var encryptPassword = VolunteerManager.EncryptPassword(password);
 
-            if (volunteer.Password != password)
+            if (volunteer.Password != encryptPassword)
                 throw new BO.BlInvalidValueException($"Invalid password for volunteer with username '{username}'.");
 
             return (BO.Jobs)volunteer.Jobs;
@@ -202,13 +204,26 @@ internal class VolunteerImplementation : IVolunteer
 
             if (requesterId != boVolunteer.Id && requester.Jobs != DO.Jobs.Administrator)
                 throw new BO.BlAuthorizationException($"Requester with ID={requesterId} is not authorized to update volunteer with ID={boVolunteer.Id}.");
+            
+            VolunteerManager.ValidateVolunteer(boVolunteer,requester.Password);
 
-            VolunteerManager.ValidateVolunteer(boVolunteer);
+            var doVolunteer = new DO.Volunteer
+            {
+                Id = boVolunteer.Id,
+                Name = boVolunteer.Name,
+                Phone = boVolunteer.Phone,
+                Email = boVolunteer.Email,
+                Password = boVolunteer.Password,
+                Address = boVolunteer.Address,
+                Latitude = boVolunteer.Latitude,
+                Longitude = boVolunteer.Longitude,
+                Jobs = (DO.Jobs)boVolunteer.Jobs,
+                active = boVolunteer.IsActive,
+                MaxDistance = boVolunteer.MaxDistance,
+                DistanceType = (DO.DistanceType)boVolunteer.DistanceType
+            };
 
-            var updatedVolunteer = _dal.Volunteer.Read(boVolunteer.Id)
-                ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={boVolunteer.Id} does not exist.");
-
-            _dal.Volunteer.Update(updatedVolunteer);
+            _dal.Volunteer.Update(doVolunteer);
         }
         catch (Exception ex)
         {
