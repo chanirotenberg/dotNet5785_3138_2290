@@ -3,7 +3,7 @@ namespace BlApi;
 /// <summary>
 /// Interface representing volunteer services in the business logic layer.
 /// </summary>
-public interface IVolunteer
+public interface IVolunteer : IObservable //stage 5
 {
     /// <summary>
     /// Logs a user into the system and returns their role.

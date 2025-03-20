@@ -1,10 +1,12 @@
 ﻿
+using BO;
+
 namespace BlApi;
 
 /// <summary>
 /// Interface for managing calls in the system.
 /// </summary>
-public interface ICall
+public interface ICall : IObservable //stage 5
 {
     /// <summary>
     /// Retrieves an array of call counts by their status.

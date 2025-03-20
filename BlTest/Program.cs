@@ -360,11 +360,11 @@ public static class Program
                 switch (choice)
                 {
                     case 1:
-                        s_bl.Admin.ResetDatabase();
+                        s_bl.Admin.ResetDB();
                         Console.WriteLine("Database reset successfully.");
                         break;
                     case 2:
-                        s_bl.Admin.InitializeDatabase();
+                        s_bl.Admin.InitializeDB();
                         Console.WriteLine("Database initialized successfully.");
                         break;
                     case 3:

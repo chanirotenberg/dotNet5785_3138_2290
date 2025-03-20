@@ -122,6 +122,7 @@ internal class VolunteerImplementation : IVolunteer
 
             // Create volunteer in the data layer
             _dal.Volunteer.Create(doVolunteer);
+            VolunteerManager.Observers.NotifyListUpdated(); //stage 5
         }
         catch (DO.DalAlreadyExistsException ex)
         {
@@ -183,6 +184,7 @@ internal class VolunteerImplementation : IVolunteer
                 throw new BO.BlDeletionImpossibleException($"Cannot delete volunteer with ID={id} as they have associated assignments.");
 
             _dal.Volunteer.Delete(id);
+            VolunteerManager.Observers.NotifyListUpdated(); //stage 5
         }
         catch (Exception ex)
         {
@@ -224,10 +226,23 @@ internal class VolunteerImplementation : IVolunteer
             };
 
             _dal.Volunteer.Update(doVolunteer);
+            VolunteerManager.Observers.NotifyItemUpdated(doVolunteer.Id);  //stage 5
+            VolunteerManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception ex)
         {
             throw new BO.BlException($"An error occurred while updating volunteer with ID={boVolunteer.Id}.", ex);
         }
     }
+
+    #region Stage 5
+    public void AddObserver(Action listObserver) =>
+    VolunteerManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) =>
+    VolunteerManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) =>
+    VolunteerManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) =>
+    VolunteerManager.Observers.RemoveObserver(id, observer); //stage 5
+    #endregion Stage 5
 }

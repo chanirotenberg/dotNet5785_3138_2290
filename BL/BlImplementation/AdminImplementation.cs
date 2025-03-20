@@ -13,7 +13,7 @@ namespace BlImplementation
         /// <returns>The current DateTime value of the system clock.</returns>
         public DateTime GetClock()
         {
-            return ClockManager.Now;
+            return AdminManager.Now;
         }
         /// <summary>
         /// Advances the system clock by a specified time unit.
@@ -25,14 +25,14 @@ namespace BlImplementation
             {
                 DateTime newClock = unit switch
                 {
-                    BO.TimeUnit.Minute => ClockManager.Now.AddMinutes(1),
-                    BO.TimeUnit.Hour => ClockManager.Now.AddHours(1),
-                    BO.TimeUnit.Day => ClockManager.Now.AddDays(1),
-                    BO.TimeUnit.Month => ClockManager.Now.AddMonths(1),
-                    BO.TimeUnit.Year => ClockManager.Now.AddYears(1),
+                    BO.TimeUnit.Minute => AdminManager.Now.AddMinutes(1),
+                    BO.TimeUnit.Hour => AdminManager.Now.AddHours(1),
+                    BO.TimeUnit.Day => AdminManager.Now.AddDays(1),
+                    BO.TimeUnit.Month => AdminManager.Now.AddMonths(1),
+                    BO.TimeUnit.Year => AdminManager.Now.AddYears(1),
                     _ => throw new BO.BlException("Invalid time unit provided.")
                 };
-                ClockManager.UpdateClock(newClock);
+                    AdminManager.UpdateClock(newClock);
             }
             catch (Exception ex)
             {
@@ -46,7 +46,7 @@ namespace BlImplementation
         /// <returns>The current TimeSpan value of the risk range.</returns>
         public TimeSpan GetRiskRange()
         {
-            return _dal.Config.RiskRange;
+            return AdminManager.RiskRange;
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace BlImplementation
         {
             try
             {
-                _dal.Config.RiskRange = riskRange;
+                AdminManager.RiskRange = riskRange;
             }
             catch (Exception ex)
             {
@@ -68,36 +68,29 @@ namespace BlImplementation
         /// <summary>
         /// Resets the entire database to initial configuration.
         /// </summary>
-        public void ResetDatabase()
+        public void ResetDB()
         {
-            try
-            {
-                _dal.ResetDB();
-                ClockManager.UpdateClock(ClockManager.Now);
-            }
-            catch (Exception ex)
-            {
-                throw new BO.BlException("Failed to reset the database.", ex);
-            }
+            AdminManager.ResetDB();
         }
-
 
         /// <summary>
         /// Initializes the database by resetting it and adding initial data.
         /// </summary>
-        public void InitializeDatabase()
+        public void InitializeDB()
         {
-            try
-            {
-                ResetDatabase();
-                DalTest.Initialization.Do();
-                ClockManager.UpdateClock(ClockManager.Now);
-
-            }
-            catch (Exception ex)
-            {
-                throw new BO.BlException("Failed to initialize the database.", ex);
-            }
+            AdminManager.InitializeDB();
         }
+
+        #region Stage 5
+        public void AddClockObserver(Action clockObserver) =>
+        AdminManager.ClockUpdatedObservers += clockObserver;
+        public void RemoveClockObserver(Action clockObserver) =>
+        AdminManager.ClockUpdatedObservers -= clockObserver;
+        public void AddConfigObserver(Action configObserver) =>
+       AdminManager.ConfigUpdatedObservers += configObserver;
+        public void RemoveConfigObserver(Action configObserver) =>
+        AdminManager.ConfigUpdatedObservers -= configObserver;
+        #endregion Stage 5
+
     }
 }

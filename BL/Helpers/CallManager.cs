@@ -10,6 +10,9 @@ namespace Helpers
     /// </summary>
     internal static class CallManager
     {
+
+        internal static ObserverManager Observers = new(); //stage 5 
+
         /// <summary>
         /// Data access layer instance.
         /// </summary>
@@ -247,6 +250,7 @@ namespace Helpers
                                 EndType = DO.EndType.ExpiredCancellation
                             };
                             _dal.Assignment.Create(expiredAssignment);
+                            Observers.NotifyItemUpdated(expiredAssignment.Id); //stage 5
                         }
                         else
                         {
@@ -260,6 +264,7 @@ namespace Helpers
                                     EndType = DO.EndType.ExpiredCancellation
                                 };
                                 _dal.Assignment.Update(updatedAssignment);
+                                Observers.NotifyItemUpdated(updatedAssignment.Id); //stage 5
                             }
                         }
 

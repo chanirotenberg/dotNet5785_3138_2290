@@ -149,6 +149,8 @@ internal class CallImplementation : ICall
             };
 
             _dal.Call.Update(updatedCall);
+            CallManager.Observers.NotifyItemUpdated(doCall.Id);  //stage 5
+            CallManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception ex)
         {
@@ -171,6 +173,7 @@ internal class CallImplementation : ICall
                 throw new BO.BlDeletionImpossibleException($"Cannot delete call with ID={callId} as it is either in treatment or in risk.");
 
             _dal.Call.Delete(callId);
+            CallManager.Observers.NotifyListUpdated(); //stage 5  
         }
         catch (Exception ex)
         {
@@ -202,6 +205,7 @@ internal class CallImplementation : ICall
 
             _dal.Call.Create(doCall);
             CallManager.SendNewCallEmail(call);
+            CallManager.Observers.NotifyListUpdated(); //stage 5  
         }
         catch (Exception ex)
         {
@@ -407,4 +411,15 @@ internal class CallImplementation : ICall
             throw new BO.BlException("Failed to assign call to volunteer.", ex);
         }
     }
+    #region Stage 5
+    public void AddObserver(Action listObserver) =>
+    CallManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) =>
+    CallManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) =>
+    CallManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) =>
+    CallManager.Observers.RemoveObserver(id, observer); //stage 5
+    #endregion Stage 5
+
 }
