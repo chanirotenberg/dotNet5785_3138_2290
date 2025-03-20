@@ -32,7 +32,7 @@ namespace BlImplementation
                     BO.TimeUnit.Year => ClockManager.Now.AddYears(1),
                     _ => throw new BO.BlException("Invalid time unit provided.")
                 };
-                    ClockManager.UpdateClock(newClock);
+                ClockManager.UpdateClock(newClock);
             }
             catch (Exception ex)
             {

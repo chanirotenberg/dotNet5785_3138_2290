@@ -61,25 +61,13 @@ public enum VolunteerSortField
 }
 
 /// <summary>
-/// Represents fields by which calls can be filtered.
-/// </summary>
-public enum CallFilterField
-{
-    CallType,
-    Status,
-    VolunteerId,
-    Address
-}
-
-/// <summary>
 /// Represents fields by which calls can be sorted.
 /// </summary>
-public enum CallSortField
+public enum CallSortAndFilterField
 {
     Id,
     CallType,
     OpeningTime,
-    Address,
     Status
 }
 

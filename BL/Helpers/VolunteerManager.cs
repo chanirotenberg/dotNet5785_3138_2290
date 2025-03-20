@@ -14,7 +14,7 @@ internal static class VolunteerManager
     /// Validates a volunteer object to ensure correct data input.
     /// </summary>
     /// <param name="volunteer">The volunteer object to validate.</param>
-    public static void ValidateVolunteer(BO.Volunteer volunteer,string? oldPassword = null)
+    public static void ValidateVolunteer(BO.Volunteer volunteer, string? oldPassword = null)
     {
         // Validate Name
         if (string.IsNullOrWhiteSpace(volunteer.Name) || volunteer.Name.Length < 2)
@@ -32,7 +32,7 @@ internal static class VolunteerManager
             // Encrypt the password before storing it
             volunteer.Password = EncryptPassword(volunteer.Password);
         }
-            
+
 
         // Validate Latitude and Longitude (if provided)
         if (volunteer.Latitude.HasValue && (volunteer.Latitude < -90 || volunteer.Latitude > 90))
@@ -77,7 +77,7 @@ internal static class VolunteerManager
     /// </summary>
     /// <param name="password">The password to check.</param>
     /// <returns>True if the password is strong, otherwise false.</returns>
-    private static bool IsStrongPassword(string password,string oldPassword)
+    private static bool IsStrongPassword(string password, string oldPassword)
     {
         if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
             return false;
@@ -88,7 +88,7 @@ internal static class VolunteerManager
         bool hasSpecial = password.Any(ch => !char.IsLetterOrDigit(ch));
 
         return hasUpper && hasLower && hasDigit && hasSpecial;
-    }    
+    }
 
     /// <summary>
     /// Encrypts a password using SHA-256.

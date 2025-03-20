@@ -19,7 +19,7 @@ public interface ICall
     /// <param name="filterValue">Value to filter by (nullable).</param>
     /// <param name="sortBy">Field to sort the list by (nullable).</param>
     /// <returns>A collection of calls represented by CallInList.</returns>
-    public IEnumerable<BO.CallInList> GetCallList(BO.CallSortField? filterField = null, object? filterValue = null, BO.CallSortField? sortField = null);
+    public IEnumerable<BO.CallInList> GetCallList(BO.CallSortAndFilterField? filterField = null, object? filterValue = null, BO.CallSortAndFilterField? sortField = null);
 
     /// <summary>
     /// Retrieves detailed information about a specific call by its ID.
@@ -53,7 +53,7 @@ public interface ICall
     /// <param name="callType">Optional filter by call type.</param>
     /// <param name="sortBy">Optional sorting field.</param>
     /// <returns>A collection of closed calls represented by ClosedCallInList.</returns>
-    IEnumerable<BO.ClosedCallInList> GetClosedCallsByVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortField? sortBy = null);
+    IEnumerable<BO.ClosedCallInList> GetClosedCallsByVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortAndFilterField? sortBy = null);
 
     /// <summary>
     /// Retrieves a list of open calls available for a specific volunteer.
@@ -62,7 +62,7 @@ public interface ICall
     /// <param name="callType">Optional filter by call type.</param>
     /// <param name="sortBy">Optional sorting field.</param>
     /// <returns>A collection of open calls represented by OpenCallInList.</returns>
-    IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortField? sortBy = null);
+    IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortAndFilterField? sortBy = null);
 
     /// <summary>
     /// Marks a call as completed by a volunteer.

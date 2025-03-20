@@ -105,7 +105,12 @@ public static class Program
                         Console.WriteLine(s_bl.Volunteer.GetVolunteerDetails(viewId));
                         break;
                     case 3:
-                        foreach (var volunteer in s_bl.Volunteer.GetVolunteerList())
+                        bool? isActive = PromptBool("Filter by active status? (true for active, false for inactive, empty for all): ");
+                        var sortField = PromptEnum<VolunteerSortField>("Enter sort field (Id, Name, SumOfCalls, SumOfCancellation, SumOfExpiredCalls) or leave empty for default sorting: ");
+                        var volunteers = s_bl.Volunteer.GetVolunteerList(isActive, sortField);
+
+                        Console.WriteLine("\nFiltered & Sorted Volunteers:");
+                        foreach (var volunteer in volunteers)
                             Console.WriteLine(volunteer);
                         break;
                     case 4:
@@ -131,8 +136,8 @@ public static class Program
                         Jobs? job = PromptEnum<Jobs>($"Job [{updatedVolunteer.Jobs}]: ");
                         if (job.HasValue) updatedVolunteer.Jobs = job.Value;
 
-                        bool? isActive = PromptBool($"Is Active [{updatedVolunteer.IsActive}]: ");
-                        if (isActive.HasValue) updatedVolunteer.IsActive = isActive.Value;
+                        bool? active = PromptBool($"Is Active [{updatedVolunteer.IsActive}]: ");
+                        if (active.HasValue) updatedVolunteer.IsActive = active.Value;
 
                         double? maxDistance = PromptDouble($"Max Distance [{updatedVolunteer.MaxDistance ?? 0}]: ");
                         if (maxDistance.HasValue) updatedVolunteer.MaxDistance = maxDistance.Value;
@@ -215,7 +220,34 @@ public static class Program
                         break;
 
                     case 3:
-                        foreach (var call in s_bl.Call.GetCallList())
+                        var filterField = PromptEnum<CallSortAndFilterField>("Enter filter field (Id, CallType, OpeningTime, Status) or leave empty for no filtering: ");
+
+                        object? filterValue = null;
+                        if (filterField.HasValue)
+                        {
+                            switch (filterField.Value)
+                            {
+                                case CallSortAndFilterField.Id:
+                                    filterValue = PromptInt("Enter Call ID to filter: ");
+                                    break;
+                                case CallSortAndFilterField.CallType:
+                                    filterValue = PromptEnum<CallType>("Enter Call Type (Transport, PickUp, None): ");
+                                    break;
+                                case CallSortAndFilterField.OpeningTime:
+                                    filterValue = PromptDateTime("Enter Opening Time (MM/dd/yyyy HH:mm): ");
+                                    break;
+                                case CallSortAndFilterField.Status:
+                                    filterValue = PromptEnum<CallStatus>("Enter Call Status (Open, InTreatment, Closed, Expired, InRiskTreatment, OpenInRisk): ");
+                                    break;
+                            }
+                        }
+                       
+                        var sortField = PromptEnum<CallSortAndFilterField>("Enter sort field (Id, CallType, OpeningTime, Status) or leave empty for default sorting: ");
+                                               
+                        var calls = s_bl.Call.GetCallList(filterField, filterValue, sortField);
+                                               
+                        Console.WriteLine("\nFiltered & Sorted Calls:");
+                        foreach (var call in calls)
                             Console.WriteLine(call);
                         break;
 

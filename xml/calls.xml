@@ -1,16 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfCall>
   <Call>
-    <Id>1000</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Medical ride, heading to a clinic for an important appointment</VerbalDescription>
-    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
-    <Latitude>32.0809</Latitude>
-    <Longitude>151.2153</Longitude>
-    <OpeningTime>2025-02-02T09:40:10</OpeningTime>
-    <MaximumTime />
-  </Call>
-  <Call>
     <Id>1001</Id>
     <CallType>PickUp</CallType>
     <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
@@ -499,5 +489,15 @@
     <Longitude>151.2153</Longitude>
     <OpeningTime>2025-02-02T18:31:10</OpeningTime>
     <MaximumTime>2025-02-02T19:12:10</MaximumTime>
+  </Call>
+  <Call>
+    <Id>1000</Id>
+    <CallType>Transport</CallType>
+    <VerbalDescription>hhhh</VerbalDescription>
+    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
+    <Latitude>32.0809</Latitude>
+    <Longitude>151.2153</Longitude>
+    <OpeningTime>2025-02-02T09:40:10</OpeningTime>
+    <MaximumTime />
   </Call>
 </ArrayOfCall>

@@ -1,5 +1,6 @@
 ﻿namespace BlImplementation;
 using BlApi;
+using BO;
 using Helpers;
 using System.Collections.Generic;
 
@@ -35,7 +36,7 @@ internal class CallImplementation : ICall
     /// <param name="filterValue">The value to filter with.</param>
     /// <param name="sortField">The field to sort by.</param>
     /// <returns>A filtered and sorted list of calls.</returns>
-    public IEnumerable<BO.CallInList> GetCallList(BO.CallSortField? filterField = null, object? filterValue = null, BO.CallSortField? sortField = null)
+    public IEnumerable<BO.CallInList> GetCallList(BO.CallSortAndFilterField? filterField = null, object? filterValue = null, BO.CallSortAndFilterField? sortField = null)
     {
         try
         {
@@ -62,7 +63,14 @@ internal class CallImplementation : ICall
 
             if (filterField.HasValue && filterValue != null)
             {
-                calls = calls.Where(c => c.GetType().GetProperty(filterField.ToString())?.GetValue(c)?.Equals(filterValue) == true);
+                calls = filterField switch
+                {
+                    BO.CallSortAndFilterField.Id => calls.Where(c => c.CallId == (filterValue as int? ?? -1)),
+                    BO.CallSortAndFilterField.Status => calls.Where(c => c.Status == (filterValue as BO.CallStatus? ?? BO.CallStatus.Open)),
+                    BO.CallSortAndFilterField.CallType => calls.Where(c => c.CallType == (filterValue as BO.CallType? ?? BO.CallType.None)),
+                    BO.CallSortAndFilterField.OpeningTime => calls.Where(c => c.OpeningTime == (filterValue as DateTime? ?? DateTime.MinValue)),
+                    _ => calls
+                };
             }
 
             return sortField.HasValue
@@ -208,7 +216,7 @@ internal class CallImplementation : ICall
     /// <param name="callType">The type of call to filter by.</param>
     /// <param name="sortBy">The field to sort by.</param>
     /// <returns>A list of closed calls.</returns>
-    public IEnumerable<BO.ClosedCallInList> GetClosedCallsByVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortField? sortBy = null)
+    public IEnumerable<BO.ClosedCallInList> GetClosedCallsByVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortAndFilterField? sortBy = null)
     {
         try
         {
@@ -246,7 +254,7 @@ internal class CallImplementation : ICall
     /// <param name="callType">The type of call to filter by.</param>
     /// <param name="sortBy">The field to sort by.</param>
     /// <returns>A list of open calls with distance information.</returns>
-    public IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortField? sortBy = null)
+    public IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortAndFilterField? sortBy = null)
     {
         try
         {
@@ -399,5 +407,4 @@ internal class CallImplementation : ICall
             throw new BO.BlException("Failed to assign call to volunteer.", ex);
         }
     }
-
 }
