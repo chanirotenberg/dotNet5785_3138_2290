@@ -5,47 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL.Volunteer"
         mc:Ignorable="d"
-        Title="VolunteerWindow"
-        Height="640" Width="800">
+        Title="VolunteerWindow" Height="450" Width="800">
     <Grid>
-        <!--External Grid-->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="769*"/>
-                <ColumnDefinition Width="31*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40*"/>
-                <RowDefinition Height="500*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <!--Internal, Upper Grid-->
-            <Grid Height="auto" Grid.Row="0" Width="auto" Grid.ColumnSpan="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Label  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0"/>
-                <ComboBox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"/>
-            </Grid>
-            <DataGrid ItemsSource="{Binding Path=StudentList}" IsReadOnly ="True" AutoGenerateColumns="False"
-       	 EnableRowVirtualization="True" RowDetailsVisibilityMode="VisibleWhenSelected"
-       	 MouseDoubleClick="dgStudentList_MouseDoubleClick" SelectedItem="{Binding SelectedStudent}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Id}" Header="Id" Width="Auto"/>
-                    <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="Auto"/>
-                    <!--...-->
-                    <DataGridTemplateColumn Header="Is Active" Width="Auto">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox IsEnabled="False" IsChecked="{Binding Path=IsActive}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <!--...-->
-                </DataGrid.Columns>
-            </DataGrid>
-            <Button Content="Add" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="100"/>
-        </Grid>
+
     </Grid>
 </Window>
