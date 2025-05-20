@@ -2,6 +2,7 @@
 using BlApi;
 using BO;
 using Helpers;
+using System;
 using System.Collections.Generic;
 
 internal class CallImplementation : ICall
@@ -411,6 +412,8 @@ internal class CallImplementation : ICall
             throw new BO.BlException("Failed to assign call to volunteer.", ex);
         }
     }
+
+
     #region Stage 5
     public void AddObserver(Action listObserver) =>
     CallManager.Observers.AddListObserver(listObserver); //stage 5

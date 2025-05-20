@@ -1,4 +1,6 @@
 ﻿
+using BO;
+
 namespace BlApi;
 /// <summary>
 /// Interface representing volunteer services in the business logic layer.
@@ -53,4 +55,5 @@ public interface IVolunteer : IObservable //stage 5
     /// <param name="volunteer">The volunteer object to add.</param>
     /// <exception cref="InvalidOperationException">Thrown if the volunteer already exists.</exception>
     void CreateVolunteer(BO.Volunteer volunteer);
+    public IEnumerable<VolunteerInList> GetVolunteersFilterList(BO.CallType? callType);
 }

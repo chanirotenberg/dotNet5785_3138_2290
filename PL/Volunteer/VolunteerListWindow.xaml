@@ -27,13 +27,18 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0"/>
-                <ComboBox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"/>
+                <ComboBox Grid.Column="1"
+          SelectedValue="{Binding Path=calls, Mode=TwoWay}"
+          ItemsSource="{Binding Source={StaticResource CallCollection}}"
+          SelectionChanged="CallTypeComboBox_SelectionChanged"/>
+
             </Grid>
             <DataGrid Margin="5" Grid.Row="1" ItemsSource="{Binding Path=VolunteerList}">
                 <DataGrid.Columns>
+                    <!--
                     <DataGridTextColumn Binding="{Binding Id}" Header="Id" Width="Auto"/>
                     <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="Auto"/>
-                    <!--...-->
+                    
                     <DataGridTemplateColumn Header="Is Active" Width="Auto">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -41,6 +46,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    -->
                     <!--...-->
                 </DataGrid.Columns>
             </DataGrid>

@@ -1,5 +1,6 @@
 ﻿namespace BlImplementation;
 using BlApi;
+using BO;
 using Helpers;
 using System.Xml.Linq;
 
@@ -233,6 +234,29 @@ internal class VolunteerImplementation : IVolunteer
         {
             throw new BO.BlException($"An error occurred while updating volunteer with ID={boVolunteer.Id}.", ex);
         }
+    }
+
+
+    public IEnumerable<VolunteerInList> GetVolunteersFilterList(BO.CallType? callType)
+    {
+        try
+        {
+            IEnumerable<VolunteerInList> volunteers;
+            if (callType is null||callType==BO.CallType.None)
+                volunteers = GetVolunteerList();
+            else
+                volunteers = GetVolunteerList().Where(v => v.CallType == callType);
+            return volunteers;
+        }
+        catch (DO.DalDoesNotExistException ex)
+        {
+            throw new BO.BlDoesNotExistException("Error accessing Volunteers.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new BO.BlException("An unexpected error occurred.", ex);
+        }
+
     }
 
     #region Stage 5
