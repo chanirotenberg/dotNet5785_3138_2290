@@ -7,70 +7,141 @@
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Title="מסך ניהול ראשי" Height="600" Width="900" WindowStartupLocation="CenterScreen"
         Loaded="MainWindow_Loaded"
-        Closed="MainWindow_Closed">
-    <Grid Background="White" Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        Closed="MainWindow_Closed"
+        Background="#f9fbfd">
 
-        <!-- כותרת -->
-        <TextBlock Text="ניהול מערכת" FontSize="28" FontWeight="Bold" Foreground="DarkBlue" HorizontalAlignment="Center" Margin="0,10"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20" HorizontalAlignment="Center">
 
-        <!-- תוכן ראשי -->
-        <Grid Grid.Row="1" Margin="0,20,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.5*"/>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="2*"/>
-            </Grid.ColumnDefinitions>
+            <!-- System Clock -->
+            <TextBlock Text="{Binding CurrentTime}" FontSize="36" FontWeight="Bold" Foreground="#34495e" HorizontalAlignment="Center" Margin="0,40,0,40"/>
 
-            <!-- אזור שעון מערכת -->
-            <StackPanel Grid.Column="0" Margin="10" VerticalAlignment="Top">
-                <!-- תווית שעון המערכת -->
-                <TextBlock Text="שעון מערכת:" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
+            <!-- Time Controls -->
+            <WrapPanel HorizontalAlignment="Center" Margin="0,0,0,20">
+                <Button Content="+1 Minute" Click="btnAddOneMinute_Click" Width="100"
+        Height="50"
+        Background="#c6f4f9"
+        BorderBrush="#3b6ea5"
+        BorderThickness="4"
+        Foreground="#3b6ea5"
+        FontWeight="SemiBold"
+        FontSize="16"
+        Padding="10"
+        Margin="15"
+        Cursor="Hand"/>
+                <Button Content="+1 Hour" Click="btnAddOneHour_Click" Width="100"
+        Height="50"
+        Background="#c6f4f9"
+        BorderBrush="#3b6ea5"
+        BorderThickness="4"
+        Foreground="#3b6ea5"
+        FontWeight="SemiBold"
+        FontSize="16"
+        Padding="10"
+        Margin="15"
+        Cursor="Hand"/>
+                <Button Content="+1 Day" Click="btnAddOneDay_Click" Width="100"
+        Height="50"
+        Background="#c6f4f9"
+        BorderBrush="#3b6ea5"
+        BorderThickness="4"
+        Foreground="#3b6ea5"
+        FontWeight="SemiBold"
+        FontSize="16"
+        Padding="10"
+        Margin="15"
+        Cursor="Hand"/>
+                <Button Content="+1 Month" Click="btnAddOneMonth_Click" Width="100"
+        Height="50"
+        Background="#c6f4f9"
+        BorderBrush="#3b6ea5"
+        BorderThickness="4"
+        Foreground="#3b6ea5"
+        FontWeight="SemiBold"
+        FontSize="16"
+        Padding="10"
+        Margin="15"
+        Cursor="Hand"/>
+                <Button Content="+1 Year" Click="btnAddOneYear_Click" Width="100"
+        Height="50"
+        Background="#c6f4f9"
+        BorderBrush="#3b6ea5"
+        BorderThickness="4"
+        Foreground="#3b6ea5"
+        FontWeight="SemiBold"
+        FontSize="16"
+        Padding="10"
+        Margin="15"
+        Cursor="Hand"/>
+            </WrapPanel>
 
-                <!-- הצגת השעה הנוכחית -->
-                <Label Content="{Binding CurrentTime}" FontSize="18" Background="LightGray" Padding="10" HorizontalContentAlignment="Center"/>
-
-                <!-- כפתורי קידום זמן -->
-                <StackPanel Margin="0,20,0,0" Orientation="Vertical" HorizontalAlignment="Center" Width="150">
-                    <Button Content="Add One Minute" Click="btnAddOneMinute_Click" Margin="5" Padding="10"/>
-                    <Button Content="Add One Hour" Click="btnAddOneHour_Click" Margin="5" Padding="10"/>
-                    <Button Content="Add One Day" Click="btnAddOneDay_Click" Margin="5" Padding="10"/>
-                    <Button Content="Add One Month" Click="btnAddOneMonth_Click" Margin="5" Padding="10"/>
-                    <Button Content="Add One Year" Click="btnAddOneYear_Click" Margin="5" Padding="10"/>
+            <!-- Risk Range -->
+            <StackPanel Margin="0,0,0,20" HorizontalAlignment="Center">
+                <TextBlock Text="Risk Range:" FontSize="30" FontWeight="Bold" Foreground="#2c3e50" Margin="50,20,100,20"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBox Width="150" Height="30" Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" FontSize="14" Margin="0,0,10,50"/>
+                    <Button Content="Update Risk Range" Click="UpdateRiskRange_Click" Width="160"
+        Height="40"
+        Background="LightGray"
+        BorderBrush="Gray"
+        BorderThickness="4"
+        Foreground="Gray"
+        FontWeight="SemiBold"
+        FontSize="16"
+        Padding="5"
+        Margin="0,0,10,50"
+        Cursor="Hand"/>
                 </StackPanel>
             </StackPanel>
 
-            <!-- קו מפריד אנכי -->
-            <Separator Grid.Column="1" Margin="10" HorizontalAlignment="Center" Width="2" Background="Gray"/>
+            <!-- Management Buttons -->
+            <WrapPanel HorizontalAlignment="Center">
+                <Button Content="Handle Volunteer" Click="HandleVolunteer_Click" Width="160"
+        Height="40"
+        Background="#3b6ea5"
+        BorderBrush="#3b6ea5"
+        BorderThickness="4"
+        Foreground="White"
+        FontWeight="SemiBold"
+        FontSize="16"
+        Padding="5"
+        Margin="15"
+        Cursor="Hand"/>
+                <Button Content= "Handle Calls" Width="160"
+        Height="40"
+        Background="#3b6ea5"
+        BorderBrush="#3b6ea5"
+        BorderThickness="4"
+        Foreground="White"
+        FontWeight="SemiBold"
+        FontSize="16"
+        Padding="5"
+        Margin="15"
+        Cursor="Hand"/>
+                <Button Content="Initialize DB"  Click="InitializeDB_Click" Width="160"
+        Height="40"
+        Background="#3b6ea5"
+        BorderBrush="#3b6ea5"
+        BorderThickness="4"
+        Foreground="White"
+        FontWeight="SemiBold"
+        FontSize="16"
+        Padding="5"
+        Margin="15"
+        Cursor="Hand"/>
+                <Button Content="Reset DB"  Click="ResetDB_Click" Width="160"
+        Height="40"
+        Background="#3b6ea5"
+        BorderBrush="#3b6ea5"
+        BorderThickness="4"
+        Foreground="White"
+        FontWeight="SemiBold"
+        FontSize="16"
+        Padding="5"
+        Margin="15"
+        Cursor="Hand"/>
+            </WrapPanel>
 
-            <!-- אזור משתני תצורה וניהול -->
-            <StackPanel Grid.Column="2" Margin="10" VerticalAlignment="Top">
-                <!-- אזור משתני תצורה -->
-                <TextBlock Text="טווח זמן סיכון:" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
-
-                <!-- עריכת משתנה תצורה -->
-                <StackPanel Orientation="Horizontal" Margin="0,5">
-                    <!-- TextBox לקישור עם TimeSpan -->
-                    <TextBox Width="150" Height="30" Background="LightYellow" Margin="0,0,10,0" 
-             Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button Content="Update Risk Range" Width="120" Height="30" Click="UpdateRiskRange_Click"/>
-
-                    <!-- Button לעדכון RiskRange -->
-                </StackPanel>
-
-
-                <!-- כפתורי ניווט עיקריים -->
-                <StackPanel Margin="0,30,0,0" Orientation="Vertical" Width="200" HorizontalAlignment="Left">
-                    <!-- כפתור לפתיחת מסך תצוגת המתנדבים -->
-                    <Button Content="Handle Volunteer" Margin="5" Padding="10" Click="HandleVolunteer_Click"/>
-                    <Button Content="ניהול קריאות" Margin="5" Padding="10"/>
-                    <Button Content="Initialize בסיס נתונים" Margin="5" Padding="10" Click="InitializeDB_Click"/>
-                    <Button Content="Reset בסיס נתונים" Margin="5" Padding="10" Click="ResetDB_Click"/>
-                </StackPanel>
-            </StackPanel>
-        </Grid>
-    </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </Window>

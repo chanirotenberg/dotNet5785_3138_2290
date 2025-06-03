@@ -3,55 +3,116 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PL.Volunteer"
         mc:Ignorable="d"
         Title="VolunteerListWindow"
         Height="640" Width="800"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
-    <Grid>
-        <!--External Grid-->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="769*"/>
-                <ColumnDefinition Width="31*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40*"/>
-                <RowDefinition Height="500*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <!--Internal, Upper Grid-->
-            <Grid Height="auto" Grid.Row="0" Width="auto" Grid.ColumnSpan="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Label  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="0"/>
-                <ComboBox Grid.Column="1"
-          SelectedValue="{Binding Path=calls, Mode=TwoWay}"
-          ItemsSource="{Binding Source={StaticResource CallCollection}}"
-          SelectionChanged="CallTypeComboBox_SelectionChanged"/>
 
-            </Grid>
-            <DataGrid Margin="5" Grid.Row="1" ItemsSource="{Binding Path=VolunteerList}">
-                <DataGrid.Columns>
-                    <!--
-                    <DataGridTextColumn Binding="{Binding Id}" Header="Id" Width="Auto"/>
-                    <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="Auto"/>
-                    
-                    <DataGridTemplateColumn Header="Is Active" Width="Auto">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox IsEnabled="False" IsChecked="{Binding Path=IsActive}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    -->
-                    <!--...-->
-                </DataGrid.Columns>
-            </DataGrid>
-            <Button Content="Add" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="100"/>
+    <Window.Resources>
+        <!-- מיישר טקסט לאמצע בתאים -->
+        <Style TargetType="DataGridCell">
+            <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderThickness" Value="10"/>
+        </Style>
+
+        <!-- עיצוב כפתור Delete - עגול ויפה -->
+        <Style x:Key="RoundDeleteButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Background" Value="#FF66B2FF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Content" Value="🗑"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="15"
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- סגנון לשורות הטבלה עם צבעים לסירוגין ורווח -->
+        <Style TargetType="DataGridRow">
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#F2F2F2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="769*"/>
+            <ColumnDefinition Width="31*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="500*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- עליון -->
+        <Grid Grid.Row="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0"/>
+            <ComboBox Grid.Column="1"
+                      SelectedValue="{Binding Path=calls, Mode=TwoWay}"
+                      ItemsSource="{Binding Source={StaticResource CallCollection}}"
+                      SelectionChanged="CallTypeComboBox_SelectionChanged"/>
         </Grid>
+
+        <!-- טבלה -->
+        <DataGrid Grid.Row="1"
+                  Margin="5"
+                  IsReadOnly="True"
+                  AutoGenerateColumns="True"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="None"
+                  BorderThickness="0"
+                  AlternationCount="2"
+                  RowHeight="40"
+                  ItemsSource="{Binding VolunteerList}"
+                  SelectedItem="{Binding SelectedVolunteer}"
+                  MouseDoubleClick="lsvVolunteerList_MouseDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header=" " Width="50">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource RoundDeleteButtonStyle}"
+                                    Click="DeleteButton_Click"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- כפתור הוספה -->
+        <Button Content="Add"
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                Height="50"
+                Width="100"
+                Click="AddVolunteer_Click"/>
     </Grid>
 </Window>
-

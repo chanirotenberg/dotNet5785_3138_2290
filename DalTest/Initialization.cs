@@ -4,6 +4,7 @@
 using DalApi;
 using DO;
 using System.Text;
+using System.Linq;
 using System.Security.Cryptography;
 
 public static class Initialization
@@ -203,66 +204,86 @@ public static class Initialization
     {
         return $"050{s_rand.Next(1000000, 9999999)}";  // Random phone number generation
     }
-
-    /// <summary>
-    /// Initializes assignments by creating random assignments for volunteers to calls.
-    /// </summary>
     private static void CreateAssignments()
     {
         Console.WriteLine("Initializing Assignments...");
         var volunteers = s_dal?.Volunteer.ReadAll() ?? new List<Volunteer>();
-        var calls = s_dal?.Call.ReadAll().Take(s_dal.Call.ReadAll().Count() - 15).ToList() ?? new List<Call>(); // Removing last 15 calls
+        var calls = s_dal?.Call.ReadAll().Take(s_dal.Call.ReadAll().Count() - 15).ToList() ?? new List<Call>();
 
-        // 20% of volunteers will not have any assignments
-        int volunteersWithNoAssignments = (int)(volunteers.Count() * 0.2);
+        var volunteersList = volunteers.ToList();
+        int volunteersWithNoAssignments = (int)(volunteersList.Count * 0.2);
         var volunteersWithAssignments = volunteers.Skip(volunteersWithNoAssignments).ToList();
+
+        var availableCalls = new List<Call>(calls); // קריאות זמינות
 
         foreach (var volunteer in volunteersWithAssignments)
         {
-            // Random number of assignments for the volunteer: between 5 and 10
-            int numberOfAssignments = s_rand.Next(5, 11);
+            int numberOfAssignments = s_rand.Next(5, 11); // 5-10 הקצאות
 
-            for (int i = 0; i < numberOfAssignments; i++)
+            for (int i = 0; i < numberOfAssignments && availableCalls.Count > 0; i++)
             {
-                var call = calls[s_rand.Next(calls.Count)];
+                var callIndex = s_rand.Next(availableCalls.Count);
+                var call = availableCalls[callIndex];
+                availableCalls.RemoveAt(callIndex); // מניעת שיוך כפול
 
-                DateTime entryTime = call.OpeningTime.AddMinutes(s_rand.Next(1, 60));  // זמן כניסה לאחר פתיחת הקריאה
-                DateTime? actualEndTime = s_rand.NextDouble() > 0.5 ? entryTime.AddMinutes(s_rand.Next(10, 120)) : null;  // זמן סיום רנדומלי
+                DateTime minEntry = call.OpeningTime.AddMinutes(1);
+                DateTime maxEntry = call.MaximumTime ?? s_dal.Config.Clock;
+                if (maxEntry <= minEntry)
+                    maxEntry = minEntry.AddMinutes(1);
+                DateTime entryTime = minEntry.AddMinutes(s_rand.Next((int)(maxEntry - minEntry).TotalMinutes));
 
-                // סוג סיום הטיפול
-                EndType? endType;
+                DateTime? actualEndTime = null;
+                EndType? endType = null;
 
-                if (actualEndTime.HasValue) // אם הקריאה נסגרה
+                bool alreadyStarted = entryTime <= s_dal.Config.Clock;
+
+                if (alreadyStarted)
                 {
-                    double chance = s_rand.NextDouble();
-                    if (chance < 0.8)
-                        endType = EndType.Cared; // 80% טופלה
-                    else if (chance < 0.9)
-                        endType = EndType.SelfCancellation; // 10% ביטול עצמי
-                    else
-                        endType = EndType.AdministratorCancellation; // 10% ביטול מנהל
-                }
-                else if (call.MaximumTime.HasValue && call.MaximumTime < s_dal.Config.Clock) // אם הקריאה עדיין פתוחה אבל עבר זמן הסיום
-                {
-                    endType = EndType.ExpiredCancellation; // הקריאה פג תוקף
-                    actualEndTime = s_dal.Config.Clock; // קובעים את זמן הסיום כרגע
-                }
-                else
-                {
-                    endType = null; // עדיין פתוח לטיפול
-                }
+                    double endChance = s_rand.NextDouble();
 
+                    if (endChance < 0.5)
+                    {
+                        // הסתיים בהצלחה
+                        actualEndTime = entryTime.AddMinutes(s_rand.Next(10, 120));
+                        endType = EndType.Cared;
+                    }
+                    else if (endChance < 0.6)
+                    {
+                        actualEndTime = entryTime.AddMinutes(s_rand.Next(5, 30));
+                        endType = EndType.SelfCancellation;
+                    }
+                    else if (endChance < 0.7)
+                    {
+                        actualEndTime = entryTime.AddMinutes(s_rand.Next(5, 30));
+                        endType = EndType.AdministratorCancellation;
+                    }
+                    else if (call.MaximumTime.HasValue && call.MaximumTime < s_dal.Config.Clock)
+                    {
+                        actualEndTime = s_dal.Config.Clock;
+                        endType = EndType.ExpiredCancellation;
+                    }
+                    // אחרת: השאר את ההקצאה פתוחה
+                }
+                // אחרת: אם עוד לא התחיל – לא נותנים endType בכלל (השאר פתוח)
+
+                if (endType != null && actualEndTime == null)
+                    actualEndTime = s_dal.Config.Clock;
 
                 s_dal?.Assignment.Create(new Assignment
                 {
-                    CallId = call.Id, // Existing call ID
-                    VolunteerId = volunteer.Id, // Existing volunteer ID
+                    CallId = call.Id,
+                    VolunteerId = volunteer.Id,
+                    EntryTime = entryTime,
                     ActualEndTime = actualEndTime,
                     EndType = endType
                 });
             }
         }
     }
+
+
+
+
 
     /// <summary>
     /// Initializes all data by resetting the database and creating volunteers, calls, and assignments.

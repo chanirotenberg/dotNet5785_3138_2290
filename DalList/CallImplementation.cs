@@ -12,8 +12,6 @@ internal class CallImplementation : ICall
     /// <exception cref="DalAlreadyExistsException">Thrown if a call with the given ID already exists.</exception>
     public void Create(Call item)
     {
-        if (this.Read(item.Id) is not null)
-            throw new DalAlreadyExistsException($"Call with ID={item.Id} already exists");
         int newId = Config.NextCallId;
         Call newCall = item with { Id = newId};
         DataSource.Calls.Add(newCall);

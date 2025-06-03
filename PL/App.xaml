@@ -5,5 +5,9 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <local:CallCollection x:Key="CallCollection" />
+        <local:JobsCollection x:Key="JobsCollectionKey" />
+        <local:DistanceCollection x:Key="DistanceCollectionKey" />
+        <local:ConvertUpdateToTrue x:Key="ConvertUpdateToTrueKey"/>
+        <local:CallInProgressToStringConverter x:Key="CallInProgressConverter"/>
     </Application.Resources>
 </Application>

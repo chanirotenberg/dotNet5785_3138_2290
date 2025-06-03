@@ -14,8 +14,6 @@ internal class AssignmentImplementation : IAssignment
     /// <exception cref="DalAlreadyExistsException">Thrown if an assignment with the given ID already exists.</exception>
     public void Create(Assignment item)
     {
-        if (DataSource.Assignments.Any(a => a.Id == item.Id))
-            throw new DalAlreadyExistsException($"Assignment with ID={item.Id} already exists");
         int newId = Config.NextAssignmentId;
         Assignment newAssignments = item with { Id = newId };
         DataSource.Assignments.Add(newAssignments);

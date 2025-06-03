@@ -3,10 +3,171 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PL.Volunteer"
         mc:Ignorable="d"
-        Title="VolunteerWindow" Height="450" Width="800">
-    <Grid>
+        Title="VolunteerWindow" Height="600" Width="400"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
 
-    </Grid>
+    <Window.Resources>
+        <!-- סטייל אחיד ל-Label -->
+        <Style TargetType="Label">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5,8,5,8"/>
+            <Setter Property="Foreground" Value="#333333"/>
+        </Style>
+
+        <!-- סטייל אחיד ל-TextBox -->
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderBrush" Value="#888"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
+        <!-- סטייל אחיד ל-PasswordBox -->
+        <Style TargetType="PasswordBox">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderBrush" Value="#888"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
+        <!-- סטייל אחיד ל-ComboBox -->
+        <Style TargetType="ComboBox">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderBrush" Value="#888"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
+        <!-- סטייל אחיד ל-CheckBox -->
+        <Style TargetType="CheckBox">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- סטייל לכפתור -->
+        <Style TargetType="Button">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="#FF66B2FF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <!-- כל שורה עבור שדה אחד -->
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Labels ופקדים -->
+            <Label Content="Id:" Grid.Row="0" Grid.Column="0" Margin="5"/>
+            <TextBox Text="{Binding CurrentVolunteer.Id}" Grid.Row="0" Grid.Column="1" Margin="5"
+                      IsReadOnly="{Binding ButtonText, Converter={StaticResource ConvertUpdateToTrueKey}}"/>
+            <Label Content="Name:" Grid.Row="1" Grid.Column="0" Margin="5"/>
+            <TextBox Text="{Binding CurrentVolunteer.Name, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="1" Grid.Column="1" Margin="5"/>
+
+            <Label Content="Phone:" Grid.Row="2" Grid.Column="0" Margin="5"/>
+            <TextBox Text="{Binding CurrentVolunteer.Phone, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="2" Grid.Column="1" Margin="5"/>
+
+            <Label Content="Email:" Grid.Row="3" Grid.Column="0" Margin="5"/>
+            <TextBox Text="{Binding CurrentVolunteer.Email, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="3" Grid.Column="1" Margin="5"/>
+
+            <Label Content="Password:" Grid.Row="4" Grid.Column="0" Margin="5"/>
+            <PasswordBox Grid.Row="4" Grid.Column="1" Margin="5" PasswordChanged="PasswordBox_PasswordChanged"/>
+
+            <Label Content="Address:" Grid.Row="5" Grid.Column="0" Margin="5"/>
+            <TextBox Text="{Binding CurrentVolunteer.Address, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="5" Grid.Column="1" Margin="5"/>
+
+            <Label Content="Job:" Grid.Row="8" Grid.Column="0" Margin="5"/>
+            <ComboBox ItemsSource="{Binding Source={StaticResource JobsCollectionKey}}"
+                      SelectedValue="{Binding CurrentVolunteer.Jobs, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
+                          Grid.Row="8" Grid.Column="1" Margin="5,5,5,5"/>
+
+            <Label Content="Is Active:" Grid.Row="9" Grid.Column="0" Margin="5"/>
+            <CheckBox IsChecked="{Binding CurrentVolunteer.IsActive, Mode=TwoWay}" Grid.Row="9" Grid.Column="1" Margin="5"/>
+
+            <Label Content="Max Distance:" Grid.Row="10" Grid.Column="0" Margin="5"/>
+            <TextBox Text="{Binding CurrentVolunteer.MaxDistance, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="10" Grid.Column="1" Margin="5"/>
+
+            <Label Content="Distance Type:" Grid.Row="11" Grid.Column="0" Margin="5"/>
+            <ComboBox ItemsSource="{Binding Source={StaticResource DistanceCollectionKey}}"
+                        SelectedValue="{Binding CurrentVolunteer.DistanceType, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
+                    Grid.Row="11" Grid.Column="1" Margin="5"/>
+            <Label Content="Sum of Calls:" Grid.Row="12" Grid.Column="0" Margin="5"/>
+            <TextBox Text="{Binding CurrentVolunteer.SumOfCalls}" IsReadOnly="True" Grid.Row="12" Grid.Column="1" Margin="5"/>
+
+            <Label Content="Cancellations:" Grid.Row="13" Grid.Column="0" Margin="5"/>
+            <TextBox Text="{Binding CurrentVolunteer.SumOfCancellation}" IsReadOnly="True" Grid.Row="13" Grid.Column="1" Margin="5"/>
+
+            <Label Content="Expired Calls:" Grid.Row="14" Grid.Column="0" Margin="5"/>
+            <TextBox Text="{Binding CurrentVolunteer.SumOfExpiredCalls}" IsReadOnly="True" Grid.Row="14" Grid.Column="1" Margin="5"/>
+            <Label Content="Current Call:" Grid.Row="15" Grid.Column="0" Margin="5"/>
+            <TextBox Text="{Binding CurrentVolunteer.CallInProgress, Converter={StaticResource CallInProgressConverter}}"
+             IsReadOnly="True" Grid.Row="15" Grid.Column="1" Margin="5" />
+            <!-- כפתור Add/Update -->
+            <Button Content="{Binding ButtonText}" Grid.Row="16" Grid.ColumnSpan="2" Height="30" Width="100" HorizontalAlignment="Center" Margin="10"
+                    Click="btnAddUpdate_Click"/>
+        </Grid>
+    </ScrollViewer>
 </Window>

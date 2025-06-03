@@ -1,6 +1,7 @@
 ﻿namespace BlImplementation;
 using BlApi;
 using BO;
+using DO;
 using Helpers;
 using System.Xml.Linq;
 
@@ -146,6 +147,33 @@ internal class VolunteerImplementation : IVolunteer
         {
             var doVolunteer = _dal.Volunteer.Read(id)
                 ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={id} does not exist.");
+             var activeAssignment = _dal.Assignment
+            .ReadAll(a => a.VolunteerId == doVolunteer.Id && a.EndType == null)
+            .FirstOrDefault();
+
+        BO.CallInProgress? callInProgress = null;
+
+        if (activeAssignment is not null)
+        {
+            var call = _dal.Call.Read(activeAssignment.CallId);
+            if (call is not null)
+            {
+                callInProgress = new BO.CallInProgress
+                {
+                    Id = activeAssignment.Id,
+                    CallId = call.Id,
+                    CallType = (BO.CallType)call.CallType,
+                    VerbalDescription = call.VerbalDescription,
+                    Address = call.Address,
+                    OpeningTime = call.OpeningTime,
+                    MaximumTime = call.MaximumTime,
+                    EntryTime = activeAssignment.EntryTime,
+                    Distance = CallManager.CalculateDistance(doVolunteer, call.Address),
+                    Status = (BO.CallStatus)CallManager.DetermineCallStatus(call.Id)
+                };
+            }
+        }
+
 
             return new BO.Volunteer
             {
@@ -160,7 +188,11 @@ internal class VolunteerImplementation : IVolunteer
                 Jobs = (BO.Jobs)doVolunteer.Jobs,
                 IsActive = doVolunteer.active,
                 MaxDistance = doVolunteer.MaxDistance,
-                DistanceType = (BO.DistanceType)doVolunteer.DistanceType
+                DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
+                SumOfCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == doVolunteer.Id && a.EndType == DO.EndType.Cared).Count(),
+                SumOfCancellation = _dal.Assignment.ReadAll(a => a.VolunteerId == doVolunteer.Id && a.EndType == DO.EndType.AdministratorCancellation).Count(),
+                SumOfExpiredCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == doVolunteer.Id && a.EndType == DO.EndType.ExpiredCancellation).Count(),
+                CallInProgress = callInProgress
             };
         }
         catch (Exception ex)
