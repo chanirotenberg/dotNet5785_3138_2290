@@ -10,8 +10,9 @@
         Closed="Window_Closed"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
 
+    <!-- Window Resources: Styles for DataGrid cells, rows, and the delete button -->
     <Window.Resources>
-        <!-- מיישר טקסט לאמצע בתאים -->
+        <!-- Style for centering content in DataGrid cells -->
         <Style TargetType="DataGridCell">
             <Setter Property="TextBlock.TextAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -19,7 +20,7 @@
             <Setter Property="BorderThickness" Value="10"/>
         </Style>
 
-        <!-- עיצוב כפתור Delete - עגול ויפה -->
+        <!-- Custom round delete button with trash emoji -->
         <Style x:Key="RoundDeleteButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="30"/>
             <Setter Property="Height" Value="30"/>
@@ -45,7 +46,7 @@
             </Setter>
         </Style>
 
-        <!-- סגנון לשורות הטבלה עם צבעים לסירוגין ורווח -->
+        <!-- Alternating row style for DataGrid -->
         <Style TargetType="DataGridRow">
             <Setter Property="Padding" Value="4"/>
             <Setter Property="Height" Value="50"/>
@@ -58,7 +59,9 @@
         </Style>
     </Window.Resources>
 
+    <!-- Main layout grid -->
     <Grid>
+        <!-- Grid structure: 2 columns, 3 rows -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="769*"/>
             <ColumnDefinition Width="31*"/>
@@ -69,20 +72,21 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- עליון -->
+        <!-- Top row: Filter selection with ComboBox -->
         <Grid Grid.Row="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0"/>
+            <!-- ComboBox for filtering by call type -->
             <ComboBox Grid.Column="1"
                       SelectedValue="{Binding Path=calls, Mode=TwoWay}"
                       ItemsSource="{Binding Source={StaticResource CallCollection}}"
                       SelectionChanged="CallTypeComboBox_SelectionChanged"/>
         </Grid>
 
-        <!-- טבלה -->
+        <!-- Middle row: DataGrid to display the volunteer list -->
         <DataGrid Grid.Row="1"
                   Margin="5"
                   IsReadOnly="True"
@@ -96,18 +100,20 @@
                   SelectedItem="{Binding SelectedVolunteer}"
                   MouseDoubleClick="lsvVolunteerList_MouseDoubleClick">
             <DataGrid.Columns>
+                <!-- Column for delete button per row -->
                 <DataGridTemplateColumn Header=" " Width="50">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Style="{StaticResource RoundDeleteButtonStyle}"
-                                    Click="DeleteButton_Click"/>
+                                    Click="DeleteButton_Click"
+                                    CommandParameter="{Binding}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- כפתור הוספה -->
+        <!-- Bottom row: Add volunteer button -->
         <Button Content="Add"
                 Grid.Row="2"
                 HorizontalAlignment="Center"

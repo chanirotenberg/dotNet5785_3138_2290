@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
-        Title="מסך ניהול ראשי" Height="600" Width="900" WindowStartupLocation="CenterScreen"
+        Title="Main Management Screen" Height="600" Width="900" WindowStartupLocation="CenterScreen"
         Loaded="MainWindow_Loaded"
         Closed="MainWindow_Closed"
         Background="#f9fbfd">
