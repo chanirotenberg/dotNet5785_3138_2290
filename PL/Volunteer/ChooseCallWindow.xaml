@@ -1,0 +1,42 @@
+﻿<Window x:Class="PL.Volunteer.ChooseCallWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Choose Call to Handle" Height="550" Width="850"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- סינון ומיון -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 0 10" Grid.Row="0" >
+            <TextBlock Text="סוג קריאה:" Margin="0 0 10 0" VerticalAlignment="Center"/>
+            <ComboBox ItemsSource="{Binding CallTypes}"
+                      SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"
+                      Width="150" Margin="0 0 20 0"/>
+
+            <TextBlock Text="מיון לפי:" Margin="0 0 10 0" VerticalAlignment="Center"/>
+            <ComboBox ItemsSource="{Binding CallSortFields}"
+                      SelectedItem="{Binding SortField, Mode=TwoWay}"
+                      Width="150"/>
+        </StackPanel>
+
+        <!-- טבלת קריאות פתוחות -->
+        <DataGrid ItemsSource="{Binding OpenCalls}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectedItem="{Binding SelectedCall, Mode=TwoWay}"
+                  MouseDoubleClick="CallsGrid_MouseDoubleClick"
+                  Grid.Row="1">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" />
+                <DataGridTextColumn Header="סוג קריאה" Binding="{Binding CallType}" />
+                <DataGridTextColumn Header="תיאור" Binding="{Binding VerbalDescription}" />
+                <DataGridTextColumn Header="כתובת" Binding="{Binding Address}" />
+                <DataGridTextColumn Header="שעת פתיחה" Binding="{Binding OpeningTime}" />
+                <DataGridTextColumn Header="מרחק" Binding="{Binding DistanceFromVolunteer}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

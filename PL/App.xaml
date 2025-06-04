@@ -9,5 +9,8 @@
         <local:DistanceCollection x:Key="DistanceCollectionKey" />
         <local:ConvertUpdateToTrue x:Key="ConvertUpdateToTrueKey"/>
         <local:CallInProgressToStringConverter x:Key="CallInProgressConverter"/>
+        <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <local:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
+        <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
     </Application.Resources>
 </Application>

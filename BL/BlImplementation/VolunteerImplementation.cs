@@ -21,11 +21,11 @@ internal class VolunteerImplementation : IVolunteer
     /// <param name="username">The volunteer's username.</param>
     /// <param name="password">The volunteer's password.</param>
     /// <returns>The job type of the logged-in volunteer.</returns>
-    public BO.Jobs Login(string username, string password)
+    public BO.Jobs Login(int username, string password)
     {
         try
         {
-            var volunteer = _dal.Volunteer.Read(v => v.Name == username)
+            var volunteer = _dal.Volunteer.Read(v => v.Id == username)
                             ?? throw new BO.BlDoesNotExistException($"Volunteer with username '{username}' does not exist.");
             var encryptPassword = VolunteerManager.EncryptPassword(password);
 

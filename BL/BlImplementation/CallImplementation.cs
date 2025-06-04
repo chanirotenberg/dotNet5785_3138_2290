@@ -406,6 +406,7 @@ internal class CallImplementation : ICall
             };
 
             _dal.Assignment.Create(assignment);
+            CallManager.Observers.NotifyItemUpdated(volunteerId);
         }
         catch (Exception ex)
         {

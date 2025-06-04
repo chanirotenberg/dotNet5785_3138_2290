@@ -14,7 +14,7 @@ public interface IVolunteer : IObservable //stage 5
     /// <param name="password">The password of the volunteer.</param>
     /// <returns>The role of the user if login is successful.</returns>
     /// <exception cref="UnauthorizedAccessException">Thrown if credentials are invalid.</exception>
-    public BO.Jobs Login(string username, string password);
+    public BO.Jobs Login(int username, string password);
 
     /// <summary>
     /// Retrieves a list of volunteers filtered by activity status and sorted by a given field.

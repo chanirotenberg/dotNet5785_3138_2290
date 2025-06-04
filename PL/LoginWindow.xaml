@@ -1,24 +1,55 @@
 ﻿<Window x:Class="PL.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Login" Height="250" Width="400">
+        Title="Login" Height="280" Width="400"
+        WindowStartupLocation="CenterScreen"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Volunteer ID -->
         <StackPanel Grid.Row="0" Margin="0 10">
-            <Label Content="Username:"/>
-            <TextBox x:Name="UsernameBox"/>
+            <Label Content="Volunteer ID:"/>
+            <TextBox Text="{Binding VolunteerId, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
 
+        <!-- Password -->
         <StackPanel Grid.Row="1" Margin="0 10">
             <Label Content="Password:"/>
-            <PasswordBox x:Name="PasswordBox"/>
+            <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" 
+                     Name="PasswordTextBox"
+                     FontFamily="Consolas"
+                     FontSize="14"
+                     VerticalContentAlignment="Center"
+                     >
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Text" Value="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPasswordHidden}" Value="True">
+                                <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+                                <Setter Property="Foreground" Value="Transparent"/>
+                                <Setter Property="CaretBrush" Value="Black"/>
+                                <Setter Property="Background" Value="White"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
         </StackPanel>
 
-        <Button Grid.Row="2" Content="Login" Click="Login_Click" Width="80" Height="30" HorizontalAlignment="Center"/>
+        <!-- Show/Hide Password -->
+        <CheckBox Grid.Row="2" Content="Show password" 
+                  IsChecked="{Binding IsPasswordHidden, Converter={StaticResource InverseBoolConverter}}"
+                  Margin="0,5"/>
+
+        <!-- Login Button -->
+        <Button Grid.Row="3" Content="Login" Click="Login_Click"
+                Width="80" Height="30" HorizontalAlignment="Center" Margin="0,10"/>
     </Grid>
 </Window>
