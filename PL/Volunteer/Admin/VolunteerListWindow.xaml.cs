@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace PL.Volunteer
+namespace PL.Volunteer.Admin
 {
     /// <summary>
     /// Interaction logic for VolunteerListWindow.xaml

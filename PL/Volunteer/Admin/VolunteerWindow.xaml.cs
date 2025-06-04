@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using DO;
 using System.Windows.Input;
 
-namespace PL.Volunteer;
+namespace PL.Volunteer.Admin;
 
 /// <summary>
 /// Represents a window for adding or updating a single volunteer entity.
