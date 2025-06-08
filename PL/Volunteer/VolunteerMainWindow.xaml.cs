@@ -20,13 +20,22 @@ namespace PL.Volunteer
             {
                 _currentVolunteer = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentVolunteer)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CallInProgress)));
+                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsJobChangeAllowed)));
             }
+
         }
+
+        public CallInProgress? CallInProgress => CurrentVolunteer.CallInProgress;
+
+        //public bool IsJobChangeAllowed => CurrentVolunteer.Jobs != Jobs.Administrator;
+
 
         public VolunteerMainWindow(BO.Volunteer volunteer)
         {
             InitializeComponent();
             CurrentVolunteer = volunteer;
+            UpdateMap();
             DataContext = this;
             _bl.Volunteer.AddObserver(volunteer.Id, RefreshVolunteer);
         }
@@ -34,7 +43,10 @@ namespace PL.Volunteer
         private void RefreshVolunteer()
         {
             CurrentVolunteer = _bl.Volunteer.GetVolunteerDetails(CurrentVolunteer.Id);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CallInProgress)));
+            UpdateMap();
         }
+
 
         private void Window_Closed(object sender, EventArgs e)
         {
@@ -45,13 +57,18 @@ namespace PL.Volunteer
         {
             try
             {
-                var window = new Admin.VolunteerWindow(CurrentVolunteer.Id);
-                window.ShowDialog();
+                if (string.IsNullOrWhiteSpace(CurrentVolunteer.Password))
+                {
+                    var existing = _bl.Volunteer.GetVolunteerDetails(CurrentVolunteer.Id);
+                    CurrentVolunteer.Password = existing.Password;
+                }
+
+                _bl.Volunteer.UpdateVolunteer(CurrentVolunteer.Id, CurrentVolunteer);
+                MessageBox.Show("הפרטים עודכנו בהצלחה.", "עדכון מתנדב", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("אירעה שגיאה בעת פתיחת מסך העדכון.\n\n" + ex.Message,
-                                "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("אירעה שגיאה בעת עדכון המתנדב:\n" + ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -73,8 +90,7 @@ namespace PL.Volunteer
         {
             try
             {
-                var chooseCallWindow = new ChooseCallWindow(CurrentVolunteer.Id);
-                chooseCallWindow.ShowDialog();
+                new ChooseCallWindow(CurrentVolunteer.Id).ShowDialog();
                 RefreshVolunteer();
             }
             catch (Exception ex)
@@ -121,5 +137,158 @@ namespace PL.Volunteer
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e) => Close();
+        //private void UpdateMap()
+        //{
+        //    double volunteerLat = (double)CurrentVolunteer.Latitude;
+        //    double volunteerLng = (double)CurrentVolunteer.Longitude;
+
+        //    string mapHtml;
+
+        //    if (CurrentVolunteer.CallInProgress != null)
+        //    {
+        //        var callDetails = _bl.Call.GetCallDetails(CurrentVolunteer.CallInProgress.CallId);
+        //        double callLat = callDetails.Latitude;
+        //        double callLng = callDetails.Longitude;
+
+
+        //        mapHtml = $@"
+        //<html>
+        //<head>
+        //    <meta charset='UTF-8'>
+        //</head>
+        //<body>
+        //    <div id='map' style='width:100%;height:100%;'></div>
+        //    <script>
+        //        function initMap() {{
+        //            var volunteer = {{lat:{volunteerLat}, lng:{volunteerLng} }};
+        //            var call = {{lat:{callLat}, lng:{callLng} }};
+
+        //            var map = new google.maps.Map(document.getElementById('map'), {{
+        //                zoom: 12,
+        //                center: volunteer
+        //            }});
+
+        //            new google.maps.Marker({{
+        //                position: volunteer,
+        //                map: map,
+        //                label: 'V'
+        //            }});
+
+        //            new google.maps.Marker({{
+        //                position: call,
+        //                map: map,
+        //                label: 'C'
+        //            }});
+        //        }}
+        //    </script>
+        //    <script async defer
+        //        src='https://maps.googleapis.com/maps/api/js?key=AIzaSyB-OcFKoYoQeEMmzyjQftNJv2R3aUEF4gE&callback=initMap'>
+        //    </script>
+        //</body>
+        //</html>";
+        //    }
+        //    else
+        //    {
+        //        mapHtml = $@"
+        //<html>
+        //<head>
+        //    <meta charset='UTF-8'>
+        //</head>
+        //<body>
+        //    <div id='map' style='width:100%;height:100%;'></div>
+        //    <script>
+        //        function initMap() {{
+        //            var volunteer = {{lat:{volunteerLat}, lng:{volunteerLng} }};
+        //            var map = new google.maps.Map(document.getElementById('map'), {{
+        //                zoom: 12,
+        //                center: volunteer
+        //            }});
+
+        //            new google.maps.Marker({{
+        //                position: volunteer,
+        //                map: map,
+        //                label: 'V'
+        //            }});
+        //        }}
+        //    </script>
+        //    <script async defer
+        //        src='https://maps.googleapis.com/maps/api/js?key=AIzaSyB-OcFKoYoQeEMmzyjQftNJv2R3aUEF4gE&callback=initMap'>
+        //    </script>
+        //</body>
+        //</html>";
+        //    }
+
+        //    MapBrowser.NavigateToString(mapHtml);
+        //}
+        private void UpdateMap()
+        {
+            double volunteerLat = (double)CurrentVolunteer.Latitude;
+            double volunteerLng = (double)CurrentVolunteer.Longitude;
+
+            string mapHtml;
+
+            if (CurrentVolunteer.CallInProgress != null)
+            {
+                var callDetails = _bl.Call.GetCallDetails(CurrentVolunteer.CallInProgress.CallId);
+                double callLat = callDetails.Latitude;
+                double callLng = callDetails.Longitude;
+
+                mapHtml = $@"
+        <html>
+        <head>
+            <meta charset='utf-8' />
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <link rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css'/>
+            <script src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js'></script>
+        </head>
+        <body>
+            <div id='map' style='width:100%;height:100%;'></div>
+            <script>
+                var map = L.map('map').setView([{volunteerLat}, {volunteerLng}], 13);
+
+                L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+                    maxZoom: 19
+                }}).addTo(map);
+
+                L.marker([{volunteerLat}, {volunteerLng}]).addTo(map)
+                    .bindPopup('Volunteer')
+                    .openPopup();
+
+                L.marker([{callLat}, {callLng}]).addTo(map)
+                    .bindPopup('Call');
+            </script>
+        </body>
+        </html>";
+            }
+            else
+            {
+                mapHtml = $@"
+        <html>
+        <head>
+            <meta charset='utf-8' />
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <link rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css'/>
+            <script src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js'></script>
+        </head>
+        <body>
+            <div id='map' style='width:100%;height:100%;'></div>
+            <script>
+                var map = L.map('map').setView([{volunteerLat}, {volunteerLng}], 13);
+
+                L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+                    maxZoom: 19
+                }}).addTo(map);
+
+                L.marker([{volunteerLat}, {volunteerLng}]).addTo(map)
+                    .bindPopup('Volunteer')
+                    .openPopup();
+            </script>
+        </body>
+        </html>";
+            }
+
+            MapBrowser.NavigateToString(mapHtml);
+        }
+
     }
 }

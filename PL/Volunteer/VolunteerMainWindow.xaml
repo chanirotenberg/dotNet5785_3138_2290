@@ -14,34 +14,55 @@
         </Grid.ColumnDefinitions>
 
         <!-- Volunteer Info Panel -->
-        <StackPanel Grid.Column="0" Background="#F0F4F8" Margin="0,0,10,0">
-            <TextBlock Text="Volunteer Profile" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+        <ScrollViewer Grid.Column="0">
+            <StackPanel>
+                <TextBlock Text="פרטי מתנדב" FontSize="20" FontWeight="Bold" Margin="0 10"/>
+                <TextBlock Text="ת.ז:"/>
+                <TextBox Text="{Binding CurrentVolunteer.Id}" IsReadOnly="True" Margin="0 5"/>
+                <TextBlock Text="שם:"/>
+                <TextBox Text="{Binding CurrentVolunteer.Name, Mode=TwoWay}" Margin="0 5"/>
+                <TextBlock Text="טלפון:"/>
+                <TextBox Text="{Binding CurrentVolunteer.Phone, Mode=TwoWay}" Margin="0 5"/>
+                <TextBlock Text="אימייל:"/>
+                <TextBox Text="{Binding CurrentVolunteer.Email, Mode=TwoWay}" Margin="0 5"/>
+                <TextBlock Text="כתובת:"/>
+                <TextBox Text="{Binding CurrentVolunteer.Address, Mode=TwoWay}" Margin="0 5"/>
 
-            <TextBlock Text="Name:" FontWeight="Bold"/>
-            <TextBlock Text="{Binding CurrentVolunteer.Name}" Margin="0,0,0,10"/>
+                <TextBlock Text="תפקיד:"/>
+                <ComboBox ItemsSource="{Binding Source={StaticResource JobsCollectionKey}}"
+          SelectedValue="{Binding CurrentVolunteer.Jobs, Mode=TwoWay}"
+          IsEnabled="False"
+          Margin="0 5"/>
 
-            <TextBlock Text="Job:" FontWeight="Bold"/>
-            <TextBlock Text="{Binding CurrentVolunteer.Jobs}" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Address:" FontWeight="Bold"/>
-            <TextBlock Text="{Binding CurrentVolunteer.Address}" Margin="0,0,0,10"/>
+                <TextBlock Text="סוג מרחק:"/>
+                <ComboBox ItemsSource="{Binding Source={StaticResource DistanceCollectionKey}}"
+                   SelectedValue="{Binding CurrentVolunteer.DistanceType, Mode=TwoWay}"
+                   Margin="0 5"/>
 
-            <TextBlock Text="Phone:" FontWeight="Bold"/>
-            <TextBlock Text="{Binding CurrentVolunteer.Phone}" Margin="0,0,0,10"/>
+                <TextBlock Text="מרחק מקסימלי:"/>
+                <TextBox Text="{Binding CurrentVolunteer.MaxDistance, Mode=TwoWay}" Margin="0 5"/>
 
-            <TextBlock Text="Email:" FontWeight="Bold"/>
-            <TextBlock Text="{Binding CurrentVolunteer.Email}" Margin="0,0,0,10"/>
+                <CheckBox Content="פעיל"
+                   IsChecked="{Binding CurrentVolunteer.IsActive, Mode=TwoWay}"
+                   Margin="0 5"/>
 
-            <TextBlock Text="Current Call:" FontWeight="Bold" Margin="0,20,0,0"/>
-            <TextBlock Text="{Binding CurrentVolunteer.CallInProgress.VerbalDescription, TargetNullValue='No call assigned'}"
-                       TextWrapping="Wrap" Margin="0,0,0,10"/>
-        </StackPanel>
+                <Button Content="Update My Details"
+         Click="UpdateVolunteer_Click"
+         Height="40" FontWeight="Bold" Background="#007ACC" Foreground="White" BorderThickness="0" Margin="0,10"/>
+            </StackPanel>
+        </ScrollViewer>
 
         <!-- Action Buttons Panel -->
-        <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="300">
-            <Button Content="Update My Details"
-                    Click="UpdateVolunteer_Click"
-                    Height="40" FontWeight="Bold" Background="#007ACC" Foreground="White" BorderThickness="0" Margin="0,10"/>
+        <ScrollViewer Grid.Column="1">
+            <StackPanel Grid.Column="1" Margin="10">
+                
+            <TextBlock Text="ניהול קריאה" FontSize="20" FontWeight="Bold" Margin="0 10"/>
+            <TextBlock Text="{Binding CallInProgress, Converter={StaticResource CallInProgressConverter}}" Margin="0 5"/>
+           <GroupBox Header="מפה: מיקום מתנדב וקריאה" Margin="0 20" Height="250">
+                    <WebBrowser Name="MapBrowser" Height="300" Margin="0,10"/>
+                </GroupBox>
+
 
             <Button Content="View Closed Calls"
                     Click="ViewClosedCalls_Click"
@@ -66,5 +87,7 @@
                     Click="Exit_Click"
                     Height="40" FontWeight="Bold" Background="#E53935" Foreground="White" BorderThickness="0" Margin="0,10"/>
         </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>
+

@@ -152,13 +152,35 @@ namespace PL
         {
             try
             {
-                s_bl.Admin.SetRiskRange(RiskRange);
+                // נוודא שלא הוזן ערך ריק
+                string input = RiskRange.ToString();
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    MessageBox.Show("יש להזין ערך לטווח זמן הסיכון.", "קלט חסר", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // נוודא שהערך תקני וניתן לפירוש
+                if (!TimeSpan.TryParse(input, out TimeSpan parsed))
+                {
+                    MessageBox.Show("הערך שהוזן אינו בפורמט תקין (לדוגמה: 00:30:00 עבור חצי שעה).", "שגיאת קלט", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (parsed.TotalMinutes <= 0)
+                {
+                    MessageBox.Show("יש להזין ערך גדול מאפס לטווח זמן הסיכון.", "ערך לא חוקי", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                s_bl.Admin.SetRiskRange(parsed);
             }
             catch (Exception ex)
             {
-                ShowError("Failed to update risk range", "An error occurred while trying to update the risk range.", ex);
+                ShowError("שגיאה בעדכון טווח סיכון", "אירעה שגיאה בעת עדכון טווח הסיכון.", ex);
             }
         }
+
 
         private void InitializeDB_Click(object sender, RoutedEventArgs e)
         {
