@@ -283,25 +283,17 @@
   <Assignment>
     <CallId>1035</CallId>
     <VolunteerId>327842290</VolunteerId>
-    <EntryTime>2025-06-08T04:18:47</EntryTime>
-    <ActualEndTime>2025-06-08T04:18:47</ActualEndTime>
-    <EndType>Cared</EndType>
+    <EntryTime>2025-06-05T02:24:57</EntryTime>
+    <ActualEndTime>2025-06-05T02:24:57</ActualEndTime>
+    <EndType>SelfCancellation</EndType>
     <Id>1035</Id>
   </Assignment>
   <Assignment>
-    <CallId>1047</CallId>
+    <CallId>1039</CallId>
     <VolunteerId>327842290</VolunteerId>
-    <EntryTime>2025-06-08T04:18:47</EntryTime>
-    <ActualEndTime>2025-06-08T04:18:47</ActualEndTime>
+    <EntryTime>2025-06-05T02:24:57</EntryTime>
+    <ActualEndTime>2025-06-05T02:24:57</ActualEndTime>
     <EndType>SelfCancellation</EndType>
     <Id>1036</Id>
-  </Assignment>
-  <Assignment>
-    <CallId>1046</CallId>
-    <VolunteerId>327842290</VolunteerId>
-    <EntryTime>2025-06-08T04:18:47</EntryTime>
-    <ActualEndTime xsi:nil="true" />
-    <EndType xsi:nil="true" />
-    <Id>1037</Id>
   </Assignment>
 </ArrayOfAssignment>

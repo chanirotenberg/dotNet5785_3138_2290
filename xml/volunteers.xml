@@ -5,11 +5,11 @@
     <Name>David Cohen</Name>
     <Phone>0501886941</Phone>
     <Email>davidcohen@gmail.com</Email>
-    <Password>7c08f3a14a6c8f42dc546dfa9cd83acd05aafd8f8d77b09128802ff02dd2cd5b</Password>
-    <Address>Tokyo Tower, Tokyo, Japan</Address>
-    <Latitude>35.6586</Latitude>
-    <Longitude>-0.1586</Longitude>
-    <Jobs>Administrator</Jobs>
+    <Password>79d60830b86fbfc5bfcdac94842563632166d73dbad4908586a35c4c1cc44e9f</Password>
+    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
+    <Latitude>37.422</Latitude>
+    <Longitude>34.7806</Longitude>
+    <Jobs>Worker</Jobs>
     <active>true</active>
     <MaxDistance>30</MaxDistance>
     <DistanceType>AirDistance</DistanceType>
@@ -211,31 +211,31 @@
     <DistanceType>AirDistance</DistanceType>
   </Volunteer>
   <Volunteer>
-    <Id>323782508</Id>
-    <Name />
-    <Phone />
-    <Email />
-    <Password>9b7026ab3af74a39397b09f149b2111f3177ec005ba213c9737be77d64946828</Password>
-    <Address>aa</Address>
-    <Latitude>51.5331324</Latitude>
-    <Longitude>5.6437768</Longitude>
-    <Jobs>Worker</Jobs>
-    <active>false</active>
-    <MaxDistance xsi:nil="true" />
-    <DistanceType>AirDistance</DistanceType>
-  </Volunteer>
-  <Volunteer>
     <Id>327842290</Id>
-    <Name>aa</Name>
+    <Name>bb</Name>
     <Phone>1234567890</Phone>
     <Email>s@s.com</Email>
     <Password>29ee2d8627df43f8c6641e771e82af9c2439eb4dedea849870758b303bf74905</Password>
     <Address>aa</Address>
     <Latitude>51.5331324</Latitude>
     <Longitude>5.6437768</Longitude>
-    <Jobs>Worker</Jobs>
+    <Jobs>Administrator</Jobs>
     <active>false</active>
-    <MaxDistance>110000</MaxDistance>
+    <MaxDistance xsi:nil="true" />
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>327883138</Id>
+    <Name>aa</Name>
+    <Phone>1234567890</Phone>
+    <Email>c@c.com</Email>
+    <Password>588010cc6e63c96a12ab178b1aef73d6a1ff20626053a54d361bc2d8e30a3877</Password>
+    <Address>aa</Address>
+    <Latitude>51.5331324</Latitude>
+    <Longitude>5.6437768</Longitude>
+    <Jobs>Administrator</Jobs>
+    <active>true</active>
+    <MaxDistance>11</MaxDistance>
     <DistanceType>AirDistance</DistanceType>
   </Volunteer>
 </ArrayOfVolunteer>
