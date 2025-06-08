@@ -51,8 +51,11 @@ namespace Helpers
                 {
                     if (latestAssignment.EndType == DO.EndType.ExpiredCancellation)
                         return 3; // Expired
-
-                    return 2; // Closed (handled or canceled)
+                    if(latestAssignment.EndType == DO.EndType.Cared)
+                    {
+                        return 2;
+                    }
+                    return 0; // Closed (handled or canceled)
                 }
             }
 

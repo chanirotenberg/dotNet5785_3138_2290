@@ -1,5 +1,8 @@
-﻿using PL.Volunteer;
+﻿using BO;
+using PL.Manager;
+using PL.Volunteer;
 using PL.Volunteer.Admin;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,12 +23,26 @@ namespace PL
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
+        private BO.Volunteer _currentVolunteer;
+
+
+        public BO.Volunteer CurrentVolunteer
+        {
+            get => _currentVolunteer;
+            set
+            {
+                _currentVolunteer = value;              
+            }
+
+        }
+
         /// <summary>
         /// Initializes the main window.
         /// </summary>
-        public MainWindow()
+        public MainWindow(BO.Volunteer volunteer)
         {
             InitializeComponent();
+            CurrentVolunteer = volunteer;
         }
 
         /// <summary>
@@ -254,6 +271,18 @@ namespace PL
                 message += "\n\nTechnical details:\n" + ex.InnerException.Message;
 
             MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void HandleCall_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                new CallManagementWindow(CurrentVolunteer.Id).Show();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Error opening call window", "An error occurred while trying to open the volunteers window.", ex);
+            }
         }
     }
 }

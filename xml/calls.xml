@@ -2,502 +2,502 @@
 <ArrayOfCall>
   <Call>
     <Id>1000</Id>
-    <CallType>Transport</CallType>
+    <CallType>PickUp</CallType>
     <VerbalDescription>Ride to the north, a stop for refueling along the way</VerbalDescription>
     <Address>221B Baker Street, London, NW1 6XE, UK</Address>
-    <Latitude>35.6586</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <OpeningTime>2025-06-08T00:23:47</OpeningTime>
+    <Latitude>48.8584</Latitude>
+    <Longitude>-73.9654</Longitude>
+    <OpeningTime>2025-06-08T12:21:57</OpeningTime>
     <MaximumTime />
   </Call>
   <Call>
     <Id>1001</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Airport ride, taxi needed at a specific time in the morning</VerbalDescription>
     <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
-    <Latitude>-33.8568</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <OpeningTime>2025-06-07T15:28:47</OpeningTime>
-    <MaximumTime />
+    <Latitude>37.422</Latitude>
+    <Longitude>151.2153</Longitude>
+    <OpeningTime>2025-06-08T19:42:57</OpeningTime>
+    <MaximumTime>2025-06-08T20:49:57</MaximumTime>
   </Call>
   <Call>
     <Id>1002</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Airport ride, taxi needed at a specific time in the morning</VerbalDescription>
-    <Address>Sydney Opera House, Sydney, Australia</Address>
-    <Latitude>51.5238</Latitude>
-    <Longitude>151.2153</Longitude>
-    <OpeningTime>2025-06-07T17:45:47</OpeningTime>
-    <MaximumTime />
-  </Call>
-  <Call>
-    <Id>1003</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Shopping trip, taxi ride to the big mall for two hours</VerbalDescription>
-    <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
-    <Latitude>-33.8568</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <OpeningTime>2025-06-07T12:19:47</OpeningTime>
-    <MaximumTime />
-  </Call>
-  <Call>
-    <Id>1004</Id>
     <CallType>PickUp</CallType>
     <VerbalDescription>Ride from a fancy restaurant to a hotel downtown</VerbalDescription>
     <Address>Tokyo Tower, Tokyo, Japan</Address>
-    <Latitude>32.0809</Latitude>
-    <Longitude>139.7454</Longitude>
-    <OpeningTime>2025-06-07T20:48:47</OpeningTime>
-    <MaximumTime>2025-06-07T22:03:47</MaximumTime>
+    <Latitude>37.422</Latitude>
+    <Longitude>151.2153</Longitude>
+    <OpeningTime>2025-06-08T22:23:57</OpeningTime>
+    <MaximumTime>2025-06-08T23:51:57</MaximumTime>
+  </Call>
+  <Call>
+    <Id>1003</Id>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
+    <Address>Sydney Opera House, Sydney, Australia</Address>
+    <Latitude>48.8584</Latitude>
+    <Longitude>-73.9654</Longitude>
+    <OpeningTime>2025-06-09T00:40:57</OpeningTime>
+    <MaximumTime>2025-06-09T01:26:57</MaximumTime>
+  </Call>
+  <Call>
+    <Id>1004</Id>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Shopping trip, taxi ride to the big mall for two hours</VerbalDescription>
+    <Address>Sydney Opera House, Sydney, Australia</Address>
+    <Latitude>52.5163</Latitude>
+    <Longitude>34.7806</Longitude>
+    <OpeningTime>2025-06-08T12:22:57</OpeningTime>
+    <MaximumTime>2025-06-08T13:37:57</MaximumTime>
   </Call>
   <Call>
     <Id>1005</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
-    <Address>Taj Mahal, Agra, India</Address>
-    <Latitude>-33.8568</Latitude>
-    <Longitude>2.1744</Longitude>
-    <OpeningTime>2025-06-08T04:10:47</OpeningTime>
-    <MaximumTime>2025-06-08T05:45:47</MaximumTime>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
+    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
+    <Latitude>52.5163</Latitude>
+    <Longitude>-122.0841</Longitude>
+    <OpeningTime>2025-06-09T00:08:57</OpeningTime>
+    <MaximumTime>2025-06-09T00:29:57</MaximumTime>
   </Call>
   <Call>
     <Id>1006</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Ride from a fancy restaurant to a hotel downtown</VerbalDescription>
-    <Address>221B Baker Street, London, NW1 6XE, UK</Address>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Festival ride in the city, picking up a group from two locations</VerbalDescription>
+    <Address>Tokyo Tower, Tokyo, Japan</Address>
     <Latitude>27.1751</Latitude>
-    <Longitude>13.3777</Longitude>
-    <OpeningTime>2025-06-07T23:06:47</OpeningTime>
-    <MaximumTime>2025-06-08T00:00:47</MaximumTime>
+    <Longitude>139.7454</Longitude>
+    <OpeningTime>2025-06-08T17:14:57</OpeningTime>
+    <MaximumTime />
   </Call>
   <Call>
     <Id>1007</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to the north, a stop for refueling along the way</VerbalDescription>
-    <Address>Brandenburg Gate, Berlin, Germany</Address>
-    <Latitude>48.8584</Latitude>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Business meeting ride, heading to the industrial area in the north</VerbalDescription>
+    <Address>Sydney Opera House, Sydney, Australia</Address>
+    <Latitude>27.1751</Latitude>
     <Longitude>-0.1586</Longitude>
-    <OpeningTime>2025-06-07T23:08:47</OpeningTime>
-    <MaximumTime>2025-06-08T00:27:47</MaximumTime>
+    <OpeningTime>2025-06-08T22:35:57</OpeningTime>
+    <MaximumTime>2025-06-08T23:22:57</MaximumTime>
   </Call>
   <Call>
     <Id>1008</Id>
     <CallType>Transport</CallType>
-    <VerbalDescription>Festival ride in the city, picking up a group from two locations</VerbalDescription>
-    <Address>Sagrada Familia, Barcelona, Spain</Address>
-    <Latitude>-33.8568</Latitude>
-    <Longitude>151.2153</Longitude>
-    <OpeningTime>2025-06-07T22:43:47</OpeningTime>
-    <MaximumTime>2025-06-07T23:26:47</MaximumTime>
+    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
+    <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
+    <Latitude>32.0809</Latitude>
+    <Longitude>78.0421</Longitude>
+    <OpeningTime>2025-06-08T16:18:57</OpeningTime>
+    <MaximumTime>2025-06-08T17:01:57</MaximumTime>
   </Call>
   <Call>
     <Id>1009</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
-    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
-    <Latitude>37.422</Latitude>
+    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
+    <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
+    <Latitude>48.8584</Latitude>
     <Longitude>34.7806</Longitude>
-    <OpeningTime>2025-06-07T15:10:47</OpeningTime>
-    <MaximumTime>2025-06-07T16:42:47</MaximumTime>
+    <OpeningTime>2025-06-08T10:06:57</OpeningTime>
+    <MaximumTime />
   </Call>
   <Call>
     <Id>1010</Id>
     <CallType>Transport</CallType>
-    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
-    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
-    <Latitude>41.4036</Latitude>
-    <Longitude>139.7454</Longitude>
-    <OpeningTime>2025-06-07T17:02:47</OpeningTime>
-    <MaximumTime />
+    <VerbalDescription>Medical ride, heading to a clinic for an important appointment</VerbalDescription>
+    <Address>Sydney Opera House, Sydney, Australia</Address>
+    <Latitude>40.775</Latitude>
+    <Longitude>34.7806</Longitude>
+    <OpeningTime>2025-06-09T01:09:57</OpeningTime>
+    <MaximumTime>2025-06-09T01:46:57</MaximumTime>
   </Call>
   <Call>
     <Id>1011</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Ride from a fancy restaurant to a hotel downtown</VerbalDescription>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
     <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
-    <Latitude>37.422</Latitude>
-    <Longitude>34.7806</Longitude>
-    <OpeningTime>2025-06-08T02:25:47</OpeningTime>
-    <MaximumTime>2025-06-08T03:51:47</MaximumTime>
-  </Call>
-  <Call>
-    <Id>1012</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
-    <Address>Tokyo Tower, Tokyo, Japan</Address>
-    <Latitude>32.0809</Latitude>
-    <Longitude>2.1744</Longitude>
-    <OpeningTime>2025-06-07T19:55:47</OpeningTime>
+    <Latitude>-33.8568</Latitude>
+    <Longitude>-122.0841</Longitude>
+    <OpeningTime>2025-06-08T19:49:57</OpeningTime>
     <MaximumTime />
   </Call>
   <Call>
-    <Id>1013</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
+    <Id>1012</Id>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Shopping trip, taxi ride to the big mall for two hours</VerbalDescription>
     <Address>5th Avenue, New York, NY, USA</Address>
-    <Latitude>27.1751</Latitude>
-    <Longitude>139.7454</Longitude>
-    <OpeningTime>2025-06-07T12:08:47</OpeningTime>
-    <MaximumTime>2025-06-07T12:36:47</MaximumTime>
+    <Latitude>48.8584</Latitude>
+    <Longitude>2.2945</Longitude>
+    <OpeningTime>2025-06-08T14:00:57</OpeningTime>
+    <MaximumTime>2025-06-08T15:57:57</MaximumTime>
+  </Call>
+  <Call>
+    <Id>1013</Id>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Airport ride, taxi needed at a specific time in the morning</VerbalDescription>
+    <Address>Taj Mahal, Agra, India</Address>
+    <Latitude>52.5163</Latitude>
+    <Longitude>13.3777</Longitude>
+    <OpeningTime>2025-06-08T22:54:57</OpeningTime>
+    <MaximumTime>2025-06-08T23:24:57</MaximumTime>
   </Call>
   <Call>
     <Id>1014</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
-    <Address>Tokyo Tower, Tokyo, Japan</Address>
-    <Latitude>52.5163</Latitude>
-    <Longitude>2.2945</Longitude>
-    <OpeningTime>2025-06-07T17:50:47</OpeningTime>
-    <MaximumTime>2025-06-07T18:09:47</MaximumTime>
+    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
+    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
+    <Latitude>48.8584</Latitude>
+    <Longitude>34.7806</Longitude>
+    <OpeningTime>2025-06-08T22:03:57</OpeningTime>
+    <MaximumTime />
   </Call>
   <Call>
     <Id>1015</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
-    <Address>Brandenburg Gate, Berlin, Germany</Address>
-    <Latitude>48.8584</Latitude>
+    <VerbalDescription>Ride from a fancy restaurant to a hotel downtown</VerbalDescription>
+    <Address>Tokyo Tower, Tokyo, Japan</Address>
+    <Latitude>52.5163</Latitude>
     <Longitude>2.1744</Longitude>
-    <OpeningTime>2025-06-08T00:48:47</OpeningTime>
-    <MaximumTime />
+    <OpeningTime>2025-06-08T16:27:57</OpeningTime>
+    <MaximumTime>2025-06-08T16:53:57</MaximumTime>
   </Call>
   <Call>
     <Id>1016</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to the north, a stop for refueling along the way</VerbalDescription>
+    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
     <Address>Sydney Opera House, Sydney, Australia</Address>
-    <Latitude>41.4036</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <OpeningTime>2025-06-08T00:16:47</OpeningTime>
-    <MaximumTime>2025-06-08T00:52:47</MaximumTime>
+    <Latitude>48.8584</Latitude>
+    <Longitude>34.7806</Longitude>
+    <OpeningTime>2025-06-08T13:36:57</OpeningTime>
+    <MaximumTime />
   </Call>
   <Call>
     <Id>1017</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
-    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
-    <Latitude>35.6586</Latitude>
-    <Longitude>34.7806</Longitude>
-    <OpeningTime>2025-06-07T16:04:47</OpeningTime>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Business meeting ride, heading to the industrial area in the north</VerbalDescription>
+    <Address>Taj Mahal, Agra, India</Address>
+    <Latitude>41.4036</Latitude>
+    <Longitude>-122.0841</Longitude>
+    <OpeningTime>2025-06-08T10:06:57</OpeningTime>
     <MaximumTime />
   </Call>
   <Call>
     <Id>1018</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Shopping trip, taxi ride to the big mall for two hours</VerbalDescription>
-    <Address>Brandenburg Gate, Berlin, Germany</Address>
-    <Latitude>48.8584</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <OpeningTime>2025-06-07T18:00:47</OpeningTime>
-    <MaximumTime>2025-06-07T19:28:47</MaximumTime>
+    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
+    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
+    <Latitude>32.0809</Latitude>
+    <Longitude>151.2153</Longitude>
+    <OpeningTime>2025-06-08T18:11:57</OpeningTime>
+    <MaximumTime>2025-06-08T18:51:57</MaximumTime>
   </Call>
   <Call>
     <Id>1019</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
     <Address>5th Avenue, New York, NY, USA</Address>
-    <Latitude>51.5238</Latitude>
-    <Longitude>-73.9654</Longitude>
-    <OpeningTime>2025-06-07T19:09:47</OpeningTime>
-    <MaximumTime>2025-06-07T20:15:47</MaximumTime>
+    <Latitude>35.6586</Latitude>
+    <Longitude>13.3777</Longitude>
+    <OpeningTime>2025-06-08T16:48:57</OpeningTime>
+    <MaximumTime>2025-06-08T18:32:57</MaximumTime>
   </Call>
   <Call>
     <Id>1020</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
-    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
-    <Latitude>37.422</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <OpeningTime>2025-06-07T13:25:47</OpeningTime>
-    <MaximumTime />
+    <CallType>Transport</CallType>
+    <VerbalDescription>Medical ride, heading to a clinic for an important appointment</VerbalDescription>
+    <Address>Taj Mahal, Agra, India</Address>
+    <Latitude>41.4036</Latitude>
+    <Longitude>151.2153</Longitude>
+    <OpeningTime>2025-06-08T17:46:57</OpeningTime>
+    <MaximumTime>2025-06-08T18:07:57</MaximumTime>
   </Call>
   <Call>
     <Id>1021</Id>
     <CallType>Transport</CallType>
-    <VerbalDescription>Festival ride in the city, picking up a group from two locations</VerbalDescription>
-    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
-    <Latitude>48.8584</Latitude>
-    <Longitude>139.7454</Longitude>
-    <OpeningTime>2025-06-07T14:16:47</OpeningTime>
-    <MaximumTime>2025-06-07T14:29:47</MaximumTime>
+    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
+    <Address>Brandenburg Gate, Berlin, Germany</Address>
+    <Latitude>-33.8568</Latitude>
+    <Longitude>-0.1586</Longitude>
+    <OpeningTime>2025-06-09T00:38:57</OpeningTime>
+    <MaximumTime>2025-06-09T02:23:57</MaximumTime>
   </Call>
   <Call>
     <Id>1022</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Airport ride, taxi needed at a specific time in the morning</VerbalDescription>
-    <Address>Sydney Opera House, Sydney, Australia</Address>
-    <Latitude>27.1751</Latitude>
-    <Longitude>-0.1586</Longitude>
-    <OpeningTime>2025-06-07T19:15:47</OpeningTime>
-    <MaximumTime />
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Business meeting ride, heading to the industrial area in the north</VerbalDescription>
+    <Address>Brandenburg Gate, Berlin, Germany</Address>
+    <Latitude>-33.8568</Latitude>
+    <Longitude>34.7806</Longitude>
+    <OpeningTime>2025-06-08T21:38:57</OpeningTime>
+    <MaximumTime>2025-06-08T21:58:57</MaximumTime>
   </Call>
   <Call>
     <Id>1023</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
-    <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
-    <Latitude>37.422</Latitude>
-    <Longitude>-73.9654</Longitude>
-    <OpeningTime>2025-06-07T14:29:47</OpeningTime>
+    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
+    <Address>Brandenburg Gate, Berlin, Germany</Address>
+    <Latitude>41.4036</Latitude>
+    <Longitude>2.2945</Longitude>
+    <OpeningTime>2025-06-08T11:16:57</OpeningTime>
     <MaximumTime />
   </Call>
   <Call>
     <Id>1024</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
-    <Address>Sagrada Familia, Barcelona, Spain</Address>
-    <Latitude>27.1751</Latitude>
-    <Longitude>13.3777</Longitude>
-    <OpeningTime>2025-06-07T12:49:47</OpeningTime>
-    <MaximumTime>2025-06-07T13:22:47</MaximumTime>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Business meeting ride, heading to the industrial area in the north</VerbalDescription>
+    <Address>5th Avenue, New York, NY, USA</Address>
+    <Latitude>32.0809</Latitude>
+    <Longitude>139.7454</Longitude>
+    <OpeningTime>2025-06-08T10:22:57</OpeningTime>
+    <MaximumTime>2025-06-08T11:47:57</MaximumTime>
   </Call>
   <Call>
     <Id>1025</Id>
     <CallType>Transport</CallType>
-    <VerbalDescription>Ride to the north, a stop for refueling along the way</VerbalDescription>
-    <Address>5th Avenue, New York, NY, USA</Address>
-    <Latitude>52.5163</Latitude>
-    <Longitude>34.7806</Longitude>
-    <OpeningTime>2025-06-07T19:35:47</OpeningTime>
-    <MaximumTime>2025-06-07T20:19:47</MaximumTime>
+    <VerbalDescription>Medical ride, heading to a clinic for an important appointment</VerbalDescription>
+    <Address>Taj Mahal, Agra, India</Address>
+    <Latitude>35.6586</Latitude>
+    <Longitude>78.0421</Longitude>
+    <OpeningTime>2025-06-08T11:45:57</OpeningTime>
+    <MaximumTime>2025-06-08T11:59:57</MaximumTime>
   </Call>
   <Call>
     <Id>1026</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Business meeting ride, heading to the industrial area in the north</VerbalDescription>
-    <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
-    <Latitude>40.775</Latitude>
-    <Longitude>-0.1586</Longitude>
-    <OpeningTime>2025-06-07T11:41:47</OpeningTime>
-    <MaximumTime />
+    <CallType>Transport</CallType>
+    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
+    <Address>5th Avenue, New York, NY, USA</Address>
+    <Latitude>41.4036</Latitude>
+    <Longitude>78.0421</Longitude>
+    <OpeningTime>2025-06-08T10:44:57</OpeningTime>
+    <MaximumTime>2025-06-08T11:18:57</MaximumTime>
   </Call>
   <Call>
     <Id>1027</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Business meeting ride, heading to the industrial area in the north</VerbalDescription>
-    <Address>Sagrada Familia, Barcelona, Spain</Address>
-    <Latitude>35.6586</Latitude>
-    <Longitude>2.1744</Longitude>
-    <OpeningTime>2025-06-07T23:16:47</OpeningTime>
-    <MaximumTime>2025-06-07T23:57:47</MaximumTime>
+    <VerbalDescription>Ride from a fancy restaurant to a hotel downtown</VerbalDescription>
+    <Address>Sydney Opera House, Sydney, Australia</Address>
+    <Latitude>51.5238</Latitude>
+    <Longitude>78.0421</Longitude>
+    <OpeningTime>2025-06-09T01:14:57</OpeningTime>
+    <MaximumTime>2025-06-09T03:01:57</MaximumTime>
   </Call>
   <Call>
     <Id>1028</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Ride from a fancy restaurant to a hotel downtown</VerbalDescription>
-    <Address>221B Baker Street, London, NW1 6XE, UK</Address>
-    <Latitude>51.5238</Latitude>
-    <Longitude>78.0421</Longitude>
-    <OpeningTime>2025-06-07T23:07:47</OpeningTime>
-    <MaximumTime>2025-06-08T00:37:47</MaximumTime>
+    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
+    <Address>Sydney Opera House, Sydney, Australia</Address>
+    <Latitude>52.5163</Latitude>
+    <Longitude>139.7454</Longitude>
+    <OpeningTime>2025-06-08T16:59:57</OpeningTime>
+    <MaximumTime>2025-06-08T17:34:57</MaximumTime>
   </Call>
   <Call>
     <Id>1029</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
-    <Address>Tokyo Tower, Tokyo, Japan</Address>
-    <Latitude>27.1751</Latitude>
-    <Longitude>2.2945</Longitude>
-    <OpeningTime>2025-06-07T18:17:47</OpeningTime>
-    <MaximumTime>2025-06-07T18:59:47</MaximumTime>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Medical ride, heading to a clinic for an important appointment</VerbalDescription>
+    <Address>221B Baker Street, London, NW1 6XE, UK</Address>
+    <Latitude>32.0809</Latitude>
+    <Longitude>-73.9654</Longitude>
+    <OpeningTime>2025-06-08T20:00:57</OpeningTime>
+    <MaximumTime />
   </Call>
   <Call>
     <Id>1030</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Airport ride, taxi needed at a specific time in the morning</VerbalDescription>
-    <Address>Tokyo Tower, Tokyo, Japan</Address>
-    <Latitude>52.5163</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <OpeningTime>2025-06-08T00:30:47</OpeningTime>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Festival ride in the city, picking up a group from two locations</VerbalDescription>
+    <Address>Sagrada Familia, Barcelona, Spain</Address>
+    <Latitude>40.775</Latitude>
+    <Longitude>34.7806</Longitude>
+    <OpeningTime>2025-06-08T18:20:57</OpeningTime>
     <MaximumTime />
   </Call>
   <Call>
     <Id>1031</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Ride from a fancy restaurant to a hotel downtown</VerbalDescription>
-    <Address>221B Baker Street, London, NW1 6XE, UK</Address>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
+    <Address>5th Avenue, New York, NY, USA</Address>
     <Latitude>37.422</Latitude>
-    <Longitude>139.7454</Longitude>
-    <OpeningTime>2025-06-07T12:50:47</OpeningTime>
-    <MaximumTime>2025-06-07T14:02:47</MaximumTime>
+    <Longitude>-73.9654</Longitude>
+    <OpeningTime>2025-06-08T10:09:57</OpeningTime>
+    <MaximumTime>2025-06-08T10:38:57</MaximumTime>
   </Call>
   <Call>
     <Id>1032</Id>
-    <CallType>PickUp</CallType>
+    <CallType>Transport</CallType>
     <VerbalDescription>Medical ride, heading to a clinic for an important appointment</VerbalDescription>
-    <Address>5th Avenue, New York, NY, USA</Address>
-    <Latitude>35.6586</Latitude>
-    <Longitude>-0.1586</Longitude>
-    <OpeningTime>2025-06-07T22:28:47</OpeningTime>
-    <MaximumTime />
+    <Address>Brandenburg Gate, Berlin, Germany</Address>
+    <Latitude>41.4036</Latitude>
+    <Longitude>-73.9654</Longitude>
+    <OpeningTime>2025-06-08T18:45:57</OpeningTime>
+    <MaximumTime>2025-06-08T19:05:57</MaximumTime>
   </Call>
   <Call>
     <Id>1033</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
     <Address>Sagrada Familia, Barcelona, Spain</Address>
-    <Latitude>52.5163</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <OpeningTime>2025-06-08T02:31:47</OpeningTime>
-    <MaximumTime />
+    <Latitude>48.8584</Latitude>
+    <Longitude>2.1744</Longitude>
+    <OpeningTime>2025-06-08T16:25:57</OpeningTime>
+    <MaximumTime>2025-06-08T18:02:57</MaximumTime>
   </Call>
   <Call>
     <Id>1034</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Festival ride in the city, picking up a group from two locations</VerbalDescription>
-    <Address>Sydney Opera House, Sydney, Australia</Address>
-    <Latitude>52.5163</Latitude>
-    <Longitude>2.1744</Longitude>
-    <OpeningTime>2025-06-07T22:41:47</OpeningTime>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Medical ride, heading to a clinic for an important appointment</VerbalDescription>
+    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
+    <Latitude>37.422</Latitude>
+    <Longitude>151.2153</Longitude>
+    <OpeningTime>2025-06-09T00:16:57</OpeningTime>
     <MaximumTime />
   </Call>
   <Call>
     <Id>1035</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Festival ride in the city, picking up a group from two locations</VerbalDescription>
-    <Address>Sydney Opera House, Sydney, Australia</Address>
-    <Latitude>32.0809</Latitude>
-    <Longitude>151.2153</Longitude>
-    <OpeningTime>2025-06-07T17:40:47</OpeningTime>
-    <MaximumTime />
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
+    <Address>Sagrada Familia, Barcelona, Spain</Address>
+    <Latitude>40.775</Latitude>
+    <Longitude>139.7454</Longitude>
+    <OpeningTime>2025-06-08T15:14:57</OpeningTime>
+    <MaximumTime>2025-06-08T16:40:57</MaximumTime>
   </Call>
   <Call>
     <Id>1036</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
-    <Address>Taj Mahal, Agra, India</Address>
-    <Latitude>-33.8568</Latitude>
-    <Longitude>78.0421</Longitude>
-    <OpeningTime>2025-06-07T17:33:47</OpeningTime>
-    <MaximumTime>2025-06-07T18:13:47</MaximumTime>
+    <VerbalDescription>Festival ride in the city, picking up a group from two locations</VerbalDescription>
+    <Address>Sagrada Familia, Barcelona, Spain</Address>
+    <Latitude>40.775</Latitude>
+    <Longitude>-0.1586</Longitude>
+    <OpeningTime>2025-06-08T19:33:57</OpeningTime>
+    <MaximumTime>2025-06-08T19:47:57</MaximumTime>
   </Call>
   <Call>
     <Id>1037</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
-    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
-    <Latitude>51.5238</Latitude>
-    <Longitude>139.7454</Longitude>
-    <OpeningTime>2025-06-08T03:46:47</OpeningTime>
-    <MaximumTime />
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
+    <Address>Tokyo Tower, Tokyo, Japan</Address>
+    <Latitude>48.8584</Latitude>
+    <Longitude>-122.0841</Longitude>
+    <OpeningTime>2025-06-08T11:11:57</OpeningTime>
+    <MaximumTime>2025-06-08T12:15:57</MaximumTime>
   </Call>
   <Call>
     <Id>1038</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Festival ride in the city, picking up a group from two locations</VerbalDescription>
-    <Address>Sagrada Familia, Barcelona, Spain</Address>
-    <Latitude>35.6586</Latitude>
-    <Longitude>139.7454</Longitude>
-    <OpeningTime>2025-06-08T01:01:47</OpeningTime>
-    <MaximumTime>2025-06-08T01:16:47</MaximumTime>
+    <VerbalDescription>Airport ride, taxi needed at a specific time in the morning</VerbalDescription>
+    <Address>Brandenburg Gate, Berlin, Germany</Address>
+    <Latitude>37.422</Latitude>
+    <Longitude>2.1744</Longitude>
+    <OpeningTime>2025-06-08T17:07:57</OpeningTime>
+    <MaximumTime />
   </Call>
   <Call>
     <Id>1039</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to the beach, needs to arrive by early evening</VerbalDescription>
-    <Address>221B Baker Street, London, NW1 6XE, UK</Address>
-    <Latitude>37.422</Latitude>
+    <VerbalDescription>Business meeting ride, heading to the industrial area in the north</VerbalDescription>
+    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
+    <Latitude>48.8584</Latitude>
     <Longitude>139.7454</Longitude>
-    <OpeningTime>2025-06-07T15:16:47</OpeningTime>
-    <MaximumTime>2025-06-07T17:11:47</MaximumTime>
+    <OpeningTime>2025-06-08T16:01:57</OpeningTime>
+    <MaximumTime>2025-06-08T16:11:57</MaximumTime>
   </Call>
   <Call>
     <Id>1040</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Shopping trip, taxi ride to the big mall for two hours</VerbalDescription>
-    <Address>Taj Mahal, Agra, India</Address>
-    <Latitude>48.8584</Latitude>
-    <Longitude>151.2153</Longitude>
-    <OpeningTime>2025-06-08T00:43:47</OpeningTime>
-    <MaximumTime>2025-06-08T02:33:47</MaximumTime>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Festival ride in the city, picking up a group from two locations</VerbalDescription>
+    <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
+    <Latitude>35.6586</Latitude>
+    <Longitude>-122.0841</Longitude>
+    <OpeningTime>2025-06-08T12:37:57</OpeningTime>
+    <MaximumTime />
   </Call>
   <Call>
     <Id>1041</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Business meeting ride, heading to the industrial area in the north</VerbalDescription>
-    <Address>5th Avenue, New York, NY, USA</Address>
-    <Latitude>37.422</Latitude>
-    <Longitude>2.2945</Longitude>
-    <OpeningTime>2025-06-07T16:46:47</OpeningTime>
-    <MaximumTime>2025-06-07T17:10:47</MaximumTime>
+    <VerbalDescription>Festival ride in the city, picking up a group from two locations</VerbalDescription>
+    <Address>Sydney Opera House, Sydney, Australia</Address>
+    <Latitude>51.5238</Latitude>
+    <Longitude>78.0421</Longitude>
+    <OpeningTime>2025-06-09T01:44:57</OpeningTime>
+    <MaximumTime />
   </Call>
   <Call>
     <Id>1042</Id>
     <CallType>Transport</CallType>
-    <VerbalDescription>Ride to the north, a stop for refueling along the way</VerbalDescription>
+    <VerbalDescription>Shopping trip, taxi ride to the big mall for two hours</VerbalDescription>
     <Address>Brandenburg Gate, Berlin, Germany</Address>
-    <Latitude>52.5163</Latitude>
-    <Longitude>-0.1586</Longitude>
-    <OpeningTime>2025-06-08T01:37:47</OpeningTime>
-    <MaximumTime>2025-06-08T02:41:47</MaximumTime>
+    <Latitude>27.1751</Latitude>
+    <Longitude>-122.0841</Longitude>
+    <OpeningTime>2025-06-08T22:38:57</OpeningTime>
+    <MaximumTime />
   </Call>
   <Call>
     <Id>1043</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Business meeting ride, heading to the industrial area in the north</VerbalDescription>
-    <Address>Sagrada Familia, Barcelona, Spain</Address>
-    <Latitude>48.8584</Latitude>
-    <Longitude>34.7806</Longitude>
-    <OpeningTime>2025-06-07T12:11:47</OpeningTime>
-    <MaximumTime>2025-06-07T12:23:47</MaximumTime>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Medical ride, heading to a clinic for an important appointment</VerbalDescription>
+    <Address>221B Baker Street, London, NW1 6XE, UK</Address>
+    <Latitude>52.5163</Latitude>
+    <Longitude>2.1744</Longitude>
+    <OpeningTime>2025-06-08T17:29:57</OpeningTime>
+    <MaximumTime>2025-06-08T18:03:57</MaximumTime>
   </Call>
   <Call>
     <Id>1044</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Airport ride, taxi needed at a specific time in the morning</VerbalDescription>
-    <Address>Brandenburg Gate, Berlin, Germany</Address>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Ride to the north, a stop for refueling along the way</VerbalDescription>
+    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
     <Latitude>27.1751</Latitude>
-    <Longitude>139.7454</Longitude>
-    <OpeningTime>2025-06-07T13:35:47</OpeningTime>
-    <MaximumTime>2025-06-07T15:11:47</MaximumTime>
+    <Longitude>78.0421</Longitude>
+    <OpeningTime>2025-06-08T11:43:57</OpeningTime>
+    <MaximumTime>2025-06-08T13:10:57</MaximumTime>
   </Call>
   <Call>
     <Id>1045</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Shopping trip, taxi ride to the big mall for two hours</VerbalDescription>
-    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
-    <Latitude>32.0809</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <OpeningTime>2025-06-07T19:33:47</OpeningTime>
-    <MaximumTime>2025-06-07T20:05:47</MaximumTime>
+    <VerbalDescription>Ride to the north, a stop for refueling along the way</VerbalDescription>
+    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
+    <Latitude>37.422</Latitude>
+    <Longitude>151.2153</Longitude>
+    <OpeningTime>2025-06-08T21:31:57</OpeningTime>
+    <MaximumTime>2025-06-08T22:30:57</MaximumTime>
   </Call>
   <Call>
     <Id>1046</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
-    <Address>5th Avenue, New York, NY, USA</Address>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Medical ride, heading to a clinic for an important appointment</VerbalDescription>
+    <Address>Brandenburg Gate, Berlin, Germany</Address>
     <Latitude>32.0809</Latitude>
-    <Longitude>13.3777</Longitude>
-    <OpeningTime>2025-06-07T20:17:47</OpeningTime>
-    <MaximumTime />
+    <Longitude>2.1744</Longitude>
+    <OpeningTime>2025-06-08T11:10:57</OpeningTime>
+    <MaximumTime>2025-06-08T11:56:57</MaximumTime>
   </Call>
   <Call>
     <Id>1047</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to a family event, group pick-up in the city center</VerbalDescription>
-    <Address>Brandenburg Gate, Berlin, Germany</Address>
-    <Latitude>37.422</Latitude>
-    <Longitude>139.7454</Longitude>
-    <OpeningTime>2025-06-08T02:50:47</OpeningTime>
+    <VerbalDescription>Business meeting ride, heading to the industrial area in the north</VerbalDescription>
+    <Address>5th Avenue, New York, NY, USA</Address>
+    <Latitude>-33.8568</Latitude>
+    <Longitude>-122.0841</Longitude>
+    <OpeningTime>2025-06-08T13:21:57</OpeningTime>
     <MaximumTime />
   </Call>
   <Call>
     <Id>1048</Id>
     <CallType>PickUp</CallType>
-    <VerbalDescription>Airport ride, taxi needed at a specific time in the morning</VerbalDescription>
+    <VerbalDescription>Ride to the north, a stop for refueling along the way</VerbalDescription>
     <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
-    <Latitude>35.6586</Latitude>
+    <Latitude>32.0809</Latitude>
     <Longitude>2.2945</Longitude>
-    <OpeningTime>2025-06-07T19:45:47</OpeningTime>
+    <OpeningTime>2025-06-08T21:22:57</OpeningTime>
     <MaximumTime />
   </Call>
   <Call>
     <Id>1049</Id>
-    <CallType>Transport</CallType>
-    <VerbalDescription>Urgent ride to the hospital, needs immediate attention</VerbalDescription>
-    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
+    <CallType>PickUp</CallType>
+    <VerbalDescription>Airport ride, taxi needed at a specific time in the morning</VerbalDescription>
+    <Address>Sagrada Familia, Barcelona, Spain</Address>
     <Latitude>41.4036</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <OpeningTime>2025-06-08T01:02:47</OpeningTime>
-    <MaximumTime>2025-06-08T02:28:47</MaximumTime>
+    <Longitude>78.0421</Longitude>
+    <OpeningTime>2025-06-08T13:09:57</OpeningTime>
+    <MaximumTime>2025-06-08T14:11:57</MaximumTime>
   </Call>
 </ArrayOfCall>
