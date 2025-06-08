@@ -191,9 +191,13 @@ namespace PL.Volunteer.Admin
                     {
                         MessageBox.Show("The volunteer no longer exists.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
-                    catch (BO.BlException)
+                    catch (Exception ex)
                     {
-                        MessageBox.Show("A general error occurred while deleting the volunteer.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        string message = ex.Message;
+                        if (ex.InnerException != null)
+                            message += "\n\nDetails: " + ex.InnerException.Message;
+
+                        MessageBox.Show(message, "Error Deleting volunteer", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }

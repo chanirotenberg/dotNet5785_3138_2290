@@ -16,15 +16,39 @@ internal static class VolunteerManager
     /// Validates a volunteer object to ensure correct data input.
     /// </summary>
     /// <param name="volunteer">The volunteer object to validate.</param>
-    public static void ValidateVolunteer(BO.Volunteer volunteer,string? oldPassword = null)
+    public static void ValidateVolunteer(BO.Volunteer volunteer, bool isPartial = false, string? oldPassword = null)
     {
-        // Validate Name
-        if (string.IsNullOrWhiteSpace(volunteer.Name) || volunteer.Name.Length < 2)
-            throw new BO.BlValidationException("Name must be at least 2 characters long.");
+        if (!isPartial)
+        {
+            // Name – חובה גם ברישום חלקי
+            if (string.IsNullOrWhiteSpace(volunteer.Name) || volunteer.Name.Length < 2)
+                throw new BO.BlValidationException("Name must be at least 2 characters long.");
+        }
 
-        // Validate Email format
-        if (!volunteer.Email.Contains("@") || !volunteer.Email.Contains("."))
-            throw new BO.BlValidationException("Invalid email format.");
+        // Email – אם קיים, נבדוק תקינות
+        if (!string.IsNullOrWhiteSpace(volunteer.Email))
+        {
+            if (!volunteer.Email.Contains("@") || !volunteer.Email.Contains("."))
+                throw new BO.BlValidationException("Invalid email format.");
+        }
+        else if (!isPartial)
+        {
+            throw new BO.BlValidationException("Email is required.");
+        }
+
+        // Password – אם קיים, נבדוק חוזק
+        //if (!string.IsNullOrWhiteSpace(volunteer.Password))
+        //{
+        //    if (volunteer.Password != oldPassword && !IsStrongPassword(volunteer.Password, oldPassword))
+        //        throw new BO.BlValidationException("Password must be at least 8 characters long, include uppercase, lowercase, number and special char.");
+
+        //    if (volunteer.Password != oldPassword)
+        //        volunteer.Password = EncryptPassword(volunteer.Password);
+        //}
+        //else
+        //{
+        //    throw new BO.BlValidationException("Password is required.");
+        //}
 
         if (volunteer.Password != oldPassword)
         {
@@ -34,31 +58,34 @@ internal static class VolunteerManager
             // Encrypt the password before storing it
             volunteer.Password = EncryptPassword(volunteer.Password);
         }
-            
 
-        // Validate Latitude and Longitude (if provided)
-        if (volunteer.Latitude.HasValue && (volunteer.Latitude < -90 || volunteer.Latitude > 90))
-            throw new BO.BlValidationException("Latitude must be between -90 and 90 degrees.");
-        if (volunteer.Longitude.HasValue && (volunteer.Longitude < -180 || volunteer.Longitude > 180))
-            throw new BO.BlValidationException("Longitude must be between -180 and 180 degrees.");
-
-        // Validate ID (must be numeric and valid)
-        if (!IsValidIsraeliId(volunteer.Id))
+            // ID – תמיד חובה
+            if (!IsValidIsraeliId(volunteer.Id))
             throw new BO.BlValidationException("Invalid Israeli ID.");
 
-        // Validate MaxDistance (must be a positive number if provided)
+        // Phone – אם קיים, נבדוק תקינות
+        if (!string.IsNullOrWhiteSpace(volunteer.Phone))
+        {
+            if (!IsNumeric(volunteer.Phone) || volunteer.Phone.Length != 10)
+                throw new BO.BlValidationException("Phone number must be numeric and 10 digits long.");
+        }
+        else if (!isPartial)
+        {
+            throw new BO.BlValidationException("Phone number is required.");
+        }
+
+        // Latitude / Longitude – אם קיימים, נבדוק תחום
+        if (volunteer.Latitude.HasValue && (volunteer.Latitude < -90 || volunteer.Latitude > 90))
+            throw new BO.BlValidationException("Latitude must be between -90 and 90.");
+
+        if (volunteer.Longitude.HasValue && (volunteer.Longitude < -180 || volunteer.Longitude > 180))
+            throw new BO.BlValidationException("Longitude must be between -180 and 180.");
+
+        // MaxDistance – אם קיים, חייב להיות חיובי
         if (volunteer.MaxDistance.HasValue && volunteer.MaxDistance <= 0)
-            throw new BO.BlValidationException("MaxDistance must be a positive number.");
+            throw new BO.BlValidationException("MaxDistance must be positive.");
 
-        // Validate Phone number (must be numeric and 10 digits)
-        if (!IsNumeric(volunteer.Phone) || volunteer.Phone.Length != 10)
-            throw new BO.BlValidationException("Phone number must be numeric and 10 digits long.");
-
-        // Validate other numeric fields
-        if (!IsPositiveInteger(volunteer.Id.ToString()))
-            throw new BO.BlValidationException("ID must be a positive integer.");
-
-        // Validate Address (if provided)
+        // Address => ניתן לנסות לחלץ קואורדינטות אם קיים
         if (!string.IsNullOrWhiteSpace(volunteer.Address))
         {
             try
@@ -72,7 +99,13 @@ internal static class VolunteerManager
                 throw new BO.BlValidationException($"Invalid address: {volunteer.Address}. Details: {ex.Message}");
             }
         }
+        else
+        {
+            throw new BO.BlValidationException("Address is required.");
+        }
     }
+
+
 
     /// <summary>
     /// Checks if a password is strong.

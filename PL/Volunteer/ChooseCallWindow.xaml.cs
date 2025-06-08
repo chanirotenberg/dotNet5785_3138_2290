@@ -1,5 +1,4 @@
-﻿// ChooseCallWindow.xaml.cs
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -16,7 +15,7 @@ namespace PL.Volunteer
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private ObservableCollection<OpenCallInList> _openCalls;
+        private ObservableCollection<OpenCallInList> _openCalls = new();
         public ObservableCollection<OpenCallInList> OpenCalls
         {
             get => _openCalls;
@@ -28,6 +27,13 @@ namespace PL.Volunteer
         {
             get => _selectedCall;
             set { _selectedCall = value; OnPropertyChanged(nameof(SelectedCall)); }
+        }
+
+        private string _volunteerAddress = "";
+        public string VolunteerAddress
+        {
+            get => _volunteerAddress;
+            set { _volunteerAddress = value; OnPropertyChanged(nameof(VolunteerAddress)); }
         }
 
         public Array CallTypes => Enum.GetValues(typeof(CallType));
@@ -57,12 +63,31 @@ namespace PL.Volunteer
             }
         }
 
+        public ICommand AssignCallCommand { get; }
+
         public ChooseCallWindow(int volunteerId)
         {
             InitializeComponent();
             _volunteerId = volunteerId;
             DataContext = this;
+
+            AssignCallCommand = new RelayCommand<OpenCallInList>(AssignCall);
+
+            LoadVolunteerAddress();
             RefreshOpenCalls();
+        }
+
+        private void LoadVolunteerAddress()
+        {
+            try
+            {
+                var volunteer = _bl.Volunteer.GetVolunteerDetails(_volunteerId);
+                VolunteerAddress = volunteer.Address ?? "";
+            }
+            catch
+            {
+                VolunteerAddress = "";
+            }
         }
 
         private void RefreshOpenCalls()
@@ -81,28 +106,52 @@ namespace PL.Volunteer
                 Close();
             }
         }
-        private void ClearFilters_Click(object sender, RoutedEventArgs e)
+
+        private async void UpdateAddressButton_Click(object sender, RoutedEventArgs e)
         {
-            SelectedCallType = null;
-            SortField = null;
+            try
+            {
+                // עדכון הכתובת במערכת
+                var volunteer = _bl.Volunteer.GetVolunteerDetails(_volunteerId);
+                volunteer.Address = VolunteerAddress;
+
+                // כאן אפשר להוסיף חישוב קואורדינטות לפי הכתובת (אם יש לך שירות גיאוקוד)
+                // var coords = geocodingService.GetCoordinates(VolunteerAddress);
+                // volunteer.Latitude = coords.Latitude;
+                // volunteer.Longitude = coords.Longitude;
+
+                _bl.Volunteer.UpdateVolunteer(volunteer.Id,volunteer);
+
+                MessageBox.Show("כתובת עודכנה בהצלחה.",
+                                "הצלחה",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+
+                RefreshOpenCalls(); // רענון הקריאות בהתאם לכתובת החדשה
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("שגיאה בעדכון הכתובת: " + ex.Message,
+                                "שגיאה",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+            }
         }
 
-
-        private void CallsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void AssignCall(OpenCallInList call)
         {
-            if (SelectedCall == null)
-                return;
+            if (call == null) return;
 
             try
             {
-                _bl.Call.AssignCallToVolunteer(_volunteerId, SelectedCall.Id);
+                _bl.Call.AssignCallToVolunteer(_volunteerId, call.Id);
 
                 MessageBox.Show("הקריאה שויכה בהצלחה.",
                                 "שיבוץ הצליח",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information);
 
-                this.Close();
+                Close();
             }
             catch (BlDoesNotExistException)
             {
@@ -129,5 +178,32 @@ namespace PL.Volunteer
 
         private void OnPropertyChanged(string propertyName)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    // מחלקת עזר לפקודות
+    public class RelayCommand<T> : ICommand
+    {
+        private readonly Action<T> _execute;
+        private readonly Predicate<T>? _canExecute;
+
+        public RelayCommand(Action<T> execute, Predicate<T>? canExecute = null)
+        {
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object? parameter) => _canExecute == null || _canExecute((T)parameter!);
+
+        public void Execute(object? parameter)
+        {
+            if (parameter is T param)
+                _execute(param);
+        }
+
+        public event EventHandler? CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
     }
 }

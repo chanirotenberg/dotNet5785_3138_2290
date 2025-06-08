@@ -31,6 +31,9 @@ namespace PL
             set { _isPasswordHidden = value; OnPropertyChanged(nameof(IsPasswordHidden)); }
         }
 
+        // שדה סטטי כדי לעקוב אם מנהל כבר מחובר
+        private static bool _isAdminLoggedIn = false;
+
         public LoginWindow()
         {
             InitializeComponent();
@@ -45,30 +48,44 @@ namespace PL
 
                 Jobs role = _bl.Volunteer.Login(id, password);
 
-                this.Hide();
-
                 if (role == Jobs.Administrator)
-                    new MainWindow().Show();
-                else
-                    new Volunteer.VolunteerMainWindow(_bl.Volunteer.GetVolunteerDetails(id)).Show();
+                {
+                    if (_isAdminLoggedIn)
+                    {
+                        MessageBox.Show("מנהל כבר מחובר כרגע.", "שגיאת התחברות", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
 
-                this.Close();
+                    _isAdminLoggedIn = true;
+                    var adminWindow = new MainWindow();
+                    adminWindow.Closed += (_, _) => _isAdminLoggedIn = false;
+                    adminWindow.Show();
+                }
+                else
+                {
+                    var volunteerWindow = new Volunteer.VolunteerMainWindow(_bl.Volunteer.GetVolunteerDetails(id));
+                    volunteerWindow.Show();
+                }
+
+                // נקה שדות לאחר התחברות מוצלחת
+                VolunteerId = string.Empty;
+                Password = string.Empty;
             }
             catch (FormatException)
             {
-                MessageBox.Show("Invalid ID format. Please enter digits only.", "Login Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("מספר מזהה שגוי. יש להזין ספרות בלבד.", "שגיאת התחברות", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (BlDoesNotExistException)
             {
-                MessageBox.Show("Volunteer not found.", "Login Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("המתנדב לא נמצא.", "שגיאת התחברות", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (BlInvalidValueException)
             {
-                MessageBox.Show("Incorrect password.", "Login Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("סיסמה שגויה.", "שגיאת התחברות", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Login failed.\n\n" + ex.Message, "Login Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("התחברות נכשלה.\n\n" + ex.Message, "שגיאת התחברות", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

@@ -266,19 +266,31 @@ internal class CallImplementation : ICall
             var volunteer = _dal.Volunteer.Read(volunteerId)
                             ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does not exist.");
 
+            double? maxDistance = volunteer.MaxDistance;
+
             var calls = _dal.Call.ReadAll()
                 .Where(c => CallManager.DetermineCallStatus(c.Id) == 0 || CallManager.DetermineCallStatus(c.Id) == 5)
                 .Where(c => callType == null || (BO.CallType)c.CallType == callType)
-                .Select(c => new BO.OpenCallInList
+                .Select(c =>
                 {
-                    Id = c.Id,
-                    CallType = (BO.CallType)c.CallType,
-                    VerbalDescription = c.VerbalDescription,
-                    Address = c.Address,
-                    OpeningTime = c.OpeningTime,
-                    MaximumTime = c.MaximumTime,
-                    DistanceFromVolunteer = CallManager.CalculateDistance(volunteer, c.Address)
+                    double distance = CallManager.CalculateDistance(volunteer, c.Address);
+                    return new BO.OpenCallInList
+                    {
+                        Id = c.Id,
+                        CallType = (BO.CallType)c.CallType,
+                        VerbalDescription = c.VerbalDescription,
+                        Address = c.Address,
+                        OpeningTime = c.OpeningTime,
+                        MaximumTime = c.MaximumTime,
+                        DistanceFromVolunteer = distance
+                    };
                 });
+
+            // סינון לפי מרחק אם מוגדר
+            if (maxDistance != null)
+            {
+                calls = calls.Where(c => c.DistanceFromVolunteer <= maxDistance.Value);
+            }
 
             return sortBy.HasValue
                 ? calls.OrderBy(c => c.GetType().GetProperty(sortBy.ToString())?.GetValue(c))
@@ -289,12 +301,13 @@ internal class CallImplementation : ICall
             throw new BO.BlException("Failed to retrieve open calls for volunteer.", ex);
         }
     }
+
     /// <summary>
     /// Closes a call by marking the assignment as completed.
     /// </summary>
     /// <param name="volunteerId">The ID of the volunteer closing the call.</param>
     /// <param name="assignmentId">The ID of the assignment to be closed.</param>
-    
+
     public void CloseCall(int volunteerId, int assignmentId)
     {
         try

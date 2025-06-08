@@ -104,7 +104,9 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             // Validate volunteer details
-            VolunteerManager.ValidateVolunteer(boVolunteer);
+
+            VolunteerManager.ValidateVolunteer(boVolunteer, isPartial: true);
+
 
             var doVolunteer = new DO.Volunteer
             {
@@ -216,6 +218,14 @@ internal class VolunteerImplementation : IVolunteer
             if (hasCalls)
                 throw new BO.BlDeletionImpossibleException($"Cannot delete volunteer with ID={id} as they have associated assignments.");
 
+            // אם מנסים למחוק מתנדב שהוא ADMIN, נוודא שיש עוד אדמין אחר
+            if (volunteer.Jobs == DO.Jobs.Administrator)
+            {
+                int adminCount = _dal.Volunteer.ReadAll(v => v.Jobs == DO.Jobs.Administrator && v.Id != id).Count();
+                if (adminCount == 0)
+                    throw new BO.BlException("Cannot delete the only administrator in the system.");
+            }
+
             _dal.Volunteer.Delete(id);
             VolunteerManager.Observers.NotifyListUpdated(); //stage 5
         }
@@ -224,6 +234,7 @@ internal class VolunteerImplementation : IVolunteer
             throw new BO.BlException($"An error occurred while deleting volunteer with ID={id}.", ex);
         }
     }
+
 
     /// <summary>
     /// Updates an existing volunteer's details.
@@ -239,8 +250,30 @@ internal class VolunteerImplementation : IVolunteer
 
             if (requesterId != boVolunteer.Id && requester.Jobs != DO.Jobs.Administrator)
                 throw new BO.BlAuthorizationException($"Requester with ID={requesterId} is not authorized to update volunteer with ID={boVolunteer.Id}.");
-            
-            VolunteerManager.ValidateVolunteer(boVolunteer,requester.Password);
+
+            // אם מנסים להפוך את המתנדב ללא פעיל
+            if (boVolunteer.IsActive == false)
+            {
+                var activeAssignment = _dal.Assignment
+                    .ReadAll(a => a.VolunteerId == boVolunteer.Id && a.ActualEndTime == null)
+                    .FirstOrDefault();
+
+                if (activeAssignment != null)
+                    throw new BO.BlException($"Volunteer with ID={boVolunteer.Id} is currently assigned to an open call and cannot be deactivated.");
+            }
+
+            // אם משנים את התפקיד למתנדב מ־ADMIN ל־WORKER
+            var currentVolunteer = _dal.Volunteer.Read(boVolunteer.Id)
+                ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={boVolunteer.Id} does not exist.");
+
+            if (currentVolunteer.Jobs == DO.Jobs.Administrator && (DO.Jobs)boVolunteer.Jobs == DO.Jobs.Worker)
+            {
+                int adminCount = _dal.Volunteer.ReadAll(v => v.Jobs == DO.Jobs.Administrator && v.Id != boVolunteer.Id).Count();
+                if (adminCount == 0)
+                    throw new BO.BlException("Cannot remove administrator role because this is the only administrator.");
+            }
+
+            VolunteerManager.ValidateVolunteer(boVolunteer, isPartial: true,requester.Password);
 
             var doVolunteer = new DO.Volunteer
             {
@@ -267,6 +300,8 @@ internal class VolunteerImplementation : IVolunteer
             throw new BO.BlException($"An error occurred while updating volunteer with ID={boVolunteer.Id}.", ex);
         }
     }
+
+
 
 
     public IEnumerable<VolunteerInList> GetVolunteersFilterList(BO.CallType? callType)
