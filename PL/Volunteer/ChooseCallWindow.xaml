@@ -45,7 +45,6 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50" />
                 <DataGridTextColumn Header="סוג קריאה" Binding="{Binding CallType}" Width="120"/>
-                <DataGridTextColumn Header="תיאור" Binding="{Binding VerbalDescription}" Width="*"/>
                 <DataGridTextColumn Header="כתובת" Binding="{Binding Address}" Width="200"/>
                 <DataGridTextColumn Header="שעת פתיחה" Binding="{Binding OpeningTime}" Width="150"/>
                 <DataGridTextColumn Header="מרחק" Binding="{Binding DistanceFromVolunteer}" Width="80"/>

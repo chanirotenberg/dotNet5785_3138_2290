@@ -107,7 +107,7 @@
         Padding="5"
         Margin="15"
         Cursor="Hand"/>
-                <Button Content= "Handle Calls" Width="160"
+                <Button Content= "Handle Calls" Click="HandleCall_Click" Width="160"
         Height="40"
         Background="#3b6ea5"
         BorderBrush="#3b6ea5"

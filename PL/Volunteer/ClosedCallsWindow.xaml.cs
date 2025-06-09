@@ -1,21 +1,71 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using BlApi;
 using BO;
 
 namespace PL.Volunteer
 {
-    public partial class ClosedCallsWindow : Window
+    public partial class ClosedCallsWindow : Window, INotifyPropertyChanged
     {
-        public ObservableCollection<ClosedCallInList> ClosedCalls { get; set; }
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private readonly IBl _bl = Factory.Get();
+        private readonly int _volunteerId;
+
+        public Array CallTypes => Enum.GetValues(typeof(CallType));
+        public Array CallSortFields => Enum.GetValues(typeof(CallSortAndFilterField));
+
+        private ObservableCollection<ClosedCallInList> _closedCalls = new();
+        public ObservableCollection<ClosedCallInList> ClosedCalls
+        {
+            get => _closedCalls;
+            set { _closedCalls = value; OnPropertyChanged(nameof(ClosedCalls)); }
+        }
+
+        private CallType? _selectedCallType;
+        public CallType? SelectedCallType
+        {
+            get => _selectedCallType;
+            set { _selectedCallType = value; OnPropertyChanged(nameof(SelectedCallType)); RefreshClosedCalls(); }
+        }
+
+        private CallSortAndFilterField? _sortField;
+        public CallSortAndFilterField? SortField
+        {
+            get => _sortField;
+            set { _sortField = value; OnPropertyChanged(nameof(SortField)); RefreshClosedCalls(); }
+        }
 
         public ClosedCallsWindow(int volunteerId)
         {
             InitializeComponent();
-            var bl = Factory.Get();
-            var calls = bl.Call.GetClosedCallsByVolunteer(volunteerId);
-            ClosedCalls = new ObservableCollection<ClosedCallInList>(calls);
             DataContext = this;
+            _volunteerId = volunteerId;
+            RefreshClosedCalls();
         }
+
+        private void RefreshClosedCalls()
+        {
+            try
+            {
+                var result = _bl.Call.GetClosedCallsByVolunteer(_volunteerId, SelectedCallType, SortField);
+                ClosedCalls = new ObservableCollection<ClosedCallInList>(result);
+            }
+            catch (BlDoesNotExistException)
+            {
+                MessageBox.Show("לא נמצאו קריאות סגורות.", "אין נתונים", MessageBoxButton.OK, MessageBoxImage.Information);
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("שגיאה בטעינת קריאות סגורות:\n" + ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
+            }
+        }
+
+        private void OnPropertyChanged(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

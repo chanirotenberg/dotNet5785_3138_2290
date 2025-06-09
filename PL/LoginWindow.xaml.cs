@@ -57,7 +57,7 @@ namespace PL
                     }
 
                     _isAdminLoggedIn = true;
-                    var adminWindow = new MainWindow();
+                    var adminWindow = new MainWindow(_bl.Volunteer.GetVolunteerDetails(id));
                     adminWindow.Closed += (_, _) => _isAdminLoggedIn = false;
                     adminWindow.Show();
                 }
