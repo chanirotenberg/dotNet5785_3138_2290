@@ -80,7 +80,7 @@ namespace PL.Volunteer
             try
             {
                 var window = new ClosedCallsWindow(CurrentVolunteer.Id);
-                window.ShowDialog();
+                window.Show();
             }
             catch (Exception ex)
             {
@@ -93,7 +93,7 @@ namespace PL.Volunteer
         {
             try
             {          
-                new ChooseCallWindow(CurrentVolunteer.Id).ShowDialog();
+                new ChooseCallWindow(CurrentVolunteer.Id).Show();
                 RefreshVolunteer();
             }
             catch (Exception ex)

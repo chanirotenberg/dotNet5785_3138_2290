@@ -77,12 +77,26 @@ namespace PL.Manager
         private void AddCall_Click(object sender, RoutedEventArgs e)
         {
             var win = new AddOrUpdateCallWindow();
-            win.ShowDialog();
+            win.Show();
             LoadCalls();
         }
 
         private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if ((e.OriginalSource as FrameworkElement)?.DataContext is CallInList selectedCall)
+            {
+                try
+                {
+                    var updateWindow = new AddOrUpdateCallWindow(selectedCall.CallId);
+                    updateWindow.Show();      
+                    // הרשימה תתעדכן דרך Observer
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("אירעה שגיאה בעת פתיחת מסך עדכון קריאה.\n\n" + ex.Message,
+                        "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
             // נשאר ללא שינוי כי אין גישה לפריט כרגע – משמש להמשך הרחבה
         }
 
