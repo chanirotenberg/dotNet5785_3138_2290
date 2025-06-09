@@ -13,5 +13,6 @@
         <local:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
         <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <local:BoolToAddOrUpdateConverter x:Key="BoolToAddOrUpdateConverter"/>
     </Application.Resources>
 </Application>

@@ -6,44 +6,30 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Filters -->
             <RowDefinition Height="Auto"/>
-            <!-- Address update -->
             <RowDefinition Height="*"/>
-            <!-- Calls grid -->
             <RowDefinition Height="Auto"/>
-            <!-- Call details -->
         </Grid.RowDefinitions>
 
-        <!-- סינון ומיון -->
+        <!-- Filters -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 0 10" Grid.Row="0">
             <TextBlock Text="סוג קריאה:" Margin="0 0 10 0" VerticalAlignment="Center"/>
-            <ComboBox ItemsSource="{Binding CallTypes}"
-                      SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"
-                      Width="150" Margin="0 0 20 0"/>
-
+            <ComboBox ItemsSource="{Binding CallTypes}" SelectedItem="{Binding SelectedCallType, Mode=TwoWay}" Width="150" Margin="0 0 20 0"/>
             <TextBlock Text="מיון לפי:" Margin="0 0 10 0" VerticalAlignment="Center"/>
-            <ComboBox ItemsSource="{Binding CallSortFields}"
-                      SelectedItem="{Binding SortField, Mode=TwoWay}"
-                      Width="150"/>
+            <ComboBox ItemsSource="{Binding CallSortFields}" SelectedItem="{Binding SortField, Mode=TwoWay}" Width="150"/>
         </StackPanel>
 
-        <!-- עדכון כתובת -->
+        <!-- Address update -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 0 10" Grid.Row="1">
             <TextBlock Text="כתובת נוכחית:" VerticalAlignment="Center" Margin="0 0 10 0"/>
-            <TextBox Text="{Binding VolunteerAddress, UpdateSourceTrigger=PropertyChanged}" Width="400" />
-            <Button Content="עדכן כתובת" Margin="10 0 0 0" Padding="10 5"
-                    Click="UpdateAddressButton_Click"/>
+            <TextBox Text="{Binding VolunteerAddress, UpdateSourceTrigger=PropertyChanged}" Width="400"/>
+            <Button Content="עדכן כתובת" Margin="10 0 0 0" Padding="10 5" Click="UpdateAddressButton_Click"/>
         </StackPanel>
 
-        <!-- טבלת קריאות פתוחות -->
-        <DataGrid ItemsSource="{Binding OpenCalls}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  SelectedItem="{Binding SelectedCall, Mode=TwoWay}"
-                  Grid.Row="2">
+        <!-- Calls grid -->
+        <DataGrid ItemsSource="{Binding OpenCalls}" AutoGenerateColumns="False" IsReadOnly="True" SelectedItem="{Binding SelectedCall, Mode=TwoWay}" Grid.Row="2">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50" />
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                 <DataGridTextColumn Header="סוג קריאה" Binding="{Binding CallType}" Width="120"/>
                 <DataGridTextColumn Header="כתובת" Binding="{Binding Address}" Width="200"/>
                 <DataGridTextColumn Header="שעת פתיחה" Binding="{Binding OpeningTime}" Width="150"/>
@@ -51,17 +37,14 @@
                 <DataGridTemplateColumn Header="בחר" Width="80">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="בחר"
-                                    Command="{Binding DataContext.AssignCallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                    CommandParameter="{Binding}"/>
+                            <Button Content="בחר" Click="AssignCall_Click"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- פירוט קריאה נבחרת -->
-        <TextBlock Grid.Row="3" Margin="0 10 0 0" TextWrapping="Wrap"
-                   Text="{Binding SelectedCall.VerbalDescription}" FontSize="14" />
+        <!-- Selected call description -->
+        <TextBlock Grid.Row="3" Margin="0 10 0 0" TextWrapping="Wrap" Text="{Binding SelectedCall.VerbalDescription}" FontSize="14"/>
     </Grid>
 </Window>

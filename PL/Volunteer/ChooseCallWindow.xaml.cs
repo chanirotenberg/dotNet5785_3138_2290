@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Input;
 using BlApi;
 using BO;
 
@@ -43,36 +42,21 @@ namespace PL.Volunteer
         public CallType? SelectedCallType
         {
             get => _selectedCallType;
-            set
-            {
-                _selectedCallType = value;
-                OnPropertyChanged(nameof(SelectedCallType));
-                RefreshOpenCalls();
-            }
+            set { _selectedCallType = value; OnPropertyChanged(nameof(SelectedCallType)); RefreshOpenCalls(); }
         }
 
         private CallSortAndFilterField? _sortField;
         public CallSortAndFilterField? SortField
         {
             get => _sortField;
-            set
-            {
-                _sortField = value;
-                OnPropertyChanged(nameof(SortField));
-                RefreshOpenCalls();
-            }
+            set { _sortField = value; OnPropertyChanged(nameof(SortField)); RefreshOpenCalls(); }
         }
-
-        public ICommand AssignCallCommand { get; }
 
         public ChooseCallWindow(int volunteerId)
         {
             InitializeComponent();
             _volunteerId = volunteerId;
             DataContext = this;
-
-            AssignCallCommand = new RelayCommand<OpenCallInList>(AssignCall);
-
             LoadVolunteerAddress();
             RefreshOpenCalls();
         }
@@ -99,111 +83,50 @@ namespace PL.Volunteer
             }
             catch (Exception ex)
             {
-                MessageBox.Show("אירעה שגיאה בעת טעינת הקריאות: " + ex.Message,
-                                "שגיאה בטעינת נתונים",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
+                MessageBox.Show("אירעה שגיאה בעת טעינת הקריאות: " + ex.Message, "שגיאה בטעינת נתונים", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
             }
         }
 
-        private async void UpdateAddressButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateAddressButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // עדכון הכתובת במערכת
                 var volunteer = _bl.Volunteer.GetVolunteerDetails(_volunteerId);
                 volunteer.Address = VolunteerAddress;
-
-                // כאן אפשר להוסיף חישוב קואורדינטות לפי הכתובת (אם יש לך שירות גיאוקוד)
-                // var coords = geocodingService.GetCoordinates(VolunteerAddress);
-                // volunteer.Latitude = coords.Latitude;
-                // volunteer.Longitude = coords.Longitude;
-
-                _bl.Volunteer.UpdateVolunteer(volunteer.Id,volunteer);
-
-                MessageBox.Show("כתובת עודכנה בהצלחה.",
-                                "הצלחה",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Information);
-
-                RefreshOpenCalls(); // רענון הקריאות בהתאם לכתובת החדשה
+                _bl.Volunteer.UpdateVolunteer(volunteer.Id, volunteer);
+                MessageBox.Show("כתובת עודכנה בהצלחה.", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
+                RefreshOpenCalls();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("שגיאה בעדכון הכתובת: " + ex.Message,
-                                "שגיאה",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
+                MessageBox.Show("שגיאה בעדכון הכתובת: " + ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void AssignCall(OpenCallInList call)
+        private void AssignCall_Click(object sender, RoutedEventArgs e)
         {
-            if (call == null) return;
-
+            if (SelectedCall == null) return;
             try
             {
-                _bl.Call.AssignCallToVolunteer(_volunteerId, call.Id);
-
-                MessageBox.Show("הקריאה שויכה בהצלחה.",
-                                "שיבוץ הצליח",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Information);
-
+                _bl.Call.AssignCallToVolunteer(_volunteerId, SelectedCall.Id);
+                MessageBox.Show("הקריאה שויכה בהצלחה.", "שיבוץ הצליח", MessageBoxButton.OK, MessageBoxImage.Information);
                 Close();
             }
             catch (BlDoesNotExistException)
             {
-                MessageBox.Show("הקריאה שבחרת כבר אינה זמינה.",
-                                "שגיאה בשיבוץ",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Warning);
+                MessageBox.Show("הקריאה שבחרת כבר אינה זמינה.", "שגיאה בשיבוץ", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (BlInvalidValueException)
             {
-                MessageBox.Show("לא ניתן לשבץ את הקריאה למתנדב.",
-                                "שיבוץ לא חוקי",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Warning);
+                MessageBox.Show("לא ניתן לשבץ את הקריאה למתנדב.", "שיבוץ לא חוקי", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("אירעה שגיאה בשיבוץ הקריאה:\n" + ex.Message,
-                                "שגיאת מערכת",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
+                MessageBox.Show("אירעה שגיאה בשיבוץ הקריאה:\n" + ex.Message, "שגיאת מערכת", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void OnPropertyChanged(string propertyName)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    // מחלקת עזר לפקודות
-    public class RelayCommand<T> : ICommand
-    {
-        private readonly Action<T> _execute;
-        private readonly Predicate<T>? _canExecute;
-
-        public RelayCommand(Action<T> execute, Predicate<T>? canExecute = null)
-        {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = canExecute;
-        }
-
-        public bool CanExecute(object? parameter) => _canExecute == null || _canExecute((T)parameter!);
-
-        public void Execute(object? parameter)
-        {
-            if (parameter is T param)
-                _execute(param);
-        }
-
-        public event EventHandler? CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
+        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -1,27 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using BlApi;
+using BO;
 
 namespace PL
 {
-    /// <summary>
-    /// Interaction logic for AddOrUpdateCallWindow.xaml
-    /// </summary>
     public partial class AddOrUpdateCallWindow : Window
     {
-        public AddOrUpdateCallWindow()
+        private readonly IBl _bl = Factory.Get();
+        public Call CurrentCall { get; private set; }
+        public List<CallType> CallTypes => new List<CallType>((CallType[])Enum.GetValues(typeof(CallType)));
+        public bool IsNewCall { get; private set; }
+        public bool CanEditAll => IsNewCall || (CurrentCall.Status == CallStatus.Open || CurrentCall.Status == CallStatus.OpenInRisk);
+        public bool CanEditMaxOnly => CanEditAll || (CurrentCall.Status == CallStatus.InTreatment || CurrentCall.Status == CallStatus.InRiskTreatment);
+        public Visibility AssignmentsVisibility => (CurrentCall?.Assignments?.Count ?? 0) > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+        public AddOrUpdateCallWindow(int? callId = null)
         {
             InitializeComponent();
+
+            if (callId == null)
+            {
+                IsNewCall = true;
+                CurrentCall = new Call
+                {
+
+                    OpeningTime = DateTime.Now,
+                    Assignments = new List<CallAssignInList>()
+                };
+            }
+            else
+            {
+                IsNewCall = false;
+                try
+                {
+                    CurrentCall = _bl.Call.GetCallDetails(callId.Value);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"שגיאה בטעינת קריאה: {ex.Message}");
+                    this.Close();
+                    return;
+                }
+            }
+
+            this.DataContext = this;
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (IsNewCall)
+                {
+                    _bl.Call.AddCall(CurrentCall);
+                    MessageBox.Show("הקריאה נוספה בהצלחה");
+                }
+                else
+                {
+                    _bl.Call.UpdateCall(CurrentCall);
+                    MessageBox.Show("הקריאה עודכנה בהצלחה");
+                }
+
+                this.DialogResult = true;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"שגיאה בשמירה: {ex.Message}");
+            }
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

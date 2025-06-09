@@ -53,9 +53,9 @@ namespace Helpers
                         return 3; // Expired
                     if(latestAssignment.EndType == DO.EndType.Cared)
                     {
-                        return 2;
+                        return 2;// Closed (handled or canceled)
                     }
-                    return 0; // Closed (handled or canceled)
+                    return 0; //open
                 }
             }
 

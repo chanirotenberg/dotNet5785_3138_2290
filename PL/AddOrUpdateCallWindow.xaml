@@ -1,12 +1,58 @@
 ﻿<Window x:Class="PL.AddOrUpdateCallWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PL"
-        mc:Ignorable="d"
-        Title="AddOrUpdateCallWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="ניהול קריאה" Height="550" Width="450"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="סוג קריאה:"/>
+            <ComboBox ItemsSource="{Binding CallTypes}" SelectedItem="{Binding CurrentCall.CallType, Mode=TwoWay}" 
+                      IsEnabled="{Binding CanEditAll}" />
+
+            <TextBlock Text="כתובת:" Margin="0,10,0,0"/>
+            <TextBox Text="{Binding CurrentCall.Address, Mode=TwoWay}" IsEnabled="{Binding CanEditAll}" />
+
+            <TextBlock Text="תיאור:" Margin="0,10,0,0"/>
+            <TextBox Text="{Binding CurrentCall.VerbalDescription, Mode=TwoWay}" IsEnabled="{Binding CanEditAll}" 
+                     AcceptsReturn="True" Height="60" />
+
+            <TextBlock Text="זמן פתיחה:" Margin="0,10,0,0"/>
+            <TextBlock Text="{Binding CurrentCall.OpeningTime, Mode=TwoWay}" />
+
+            <TextBlock Text="זמן מקסימלי לסיום:" Margin="0,10,0,0"/>
+            <DatePicker SelectedDate="{Binding CurrentCall.MaximumTime, Mode=TwoWay}" 
+                        IsEnabled="{Binding CanEditMaxOnly}" />
+
+            <TextBlock Text="סטטוס:" Margin="0,10,0,0"/>
+            <TextBlock Text="{Binding CurrentCall.Status}" />
+        </StackPanel>
+
+        <!-- הקצאות -->
+        <GroupBox Header="הקצאות קיימות" Grid.Row="1" Margin="0,10,0,10"
+                  Visibility="{Binding AssignmentsVisibility}">
+            <ListView ItemsSource="{Binding CurrentCall.Assignments}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="מתנדב" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="שעת כניסה" DisplayMemberBinding="{Binding EntryTime}" />
+                        <GridViewColumn Header="סיום בפועל" DisplayMemberBinding="{Binding EndTime}" />
+                        <GridViewColumn Header="סיבת סיום" DisplayMemberBinding="{Binding EndType}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
+
+        <!-- כפתורים -->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button Content="{Binding IsNewCall, Converter={StaticResource BoolToAddOrUpdateConverter}}" 
+                    Click="Save_Click" Width="100" Margin="5"/>
+            <Button Content="סגור" Click="Close_Click" Width="100" Margin="5"/>
+        </StackPanel>
     </Grid>
 </Window>
