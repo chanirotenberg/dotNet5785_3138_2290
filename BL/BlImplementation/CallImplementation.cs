@@ -1,6 +1,7 @@
 ﻿namespace BlImplementation;
 using BlApi;
 using BO;
+using DO;
 using Helpers;
 using System;
 using System.Collections.Generic;
@@ -194,7 +195,7 @@ internal class CallImplementation : ICall
 
             var doCall = new DO.Call
             {
-                Id =call.Id,
+                Id = call.Id,
                 CallType = (DO.CallType)call.CallType,
                 VerbalDescription = call.VerbalDescription,
                 Address = call.Address,
@@ -328,12 +329,18 @@ internal class CallImplementation : ICall
             };
 
             _dal.Assignment.Update(assignment);
+
+            // 🔔 עדכון המשקיפים:
+            VolunteerManager.Observers.NotifyItemUpdated(assignment.VolunteerId);
+            CallManager.Observers.NotifyItemUpdated(volunteerId);
+            CallManager.Observers.NotifyListUpdated();
         }
         catch (Exception ex)
         {
             throw new BO.BlException("Failed to close the call.", ex);
         }
     }
+
 
     /// <summary>
     /// Cancels an assignment for a call.
@@ -352,7 +359,7 @@ internal class CallImplementation : ICall
 
             var isRequesterAuthorized =
                 assignment.VolunteerId == requesterId ||
-                 _dal.Volunteer.Read(requesterId)?.Jobs == DO.Jobs.Administrator;
+                _dal.Volunteer.Read(requesterId)?.Jobs == DO.Jobs.Administrator;
 
             if (!isRequesterAuthorized)
                 throw new BO.BlAuthorizationException($"Requester with ID={requesterId} is not authorized to cancel this call.");
@@ -365,7 +372,11 @@ internal class CallImplementation : ICall
 
             _dal.Assignment.Update(assignment);
 
-            // If cancellation is done by an administrator, send an email notification
+            // 🔔 עדכון המשקיפים:
+            VolunteerManager.Observers.NotifyItemUpdated(assignment.VolunteerId);
+            CallManager.Observers.NotifyItemUpdated(assignment.VolunteerId);
+            CallManager.Observers.NotifyListUpdated();
+
             if (assignment.EndType == DO.EndType.AdministratorCancellation)
             {
                 var volunteer = _dal.Volunteer.Read(assignment.VolunteerId)
@@ -386,6 +397,7 @@ internal class CallImplementation : ICall
             throw new BO.BlException("Failed to cancel the call.", ex);
         }
     }
+
 
 
     /// <summary>
@@ -420,6 +432,7 @@ internal class CallImplementation : ICall
 
             _dal.Assignment.Create(assignment);
             CallManager.Observers.NotifyItemUpdated(volunteerId);
+            VolunteerManager.Observers.NotifyItemUpdated(volunteerId); // ← תוסיפי את זה
         }
         catch (Exception ex)
         {

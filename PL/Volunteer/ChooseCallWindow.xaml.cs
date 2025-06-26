@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Windows;
 using BlApi;
 using BO;
+using PL.Admin;
+using PL.Volunteer;
 
 namespace PL.Volunteer
 {
@@ -11,6 +13,7 @@ namespace PL.Volunteer
     {
         private readonly IBl _bl = Factory.Get();
         private readonly int _volunteerId;
+        private Action? callListObserver;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -59,6 +62,16 @@ namespace PL.Volunteer
             DataContext = this;
             LoadVolunteerAddress();
             RefreshOpenCalls();
+
+            // הרשמה למשקיף על קריאות
+            callListObserver = RefreshOpenCalls;
+            _bl.Call.AddObserver(callListObserver);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if (callListObserver is not null)
+                _bl.Call.RemoveObserver(callListObserver);
         }
 
         private void LoadVolunteerAddress()
@@ -76,6 +89,7 @@ namespace PL.Volunteer
 
         private void RefreshOpenCalls()
         {
+            System.Diagnostics.Debug.WriteLine($"[DEBUG] RefreshOpenCalls() triggered");
             try
             {
                 var result = _bl.Call.GetOpenCallsForVolunteer(_volunteerId, SelectedCallType, SortField);
@@ -127,6 +141,7 @@ namespace PL.Volunteer
             }
         }
 
-        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

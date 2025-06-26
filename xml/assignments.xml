@@ -340,8 +340,16 @@
     <CallId>1012</CallId>
     <VolunteerId>327842290</VolunteerId>
     <EntryTime>2025-06-09T02:20:57</EntryTime>
+    <ActualEndTime>2025-06-09T02:20:57</ActualEndTime>
+    <EndType>Cared</EndType>
+    <Id>1042</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1047</CallId>
+    <VolunteerId>327842290</VolunteerId>
+    <EntryTime>2025-06-09T02:20:57</EntryTime>
     <ActualEndTime xsi:nil="true" />
     <EndType xsi:nil="true" />
-    <Id>1042</Id>
+    <Id>1043</Id>
   </Assignment>
 </ArrayOfAssignment>

@@ -12,6 +12,8 @@ namespace PL.Volunteer
 
         private readonly IBl _bl = Factory.Get();
 
+        private readonly int volunteerId;
+
         private BO.Volunteer _currentVolunteer;
         public BO.Volunteer CurrentVolunteer
         {
@@ -23,36 +25,37 @@ namespace PL.Volunteer
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CallInProgress)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanChooseCall)));
             }
-
         }
 
         public CallInProgress? CallInProgress => CurrentVolunteer.CallInProgress;
         public bool CanChooseCall => CurrentVolunteer.IsActive && CurrentVolunteer.CallInProgress == null;
 
-
-        //public bool IsJobChangeAllowed => CurrentVolunteer.Jobs != Jobs.Administrator;
-
-
         public VolunteerMainWindow(BO.Volunteer volunteer)
         {
             InitializeComponent();
+            volunteerId = volunteer.Id;
             CurrentVolunteer = volunteer;
             UpdateMap();
             DataContext = this;
-            _bl.Volunteer.AddObserver(volunteer.Id, RefreshVolunteer);
+
+            // התחברות למשקיף
+            _bl.Volunteer.AddObserver(volunteerId, RefreshVolunteer);
         }
 
         private void RefreshVolunteer()
         {
-            CurrentVolunteer = _bl.Volunteer.GetVolunteerDetails(CurrentVolunteer.Id);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CallInProgress)));
-            UpdateMap();
+            Dispatcher.Invoke(() =>
+            {
+                CurrentVolunteer = _bl.Volunteer.GetVolunteerDetails(volunteerId);
+                DataContext = this;
+                UpdateMap();
+            });
         }
-
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            _bl.Volunteer.RemoveObserver(CurrentVolunteer.Id, RefreshVolunteer);
+            // התנתקות מהמשקיף
+            _bl.Volunteer.RemoveObserver(volunteerId, RefreshVolunteer);
         }
 
         private void UpdateVolunteer_Click(object sender, RoutedEventArgs e)
@@ -94,8 +97,7 @@ namespace PL.Volunteer
             try
             {
                 var window = new ChooseCallWindow(CurrentVolunteer.Id);
-                window.ShowDialog(); // מחכה לסגירה
-                RefreshVolunteer(); // מרענן אחרי שהמשתמש בחר ונסגר החלון
+                window.ShowDialog(); // אין צורך ב־Refresh כאן, observer כבר יעדכן
             }
             catch (Exception ex)
             {
@@ -112,7 +114,7 @@ namespace PL.Volunteer
                 {
                     _bl.Call.CloseCall(CurrentVolunteer.Id, CurrentVolunteer.CallInProgress.Id);
                     MessageBox.Show("הקריאה נסגרה בהצלחה!", "סיום קריאה", MessageBoxButton.OK, MessageBoxImage.Information);
-                    RefreshVolunteer();
+                    // לא צריך לקרוא ל־Refresh – observer יעדכן
                 }
             }
             catch (Exception ex)
@@ -130,7 +132,7 @@ namespace PL.Volunteer
                 {
                     _bl.Call.CancelCall(CurrentVolunteer.Id, CurrentVolunteer.CallInProgress.Id);
                     MessageBox.Show("הקריאה בוטלה בהצלחה.", "ביטול קריאה", MessageBoxButton.OK, MessageBoxImage.Information);
-                    RefreshVolunteer();
+                    // לא צריך לקרוא ל־Refresh – observer יעדכן
                 }
             }
             catch (Exception ex)
@@ -141,6 +143,7 @@ namespace PL.Volunteer
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e) => Close();
+
         private void UpdateMap()
         {
             double volunteerLat = (double)CurrentVolunteer.Latitude;
@@ -210,6 +213,5 @@ namespace PL.Volunteer
 
             MapBrowser.NavigateToString(mapHtml);
         }
-
     }
 }
