@@ -95,7 +95,7 @@ namespace PL.Volunteer
             {
                 var window = new ChooseCallWindow(CurrentVolunteer.Id);
                 window.ShowDialog(); // מחכה לסגירה
-                RefreshVolunteer();  // מרענן אחרי שהמשתמש בחר ונסגר החלון
+                RefreshVolunteer(); // מרענן אחרי שהמשתמש בחר ונסגר החלון
             }
             catch (Exception ex)
             {
