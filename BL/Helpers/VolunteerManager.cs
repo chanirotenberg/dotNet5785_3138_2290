@@ -36,20 +36,6 @@ internal static class VolunteerManager
             throw new BO.BlValidationException("Email is required.");
         }
 
-        // Password – אם קיים, נבדוק חוזק
-        //if (!string.IsNullOrWhiteSpace(volunteer.Password))
-        //{
-        //    if (volunteer.Password != oldPassword && !IsStrongPassword(volunteer.Password, oldPassword))
-        //        throw new BO.BlValidationException("Password must be at least 8 characters long, include uppercase, lowercase, number and special char.");
-
-        //    if (volunteer.Password != oldPassword)
-        //        volunteer.Password = EncryptPassword(volunteer.Password);
-        //}
-        //else
-        //{
-        //    throw new BO.BlValidationException("Password is required.");
-        //}
-
         if (volunteer.Password != oldPassword)
         {
             // Validate Password Strength

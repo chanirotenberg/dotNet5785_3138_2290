@@ -5,9 +5,8 @@ using System.Linq;
 using System.Windows;
 using BO;
 using BlApi;
-using System.Runtime.CompilerServices;
 
-namespace PL.Manager
+namespace PL.Admin
 {
     public partial class CallManagementWindow : Window, INotifyPropertyChanged
     {
@@ -63,7 +62,7 @@ namespace PL.Manager
                 Calls.Add(call);
         }
 
-        private void RefreshCalls() => Dispatcher.Invoke(LoadCalls);
+        private void RefreshCalls() => LoadCalls();
 
         private void Filter_Click(object sender, RoutedEventArgs e) => LoadCalls();
 

@@ -1,16 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfCall>
   <Call>
-    <Id>1000</Id>
-    <CallType>PickUp</CallType>
-    <VerbalDescription>Ride to the north, a stop for refueling along the way</VerbalDescription>
-    <Address>221B Baker Street, London, NW1 6XE, UK</Address>
-    <Latitude>48.8584</Latitude>
-    <Longitude>-73.9654</Longitude>
-    <OpeningTime>2025-06-08T12:21:57</OpeningTime>
-    <MaximumTime />
-  </Call>
-  <Call>
     <Id>1001</Id>
     <CallType>PickUp</CallType>
     <VerbalDescription>Airport ride, taxi needed at a specific time in the morning</VerbalDescription>
@@ -519,5 +509,15 @@
     <Longitude>5.6437768</Longitude>
     <OpeningTime>2025-06-09T18:45:29.4225638+03:00</OpeningTime>
     <MaximumTime>2025-06-17T00:00:00</MaximumTime>
+  </Call>
+  <Call>
+    <Id>1000</Id>
+    <CallType>Transport</CallType>
+    <VerbalDescription>Ride to the north, a stop for refuelasdfghjking alovvvvvvvvvvvvvng the way</VerbalDescription>
+    <Address>221B Baker Street, London, NW1 6XE, UK</Address>
+    <Latitude>51.523748049999995</Latitude>
+    <Longitude>-0.15856988165361335</Longitude>
+    <OpeningTime>2025-06-08T12:21:57</OpeningTime>
+    <MaximumTime />
   </Call>
 </ArrayOfCall>

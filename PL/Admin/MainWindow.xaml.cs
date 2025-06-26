@@ -1,7 +1,6 @@
 ﻿using BO;
-using PL.Manager;
-using PL.Volunteer;
-using PL.Volunteer.Admin;
+//using PL.Volunteer;
+//using PL.Admin;
 using System.ComponentModel;
 using System.Text;
 using System.Windows;
@@ -14,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PL
+namespace PL.Admin
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

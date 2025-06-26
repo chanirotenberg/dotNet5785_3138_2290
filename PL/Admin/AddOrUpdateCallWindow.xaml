@@ -1,8 +1,10 @@
-﻿<Window x:Class="PL.AddOrUpdateCallWindow"
+﻿<Window x:Class="PL.Admin.AddOrUpdateCallWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="ניהול קריאה" Height="550" Width="450"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

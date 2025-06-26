@@ -290,10 +290,14 @@ internal class VolunteerImplementation : IVolunteer
                 MaxDistance = boVolunteer.MaxDistance,
                 DistanceType = (DO.DistanceType)boVolunteer.DistanceType
             };
-
             _dal.Volunteer.Update(doVolunteer);
-            VolunteerManager.Observers.NotifyItemUpdated(doVolunteer.Id);  //stage 5
-            VolunteerManager.Observers.NotifyListUpdated();  //stage 5
+            VolunteerManager.Observers.NotifyItemUpdated(doVolunteer.Id);
+            System.Diagnostics.Debug.WriteLine($"[DEBUG] NotifyItemUpdated for ID={doVolunteer.Id}");
+            VolunteerManager.Observers.NotifyListUpdated();
+
+            //_dal.Volunteer.Update(doVolunteer);
+            //VolunteerManager.Observers.NotifyItemUpdated(doVolunteer.Id);  //stage 5
+            //VolunteerManager.Observers.NotifyListUpdated();  //stage 5
         }
         catch (Exception ex)
         {

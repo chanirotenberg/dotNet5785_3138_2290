@@ -71,20 +71,6 @@
     <DistanceType>AirDistance</DistanceType>
   </Volunteer>
   <Volunteer>
-    <Id>232282483</Id>
-    <Name>Emma Brown</Name>
-    <Phone>0505324305</Phone>
-    <Email>emmabrown@gmail.com</Email>
-    <Password>5cf78f4d10243dc2dd37642a2130e739671a45d4de9262c928cb82d583519586</Password>
-    <Address>Tokyo Tower, Tokyo, Japan</Address>
-    <Latitude>40.775</Latitude>
-    <Longitude>2.2945</Longitude>
-    <Jobs>Worker</Jobs>
-    <active>true</active>
-    <MaxDistance>13</MaxDistance>
-    <DistanceType>AirDistance</DistanceType>
-  </Volunteer>
-  <Volunteer>
     <Id>333310316</Id>
     <Name>James White</Name>
     <Phone>0501882256</Phone>
@@ -99,34 +85,6 @@
     <DistanceType>AirDistance</DistanceType>
   </Volunteer>
   <Volunteer>
-    <Id>247613631</Id>
-    <Name>Sophia Black</Name>
-    <Phone>0502800230</Phone>
-    <Email>sophiablack@gmail.com</Email>
-    <Password>04b2be7f138e397aec9208962397dcbc74bfa1193a2c17b7a4d2b43702a66703</Password>
-    <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
-    <Latitude>40.775</Latitude>
-    <Longitude>-122.0841</Longitude>
-    <Jobs>Worker</Jobs>
-    <active>true</active>
-    <MaxDistance>35</MaxDistance>
-    <DistanceType>AirDistance</DistanceType>
-  </Volunteer>
-  <Volunteer>
-    <Id>296906605</Id>
-    <Name>Benjamin Blue</Name>
-    <Phone>0505323598</Phone>
-    <Email>benjaminblue@gmail.com</Email>
-    <Password>fce98c5157e3f6388f598b72429737e7621047d60e1c562066c45badcb8b4f0a</Password>
-    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
-    <Latitude>52.5163</Latitude>
-    <Longitude>2.1744</Longitude>
-    <Jobs>Worker</Jobs>
-    <active>true</active>
-    <MaxDistance>28</MaxDistance>
-    <DistanceType>AirDistance</DistanceType>
-  </Volunteer>
-  <Volunteer>
     <Id>351330568</Id>
     <Name>Olivia Silver</Name>
     <Phone>0503461677</Phone>
@@ -138,20 +96,6 @@
     <Jobs>Worker</Jobs>
     <active>true</active>
     <MaxDistance>48</MaxDistance>
-    <DistanceType>AirDistance</DistanceType>
-  </Volunteer>
-  <Volunteer>
-    <Id>293642245</Id>
-    <Name>Noah Gray</Name>
-    <Phone>0506895977</Phone>
-    <Email>noahgray@gmail.com</Email>
-    <Password>2b2846644b9a897d56f5055e75f0612a538e0dd45a0728793b55319419d88827</Password>
-    <Address>Taj Mahal, Agra, India</Address>
-    <Latitude>37.422</Latitude>
-    <Longitude>13.3777</Longitude>
-    <Jobs>Worker</Jobs>
-    <active>true</active>
-    <MaxDistance>35</MaxDistance>
     <DistanceType>AirDistance</DistanceType>
   </Volunteer>
   <Volunteer>
@@ -236,6 +180,62 @@
     <Jobs>Worker</Jobs>
     <active>true</active>
     <MaxDistance xsi:nil="true" />
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>293642245</Id>
+    <Name>Noah Gray</Name>
+    <Phone>1234567890</Phone>
+    <Email>noahgray@gmail.com</Email>
+    <Password>2b2846644b9a897d56f5055e75f0612a538e0dd45a0728793b55319419d88827</Password>
+    <Address>Taj Mahal, Agra, India</Address>
+    <Latitude>27.1750075</Latitude>
+    <Longitude>78.04210126365584</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>35</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>232282483</Id>
+    <Name>Emma Brown</Name>
+    <Phone>0987654321</Phone>
+    <Email>emmabrown@gmail.com</Email>
+    <Password>5cf78f4d10243dc2dd37642a2130e739671a45d4de9262c928cb82d583519586</Password>
+    <Address>Tokyo Tower, Tokyo, Japan</Address>
+    <Latitude>35.65928</Latitude>
+    <Longitude>139.744767</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>13</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>296906605</Id>
+    <Name>Benjamin Blue</Name>
+    <Phone>1234567890</Phone>
+    <Email>benjaminblue@gmail.com</Email>
+    <Password>fce98c5157e3f6388f598b72429737e7621047d60e1c562066c45badcb8b4f0a</Password>
+    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
+    <Latitude>37.4217636</Latitude>
+    <Longitude>-122.084614</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>false</active>
+    <MaxDistance>28</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>247613631</Id>
+    <Name>Sophia Blackbbb</Name>
+    <Phone>1234567890</Phone>
+    <Email>sophiablack@gmail.com</Email>
+    <Password>04b2be7f138e397aec9208962397dcbc74bfa1193a2c17b7a4d2b43702a66703</Password>
+    <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
+    <Latitude>31.962879</Latitude>
+    <Longitude>34.82372</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>false</active>
+    <MaxDistance>35</MaxDistance>
     <DistanceType>AirDistance</DistanceType>
   </Volunteer>
 </ArrayOfVolunteer>

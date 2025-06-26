@@ -4,6 +4,7 @@ using System.Windows;
 using BlApi;
 using BO;
 
+
 namespace PL
 {
     public partial class LoginWindow : Window, INotifyPropertyChanged
@@ -57,7 +58,7 @@ namespace PL
                     }
 
                     _isAdminLoggedIn = true;
-                    var adminWindow = new MainWindow(_bl.Volunteer.GetVolunteerDetails(id));
+                    var adminWindow = new Admin.MainWindow(_bl.Volunteer.GetVolunteerDetails(id));
                     adminWindow.Closed += (_, _) => _isAdminLoggedIn = false;
                     adminWindow.Show();
                 }
