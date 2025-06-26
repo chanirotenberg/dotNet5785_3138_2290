@@ -92,9 +92,10 @@ namespace PL.Volunteer
         private void ViewOpenCalls_Click(object sender, RoutedEventArgs e)
         {
             try
-            {          
-                new ChooseCallWindow(CurrentVolunteer.Id).Show();
-                RefreshVolunteer();
+            {
+                var window = new ChooseCallWindow(CurrentVolunteer.Id);
+                window.ShowDialog(); // מחכה לסגירה
+                RefreshVolunteer();  // מרענן אחרי שהמשתמש בחר ונסגר החלון
             }
             catch (Exception ex)
             {
