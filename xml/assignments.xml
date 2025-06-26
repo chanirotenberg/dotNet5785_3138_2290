@@ -320,4 +320,28 @@
     <EndType>Cared</EndType>
     <Id>1039</Id>
   </Assignment>
+  <Assignment>
+    <CallId>1022</CallId>
+    <VolunteerId>327842290</VolunteerId>
+    <EntryTime>2025-06-09T02:20:57</EntryTime>
+    <ActualEndTime>2025-06-09T02:20:57</ActualEndTime>
+    <EndType>SelfCancellation</EndType>
+    <Id>1040</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1002</CallId>
+    <VolunteerId>327842290</VolunteerId>
+    <EntryTime>2025-06-09T02:20:57</EntryTime>
+    <ActualEndTime>2025-06-09T02:20:57</ActualEndTime>
+    <EndType>Cared</EndType>
+    <Id>1041</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1012</CallId>
+    <VolunteerId>327842290</VolunteerId>
+    <EntryTime>2025-06-09T02:20:57</EntryTime>
+    <ActualEndTime xsi:nil="true" />
+    <EndType xsi:nil="true" />
+    <Id>1042</Id>
+  </Assignment>
 </ArrayOfAssignment>
