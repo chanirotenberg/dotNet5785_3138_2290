@@ -32,7 +32,6 @@ namespace PL
             set { _isPasswordHidden = value; OnPropertyChanged(nameof(IsPasswordHidden)); }
         }
 
-        // שדה סטטי כדי לעקוב אם מנהל כבר מחובר
         private static bool _isAdminLoggedIn = false;
 
         public LoginWindow()
