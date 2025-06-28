@@ -432,6 +432,7 @@ internal class CallImplementation : ICall
 
             _dal.Assignment.Create(assignment);
             CallManager.Observers.NotifyItemUpdated(volunteerId);
+            CallManager.Observers.NotifyListUpdated(); // ← זה מה שהיה חסר
             VolunteerManager.Observers.NotifyItemUpdated(volunteerId); // ← תוסיפי את זה
         }
         catch (Exception ex)

@@ -89,11 +89,14 @@ namespace PL.Volunteer
 
         private void RefreshOpenCalls()
         {
-            System.Diagnostics.Debug.WriteLine($"[DEBUG] RefreshOpenCalls() triggered");
             try
             {
                 var result = _bl.Call.GetOpenCallsForVolunteer(_volunteerId, SelectedCallType, SortField);
-                OpenCalls = new ObservableCollection<OpenCallInList>(result);
+
+                // לא מחליפים את כל האוסף, אלא מרוקנים ומוסיפים מחדש
+                OpenCalls.Clear();
+                foreach (var call in result)
+                    OpenCalls.Add(call);
             }
             catch (Exception ex)
             {
@@ -101,6 +104,7 @@ namespace PL.Volunteer
                 Close();
             }
         }
+
 
         private void UpdateAddressButton_Click(object sender, RoutedEventArgs e)
         {

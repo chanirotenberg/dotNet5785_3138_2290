@@ -97,7 +97,7 @@ namespace PL.Volunteer
             try
             {
                 var window = new ChooseCallWindow(CurrentVolunteer.Id);
-                window.ShowDialog(); // אין צורך ב־Refresh כאן, observer כבר יעדכן
+                window.Show(); // אין צורך ב־Refresh כאן, observer כבר יעדכן
             }
             catch (Exception ex)
             {
