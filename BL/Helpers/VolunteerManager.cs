@@ -46,8 +46,8 @@ internal static class VolunteerManager
         }
 
             // ID – תמיד חובה
-            if (!IsValidIsraeliId(volunteer.Id))
-            throw new BO.BlValidationException("Invalid Israeli ID.");
+        if (!IsValidIsraeliId(volunteer.Id))
+            throw new BO.BlValidationException("Invalid ID.");
 
         // Phone – אם קיים, נבדוק תקינות
         if (!string.IsNullOrWhiteSpace(volunteer.Phone))
@@ -132,7 +132,10 @@ internal static class VolunteerManager
     /// <returns>True if the ID is valid, otherwise false.</returns>
     private static bool IsValidIsraeliId(int id)
     {
-        var idStr = id.ToString("D9"); // Pad to 9 digits
+        
+        var idStr = id.ToString("D9");
+        if (idStr.Length < 9)
+            return false;// Pad to 9 digits
         int sum = 0;
         for (int i = 0; i < idStr.Length; i++)
         {

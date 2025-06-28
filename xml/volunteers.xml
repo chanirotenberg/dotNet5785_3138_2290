@@ -1,255 +1,266 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfVolunteer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<Volunteer>
-		<Id>208165613</Id>
-		<Name>David Cohen</Name>
-		<Phone>0505101388</Phone>
-		<Email>davidcohen@gmail.com</Email>
-		<Password>7c01e42693e363d832692477825cf027aa3badf8e8bd749af8b6b8e4945174e7</Password>
-		<Address>Sydney Opera House, Sydney, Australia</Address>
-		<Latitude>37.422</Latitude>
-		<Longitude>2.1744</Longitude>
-		<Jobs>Administrator</Jobs>
-		<active>true</active>
-		<MaxDistance>24</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>317711745</Id>
-		<Name>Sarah Levi</Name>
-		<Phone>0508135523</Phone>
-		<Email>sarahlevi@gmail.com</Email>
-		<Password>1789b8200fed33b282891f1ef148f8946ee58a8b7519bc50f84904368ecb4e01</Password>
-		<Address>Taj Mahal, Agra, India</Address>
-		<Latitude>-33.8568</Latitude>
-		<Longitude>13.3777</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance>45</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>294364757</Id>
-		<Name>Michael Ben-David</Name>
-		<Phone>0504389353</Phone>
-		<Email>michaelben-david@gmail.com</Email>
-		<Password>8e64659ba5822b47a20c8404628f314e9365530625d0e2f7fc4be59634a85a12</Password>
-		<Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
-		<Latitude>27.1751</Latitude>
-		<Longitude>-122.0841</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance>12</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>340155555</Id>
-		<Name>Rachel Gold</Name>
-		<Phone>0502894122</Phone>
-		<Email>rachelgold@gmail.com</Email>
-		<Password>a89c8a6d0ae8c3fe03f0916a25f19b12e29719497f58b44e6aa0ded83d1d9963</Password>
-		<Address>5th Avenue, New York, NY, USA</Address>
-		<Latitude>48.8584</Latitude>
-		<Longitude>2.2945</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance>21</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>301970612</Id>
-		<Name>Daniel Green</Name>
-		<Phone>0501029026</Phone>
-		<Email>danielgreen@gmail.com</Email>
-		<Password>0856fd88a3c8190875429b162cc06c43df24107131a9d63c10ad620d0ed3e0b9</Password>
-		<Address>221B Baker Street, London, NW1 6XE, UK</Address>
-		<Latitude>41.4036</Latitude>
-		<Longitude>-73.9654</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance>17</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>333310316</Id>
-		<Name>James White</Name>
-		<Phone>0501882256</Phone>
-		<Email>jameswhite@gmail.com</Email>
-		<Password>494b1068737abf3385977960fc3ea09647d5a6a3b301ed033d3dd8c6b4ce9ebc</Password>
-		<Address>Sydney Opera House, Sydney, Australia</Address>
-		<Latitude>35.6586</Latitude>
-		<Longitude>139.7454</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance>14</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>351330568</Id>
-		<Name>Olivia Silver</Name>
-		<Phone>0503461677</Phone>
-		<Email>oliviasilver@gmail.com</Email>
-		<Password>58d50e15f6e898927a0167117f7983e07bdd6bfd4e0a300ccd523e9bdcaa83a2</Password>
-		<Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
-		<Latitude>-33.8568</Latitude>
-		<Longitude>2.1744</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance>48</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>203014618</Id>
-		<Name>Emily Rose</Name>
-		<Phone>0504795265</Phone>
-		<Email>emilyrose@gmail.com</Email>
-		<Password>100143fa3d7f7ae45bf4ab0cbe1be02cdf9fb6172c3ed9a2622a09aec0cfd01d</Password>
-		<Address>Tokyo Tower, Tokyo, Japan</Address>
-		<Latitude>37.422</Latitude>
-		<Longitude>-73.9654</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance>31</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>385097118</Id>
-		<Name>Ethan Adler</Name>
-		<Phone>0508595465</Phone>
-		<Email>ethanadler@gmail.com</Email>
-		<Password>056bd2ff9774f6fd62e70655ce5a695f271018ac894e7f1b574b48f34a5df3a8</Password>
-		<Address>Sagrada Familia, Barcelona, Spain</Address>
-		<Latitude>37.422</Latitude>
-		<Longitude>13.3777</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>false</active>
-		<MaxDistance>23</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>368165031</Id>
-		<Name>Mia Kaplan</Name>
-		<Phone>0504030141</Phone>
-		<Email>miakaplan@gmail.com</Email>
-		<Password>cbdf3b1cdb5c081becab4339e3422d47b38f53163a396cc8370dde538a315b8c</Password>
-		<Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
-		<Latitude>51.5238</Latitude>
-		<Longitude>-0.1586</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance>28</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>354048407</Id>
-		<Name>Jacob Fisher</Name>
-		<Phone>0501856064</Phone>
-		<Email>jacobfisher@gmail.com</Email>
-		<Password>698c811fc0efa70de5ae0a5e3e0d6462743bbf4cc92202b9011a1c36a1af3f12</Password>
-		<Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
-		<Latitude>27.1751</Latitude>
-		<Longitude>13.3777</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>false</active>
-		<MaxDistance>36</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>327883138</Id>
-		<Name>aa</Name>
-		<Phone>1234567890</Phone>
-		<Email>c@c.com</Email>
-		<Password>588010cc6e63c96a12ab178b1aef73d6a1ff20626053a54d361bc2d8e30a3877</Password>
-		<Address>aa</Address>
-		<Latitude>51.5331324</Latitude>
-		<Longitude>5.6437768</Longitude>
-		<Jobs>Administrator</Jobs>
-		<active>true</active>
-		<MaxDistance>11</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>293642245</Id>
-		<Name>Noah Gray</Name>
-		<Phone>1234567890</Phone>
-		<Email>noahgray@gmail.com</Email>
-		<Password>2b2846644b9a897d56f5055e75f0612a538e0dd45a0728793b55319419d88827</Password>
-		<Address>Taj Mahal, Agra, India</Address>
-		<Latitude>27.1750075</Latitude>
-		<Longitude>78.04210126365584</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance>35</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>232282483</Id>
-		<Name>Emma Brown</Name>
-		<Phone>0987654321</Phone>
-		<Email>emmabrown@gmail.com</Email>
-		<Password>5cf78f4d10243dc2dd37642a2130e739671a45d4de9262c928cb82d583519586</Password>
-		<Address>Tokyo Tower, Tokyo, Japan</Address>
-		<Latitude>35.65928</Latitude>
-		<Longitude>139.744767</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance>13</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>296906605</Id>
-		<Name>Benjamin Blue</Name>
-		<Phone>1234567890</Phone>
-		<Email>benjaminblue@gmail.com</Email>
-		<Password>fce98c5157e3f6388f598b72429737e7621047d60e1c562066c45badcb8b4f0a</Password>
-		<Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
-		<Latitude>37.4217636</Latitude>
-		<Longitude>-122.084614</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>false</active>
-		<MaxDistance>28</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>247613631</Id>
-		<Name>Sophia Blackbbb</Name>
-		<Phone>1234567890</Phone>
-		<Email>sophiablack@gmail.com</Email>
-		<Password>04b2be7f138e397aec9208962397dcbc74bfa1193a2c17b7a4d2b43702a66703</Password>
-		<Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
-		<Latitude>31.962879</Latitude>
-		<Longitude>34.82372</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>false</active>
-		<MaxDistance>35</MaxDistance>
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>327842290</Id>
-		<Name>bbvvvvvv</Name>
-		<Phone>1234567890</Phone>
-		<Email>s@s.com</Email>
-		<Password>29ee2d8627df43f8c6641e771e82af9c2439eb4dedea849870758b303bf74905</Password>
-		<Address>aa</Address>
-		<Latitude>51.5331324</Latitude>
-		<Longitude>5.6437768</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance xsi:nil="true" />
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
-	<Volunteer>
-		<Id>323782508</Id>
-		<Name />
-		<Phone />
-		<Email />
-		<Password>a9d6466202bd0006cca54a54e100afa9ef5ff219ace79316a756b9ed3e943e0a</Password>
-		<Address>aa</Address>
-		<Latitude>51.5331324</Latitude>
-		<Longitude>5.6437768</Longitude>
-		<Jobs>Worker</Jobs>
-		<active>true</active>
-		<MaxDistance xsi:nil="true" />
-		<DistanceType>AirDistance</DistanceType>
-	</Volunteer>
+  <Volunteer>
+    <Id>208165613</Id>
+    <Name>David Cohen</Name>
+    <Phone>0505101388</Phone>
+    <Email>davidcohen@gmail.com</Email>
+    <Password>7c01e42693e363d832692477825cf027aa3badf8e8bd749af8b6b8e4945174e7</Password>
+    <Address>Sydney Opera House, Sydney, Australia</Address>
+    <Latitude>37.422</Latitude>
+    <Longitude>2.1744</Longitude>
+    <Jobs>Administrator</Jobs>
+    <active>true</active>
+    <MaxDistance>24</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>317711745</Id>
+    <Name>Sarah Levi</Name>
+    <Phone>0508135523</Phone>
+    <Email>sarahlevi@gmail.com</Email>
+    <Password>1789b8200fed33b282891f1ef148f8946ee58a8b7519bc50f84904368ecb4e01</Password>
+    <Address>Taj Mahal, Agra, India</Address>
+    <Latitude>-33.8568</Latitude>
+    <Longitude>13.3777</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>45</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>294364757</Id>
+    <Name>Michael Ben-David</Name>
+    <Phone>0504389353</Phone>
+    <Email>michaelben-david@gmail.com</Email>
+    <Password>8e64659ba5822b47a20c8404628f314e9365530625d0e2f7fc4be59634a85a12</Password>
+    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
+    <Latitude>27.1751</Latitude>
+    <Longitude>-122.0841</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>12</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>340155555</Id>
+    <Name>Rachel Gold</Name>
+    <Phone>0502894122</Phone>
+    <Email>rachelgold@gmail.com</Email>
+    <Password>a89c8a6d0ae8c3fe03f0916a25f19b12e29719497f58b44e6aa0ded83d1d9963</Password>
+    <Address>5th Avenue, New York, NY, USA</Address>
+    <Latitude>48.8584</Latitude>
+    <Longitude>2.2945</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>21</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>301970612</Id>
+    <Name>Daniel Green</Name>
+    <Phone>0501029026</Phone>
+    <Email>danielgreen@gmail.com</Email>
+    <Password>0856fd88a3c8190875429b162cc06c43df24107131a9d63c10ad620d0ed3e0b9</Password>
+    <Address>221B Baker Street, London, NW1 6XE, UK</Address>
+    <Latitude>41.4036</Latitude>
+    <Longitude>-73.9654</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>17</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>333310316</Id>
+    <Name>James White</Name>
+    <Phone>0501882256</Phone>
+    <Email>jameswhite@gmail.com</Email>
+    <Password>494b1068737abf3385977960fc3ea09647d5a6a3b301ed033d3dd8c6b4ce9ebc</Password>
+    <Address>Sydney Opera House, Sydney, Australia</Address>
+    <Latitude>35.6586</Latitude>
+    <Longitude>139.7454</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>14</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>351330568</Id>
+    <Name>Olivia Silver</Name>
+    <Phone>0503461677</Phone>
+    <Email>oliviasilver@gmail.com</Email>
+    <Password>58d50e15f6e898927a0167117f7983e07bdd6bfd4e0a300ccd523e9bdcaa83a2</Password>
+    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
+    <Latitude>-33.8568</Latitude>
+    <Longitude>2.1744</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>48</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>203014618</Id>
+    <Name>Emily Rose</Name>
+    <Phone>0504795265</Phone>
+    <Email>emilyrose@gmail.com</Email>
+    <Password>100143fa3d7f7ae45bf4ab0cbe1be02cdf9fb6172c3ed9a2622a09aec0cfd01d</Password>
+    <Address>Tokyo Tower, Tokyo, Japan</Address>
+    <Latitude>37.422</Latitude>
+    <Longitude>-73.9654</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>31</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>385097118</Id>
+    <Name>Ethan Adler</Name>
+    <Phone>0508595465</Phone>
+    <Email>ethanadler@gmail.com</Email>
+    <Password>056bd2ff9774f6fd62e70655ce5a695f271018ac894e7f1b574b48f34a5df3a8</Password>
+    <Address>Sagrada Familia, Barcelona, Spain</Address>
+    <Latitude>37.422</Latitude>
+    <Longitude>13.3777</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>false</active>
+    <MaxDistance>23</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>368165031</Id>
+    <Name>Mia Kaplan</Name>
+    <Phone>0504030141</Phone>
+    <Email>miakaplan@gmail.com</Email>
+    <Password>cbdf3b1cdb5c081becab4339e3422d47b38f53163a396cc8370dde538a315b8c</Password>
+    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
+    <Latitude>51.5238</Latitude>
+    <Longitude>-0.1586</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>28</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>354048407</Id>
+    <Name>Jacob Fisher</Name>
+    <Phone>0501856064</Phone>
+    <Email>jacobfisher@gmail.com</Email>
+    <Password>698c811fc0efa70de5ae0a5e3e0d6462743bbf4cc92202b9011a1c36a1af3f12</Password>
+    <Address>Eiffel Tower, Champ de Mars, Paris, France</Address>
+    <Latitude>27.1751</Latitude>
+    <Longitude>13.3777</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>false</active>
+    <MaxDistance>36</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>327883138</Id>
+    <Name>aa</Name>
+    <Phone>1234567890</Phone>
+    <Email>c@c.com</Email>
+    <Password>588010cc6e63c96a12ab178b1aef73d6a1ff20626053a54d361bc2d8e30a3877</Password>
+    <Address>aa</Address>
+    <Latitude>51.5331324</Latitude>
+    <Longitude>5.6437768</Longitude>
+    <Jobs>Administrator</Jobs>
+    <active>true</active>
+    <MaxDistance>11</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>293642245</Id>
+    <Name>Noah Gray</Name>
+    <Phone>1234567890</Phone>
+    <Email>noahgray@gmail.com</Email>
+    <Password>2b2846644b9a897d56f5055e75f0612a538e0dd45a0728793b55319419d88827</Password>
+    <Address>Taj Mahal, Agra, India</Address>
+    <Latitude>27.1750075</Latitude>
+    <Longitude>78.04210126365584</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>35</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>232282483</Id>
+    <Name>Emma Brown</Name>
+    <Phone>0987654321</Phone>
+    <Email>emmabrown@gmail.com</Email>
+    <Password>5cf78f4d10243dc2dd37642a2130e739671a45d4de9262c928cb82d583519586</Password>
+    <Address>Tokyo Tower, Tokyo, Japan</Address>
+    <Latitude>35.65928</Latitude>
+    <Longitude>139.744767</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance>13</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>296906605</Id>
+    <Name>Benjamin Blue</Name>
+    <Phone>1234567890</Phone>
+    <Email>benjaminblue@gmail.com</Email>
+    <Password>fce98c5157e3f6388f598b72429737e7621047d60e1c562066c45badcb8b4f0a</Password>
+    <Address>1600 Amphitheatre Parkway, Mountain View, CA, USA</Address>
+    <Latitude>37.4217636</Latitude>
+    <Longitude>-122.084614</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>false</active>
+    <MaxDistance>28</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>247613631</Id>
+    <Name>Sophia Blackbbb</Name>
+    <Phone>1234567890</Phone>
+    <Email>sophiablack@gmail.com</Email>
+    <Password>04b2be7f138e397aec9208962397dcbc74bfa1193a2c17b7a4d2b43702a66703</Password>
+    <Address>Kikar Rabin, Tel Aviv-Yafo, Israel</Address>
+    <Latitude>31.962879</Latitude>
+    <Longitude>34.82372</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>false</active>
+    <MaxDistance>35</MaxDistance>
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>327842290</Id>
+    <Name>bbvvvvvv</Name>
+    <Phone>1234567890</Phone>
+    <Email>s@s.com</Email>
+    <Password>29ee2d8627df43f8c6641e771e82af9c2439eb4dedea849870758b303bf74905</Password>
+    <Address>aa</Address>
+    <Latitude>51.5331324</Latitude>
+    <Longitude>5.6437768</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance xsi:nil="true" />
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>323782508</Id>
+    <Name />
+    <Phone />
+    <Email />
+    <Password>a9d6466202bd0006cca54a54e100afa9ef5ff219ace79316a756b9ed3e943e0a</Password>
+    <Address>aa</Address>
+    <Latitude>51.5331324</Latitude>
+    <Longitude>5.6437768</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>true</active>
+    <MaxDistance xsi:nil="true" />
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>65678765</Id>
+    <Password>62f59256083d348dd1e6af18692017512a2814032ac776f011eaced168e88d1d</Password>
+    <Address>aa</Address>
+    <Latitude>51.5331324</Latitude>
+    <Longitude>5.6437768</Longitude>
+    <Jobs>Worker</Jobs>
+    <active>false</active>
+    <MaxDistance xsi:nil="true" />
+    <DistanceType>AirDistance</DistanceType>
+  </Volunteer>
 </ArrayOfVolunteer>
