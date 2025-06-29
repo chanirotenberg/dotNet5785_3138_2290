@@ -1,82 +1,66 @@
 ﻿using BO;
-//using PL.Volunteer;
-//using PL.Admin;
-using System.ComponentModel;
-using System.Text;
+using System;
+using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-
 
 namespace PL.Admin
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-
-
         private volatile DispatcherOperation? _clockObserverOperation = null;
         private volatile DispatcherOperation? _configObserverOperation = null;
-
         private BO.Volunteer _currentVolunteer;
 
-
-        public BO.Volunteer CurrentVolunteer
-        {
-            get => _currentVolunteer;
-            set
-            {
-                _currentVolunteer = value;              
-            }
-
-        }
-
-        /// <summary>
-        /// Initializes the main window.
-        /// </summary>
         public MainWindow(BO.Volunteer volunteer)
         {
             InitializeComponent();
             CurrentVolunteer = volunteer;
         }
 
-        /// <summary>
-        /// Current simulated system time.
-        /// </summary>
+        public BO.Volunteer CurrentVolunteer
+        {
+            get => _currentVolunteer;
+            set => _currentVolunteer = value;
+        }
+
         public DateTime CurrentTime
         {
-            get { return (DateTime)GetValue(CurrentTimeProperty); }
-            set { SetValue(CurrentTimeProperty, value); }
+            get => (DateTime)GetValue(CurrentTimeProperty);
+            set => SetValue(CurrentTimeProperty, value);
         }
 
         public static readonly DependencyProperty CurrentTimeProperty =
             DependencyProperty.Register("CurrentTime", typeof(DateTime), typeof(MainWindow));
 
-        /// <summary>
-        /// Time range used for risk detection configuration.
-        /// </summary>
         public TimeSpan RiskRange
         {
-            get { return (TimeSpan)GetValue(RiskRangeProperty); }
-            set { SetValue(RiskRangeProperty, value); }
+            get => (TimeSpan)GetValue(RiskRangeProperty);
+            set => SetValue(RiskRangeProperty, value);
         }
 
         public static readonly DependencyProperty RiskRangeProperty =
             DependencyProperty.Register("RiskRange", typeof(TimeSpan), typeof(MainWindow));
 
-        /// <summary>
-        /// Observer method for updating the current time.
-        /// </summary>
+        public bool IsSimulatorRunning
+        {
+            get => (bool)GetValue(IsSimulatorRunningProperty);
+            set => SetValue(IsSimulatorRunningProperty, value);
+        }
+
+        public static readonly DependencyProperty IsSimulatorRunningProperty =
+            DependencyProperty.Register("IsSimulatorRunning", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
+        public int Interval
+        {
+            get => (int)GetValue(IntervalProperty);
+            set => SetValue(IntervalProperty, value);
+        }
+
+        public static readonly DependencyProperty IntervalProperty =
+            DependencyProperty.Register("Interval", typeof(int), typeof(MainWindow), new PropertyMetadata(1));
 
         private void clockObserver()
         {
@@ -89,9 +73,6 @@ namespace PL.Admin
             }
         }
 
-        /// <summary>
-        /// Observer method for updating the risk range.
-        /// </summary>
         private void configObserver()
         {
             if (_configObserverOperation is null || _configObserverOperation.Status == DispatcherOperationStatus.Completed)
@@ -103,9 +84,6 @@ namespace PL.Admin
             }
         }
 
-        /// <summary>
-        /// Loads initial data and subscribes to observers.
-        /// </summary>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             CurrentTime = s_bl.Admin.GetClock();
@@ -114,174 +92,77 @@ namespace PL.Admin
             s_bl.Admin.AddConfigObserver(configObserver);
         }
 
-        /// <summary>
-        /// Unsubscribes from observers when window is closed.
-        /// </summary>
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             s_bl.Admin.RemoveClockObserver(clockObserver);
             s_bl.Admin.RemoveConfigObserver(configObserver);
+
+            if (IsSimulatorRunning)
+                s_bl.Admin.StopSimulator();
         }
 
-        private void btnAddOneMinute_Click(object sender, RoutedEventArgs e)
+        private void ToggleSimulator_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                s_bl.Admin.AdvanceClock(BO.TimeUnit.Minute);
+                if (!IsSimulatorRunning)
+                {
+                    s_bl.Admin.StartSimulator(Interval);
+                    IsSimulatorRunning = true;
+                }
+                else
+                {
+                    s_bl.Admin.StopSimulator();
+                    IsSimulatorRunning = false;
+                }
             }
             catch (Exception ex)
             {
-                ShowError("Failed to advance clock by one minute", "An error occurred while updating the clock by one minute.", ex);
+                ShowError("Simulator Error", "An error occurred while starting/stopping the simulator.", ex);
             }
         }
 
-        private void btnAddOneHour_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                s_bl.Admin.AdvanceClock(BO.TimeUnit.Hour);
-            }
-            catch (Exception ex)
-            {
-                ShowError("Failed to advance clock by one hour", "An error occurred while updating the clock by one hour.", ex);
-            }
-        }
+        private void btnAddOneMinute_Click(object sender, RoutedEventArgs e) =>
+            s_bl.Admin.AdvanceClock(BO.TimeUnit.Minute);
 
-        private void btnAddOneDay_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                s_bl.Admin.AdvanceClock(BO.TimeUnit.Day);
-            }
-            catch (Exception ex)
-            {
-                ShowError("Failed to advance clock by one day", "An error occurred while updating the clock by one day.", ex);
-            }
-        }
+        private void btnAddOneHour_Click(object sender, RoutedEventArgs e) =>
+            s_bl.Admin.AdvanceClock(BO.TimeUnit.Hour);
 
-        private void btnAddOneMonth_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                s_bl.Admin.AdvanceClock(BO.TimeUnit.Month);
-            }
-            catch (Exception ex)
-            {
-                ShowError("Failed to advance clock by one month", "An error occurred while updating the clock by one month.", ex);
-            }
-        }
+        private void btnAddOneDay_Click(object sender, RoutedEventArgs e) =>
+            s_bl.Admin.AdvanceClock(BO.TimeUnit.Day);
 
-        private void btnAddOneYear_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                s_bl.Admin.AdvanceClock(BO.TimeUnit.Year);
-            }
-            catch (Exception ex)
-            {
-                ShowError("Failed to advance clock by one year", "An error occurred while updating the clock by one year.", ex);
-            }
-        }
+        private void btnAddOneMonth_Click(object sender, RoutedEventArgs e) =>
+            s_bl.Admin.AdvanceClock(BO.TimeUnit.Month);
+
+        private void btnAddOneYear_Click(object sender, RoutedEventArgs e) =>
+            s_bl.Admin.AdvanceClock(BO.TimeUnit.Year);
 
         private void UpdateRiskRange_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                // נוודא שלא הוזן ערך ריק
-                string input = RiskRange.ToString();
-                if (string.IsNullOrWhiteSpace(input))
-                {
-                    MessageBox.Show("יש להזין ערך לטווח זמן הסיכון.", "קלט חסר", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                // נוודא שהערך תקני וניתן לפירוש
-                if (!TimeSpan.TryParse(input, out TimeSpan parsed))
-                {
-                    MessageBox.Show("הערך שהוזן אינו בפורמט תקין (לדוגמה: 00:30:00 עבור חצי שעה).", "שגיאת קלט", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                if (parsed.TotalMinutes <= 0)
-                {
-                    MessageBox.Show("יש להזין ערך גדול מאפס לטווח זמן הסיכון.", "ערך לא חוקי", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
+            if (TimeSpan.TryParse(RiskRange.ToString(), out TimeSpan parsed) && parsed.TotalMinutes > 0)
                 s_bl.Admin.SetRiskRange(parsed);
-            }
-            catch (Exception ex)
-            {
-                ShowError("שגיאה בעדכון טווח סיכון", "אירעה שגיאה בעת עדכון טווח הסיכון.", ex);
-            }
         }
-
 
         private void InitializeDB_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to initialize the database?", "Confirm Initialization", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-                try
-                {
-                    foreach (Window window in Application.Current.Windows)
-                    {
-                        if (window != this)
-                            window.Close();
-                    }
-                    s_bl.Admin.InitializeDB();
-                }
-                catch (Exception ex)
-                {
-                    ShowError("Database Initialization Error", "An error occurred while trying to initialize the database.", ex);
-                }
-                finally
-                {
-                    Mouse.OverrideCursor = null;
-                }
-            }
+            s_bl.Admin.InitializeDB();
         }
 
         private void ResetDB_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to reset the database?", "Confirm Reset", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-                try
-                {
-                    foreach (Window window in Application.Current.Windows)
-                    {
-                        if (window != this)
-                            window.Close();
-                    }
-                    s_bl.Admin.ResetDB();
-                }
-                catch (Exception ex)
-                {
-                    ShowError("Database Reset Error", "An error occurred while trying to reset the database.", ex);
-                }
-                finally
-                {
-                    Mouse.OverrideCursor = null;
-                }
-            }
+            s_bl.Admin.ResetDB();
         }
 
         private void HandleVolunteer_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                new VolunteerListWindow().Show();
-            }
-            catch (Exception ex)
-            {
-                ShowError("Error opening volunteers window", "An error occurred while trying to open the volunteers window.", ex);
-            }
+            new VolunteerListWindow().Show();
         }
 
-        /// <summary>
-        /// Displays an error message with additional technical details.
-        /// </summary>
+        private void HandleCall_Click(object sender, RoutedEventArgs e)
+        {
+            new CallManagementWindow(CurrentVolunteer.Id).Show();
+        }
+
         private void ShowError(string title, string userMessage, Exception ex)
         {
             string message = userMessage;
@@ -289,18 +170,6 @@ namespace PL.Admin
                 message += "\n\nTechnical details:\n" + ex.InnerException.Message;
 
             MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-        private void HandleCall_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                new CallManagementWindow(CurrentVolunteer.Id).Show();
-            }
-            catch (Exception ex)
-            {
-                ShowError("Error opening call window", "An error occurred while trying to open the volunteers window.", ex);
-            }
         }
     }
 }

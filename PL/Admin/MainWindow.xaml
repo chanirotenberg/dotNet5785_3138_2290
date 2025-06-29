@@ -94,6 +94,25 @@
                 </StackPanel>
             </StackPanel>
 
+            <StackPanel Margin="0,0,0,30" HorizontalAlignment="Center">
+                <TextBlock Text="Simulator:" FontSize="30" FontWeight="Bold" Foreground="#2c3e50" Margin="50,20,100,20"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBox Width="100" Height="30" Text="{Binding Interval, UpdateSourceTrigger=PropertyChanged}" FontSize="14" Margin="0,0,10,10"/>
+                    <Button Content="{Binding IsSimulatorRunning, Converter={StaticResource SimulatorButtonTextConverter}}"
+                Click="ToggleSimulator_Click"
+                Width="160" Height="40"
+                Background="LightGray"
+                BorderBrush="Gray"
+                BorderThickness="4"
+                Foreground="Gray"
+                FontWeight="SemiBold"
+                FontSize="16"
+                Padding="5"
+                Margin="0,0,10,10"
+                Cursor="Hand"/>
+                </StackPanel>
+            </StackPanel>
+
             <!-- Management Buttons -->
             <WrapPanel HorizontalAlignment="Center">
                 <Button Content="Handle Volunteer" Click="HandleVolunteer_Click" Width="160"
