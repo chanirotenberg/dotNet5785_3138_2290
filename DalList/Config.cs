@@ -1,4 +1,6 @@
 ﻿// Module configuration.cs
+using System.Runtime.CompilerServices;
+
 namespace Dal;
 
 /// <summary>
@@ -19,7 +21,10 @@ internal static class Config
     /// <summary>
     /// Gets the next available Call ID and increments it for the next call.
     /// </summary>
-    internal static int NextCallId { get => nextCallId++; }
+    internal static int NextCallId {
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        get => nextCallId++; 
+    }
 
     /// <summary>
     /// The starting value for the Assignment ID.
@@ -31,21 +36,35 @@ internal static class Config
     /// <summary>
     /// Gets the next available Assignment ID and increments it for the next assignment.
     /// </summary>
-    internal static int NextAssignmentId { get => nextAssignmentId++; }
+    internal static int NextAssignmentId {
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        get => nextAssignmentId++; 
+    }
 
     /// <summary>
     /// The system clock representing the current date and time. Defaults to the current time when the application starts.
     /// </summary>
-    internal static DateTime Clock { get; set; } = DateTime.Now;
+    internal static DateTime Clock {
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        get;
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        set; 
+    } = DateTime.Now;
 
     /// <summary>
     /// The risk range represented as a TimeSpan, defaults to 1 hour.
     /// </summary>
-    internal static TimeSpan RiskRange { get; set; } = TimeSpan.FromHours(1);
+    internal static TimeSpan RiskRange {
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        get;
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        set; 
+    } = TimeSpan.FromHours(1);
 
     /// <summary>
     /// Resets the configuration values to their default settings.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     internal static void Reset()
     {
         nextAssignmentId = startAssignmentId;

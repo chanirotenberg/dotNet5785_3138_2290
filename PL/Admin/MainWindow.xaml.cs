@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+
 
 namespace PL.Admin
 {
@@ -21,6 +23,10 @@ namespace PL.Admin
     public partial class MainWindow : Window
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+
+
+        private volatile DispatcherOperation? _clockObserverOperation = null;
+        private volatile DispatcherOperation? _configObserverOperation = null;
 
         private BO.Volunteer _currentVolunteer;
 
@@ -71,9 +77,16 @@ namespace PL.Admin
         /// <summary>
         /// Observer method for updating the current time.
         /// </summary>
+
         private void clockObserver()
         {
-            CurrentTime = s_bl.Admin.GetClock();
+            if (_clockObserverOperation is null || _clockObserverOperation.Status == DispatcherOperationStatus.Completed)
+            {
+                _clockObserverOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    CurrentTime = s_bl.Admin.GetClock();
+                });
+            }
         }
 
         /// <summary>
@@ -81,7 +94,13 @@ namespace PL.Admin
         /// </summary>
         private void configObserver()
         {
-            RiskRange = s_bl.Admin.GetRiskRange();
+            if (_configObserverOperation is null || _configObserverOperation.Status == DispatcherOperationStatus.Completed)
+            {
+                _configObserverOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    RiskRange = s_bl.Admin.GetRiskRange();
+                });
+            }
         }
 
         /// <summary>

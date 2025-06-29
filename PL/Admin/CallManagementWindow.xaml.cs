@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Threading;  // שים לב לייבוא Dispatcher
 using BO;
 using BlApi;
 
@@ -30,6 +31,9 @@ namespace PL.Admin
             get => _selectedType;
             set { _selectedType = value; OnPropertyChanged(nameof(SelectedType)); }
         }
+
+        // שדה DispatcherOperation ייעודי למתודת ההשקפה RefreshCalls
+        private volatile DispatcherOperation? _refreshCallsOperation = null;
 
         public CallManagementWindow(int managerId)
         {
@@ -62,7 +66,17 @@ namespace PL.Admin
                 Calls.Add(call);
         }
 
-        private void RefreshCalls() => LoadCalls();
+        // מתודת ההשקפה עם עיטוף Dispatcher.BeginInvoke
+        private void RefreshCalls()
+        {
+            if (_refreshCallsOperation is null || _refreshCallsOperation.Status == DispatcherOperationStatus.Completed)
+            {
+                _refreshCallsOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    LoadCalls();
+                });
+            }
+        }
 
         private void Filter_Click(object sender, RoutedEventArgs e) => LoadCalls();
 
@@ -87,7 +101,7 @@ namespace PL.Admin
                 try
                 {
                     var updateWindow = new AddOrUpdateCallWindow(selectedCall.CallId);
-                    updateWindow.Show();      
+                    updateWindow.Show();
                     // הרשימה תתעדכן דרך Observer
                 }
                 catch (Exception ex)
@@ -96,7 +110,6 @@ namespace PL.Admin
                         "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            // נשאר ללא שינוי כי אין גישה לפריט כרגע – משמש להמשך הרחבה
         }
 
         private void DeleteCall_Click(object sender, RoutedEventArgs e)

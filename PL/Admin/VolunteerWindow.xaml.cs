@@ -1,13 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Threading; // שימי לב שיש להוסיף using זה
 using BO;
 
 namespace PL.Admin
 {
-    /// <summary>
-    /// Represents a window for adding or updating a single volunteer entity.
-    /// </summary>
     public partial class VolunteerWindow : Window, INotifyPropertyChanged
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
@@ -30,6 +28,9 @@ namespace PL.Admin
                 OnPropertyChanged(nameof(CurrentVolunteer));
             }
         }
+
+        // שדה DispatcherOperation לשמירת מצב הקריאה הנוכחית ל-Dispatcher
+        private volatile DispatcherOperation? _refreshVolunteerOperation = null;
 
         public VolunteerWindow(int id = 0)
         {
@@ -75,9 +76,21 @@ namespace PL.Admin
             }
         }
 
+        // מתודת ההשקפה עם השימוש ב-DispatcherOperation לפי ההוראות
         private void RefreshVolunteer()
         {
-            CurrentVolunteer = s_bl.Volunteer.GetVolunteerDetails(CurrentVolunteer!.Id);
+            if (_refreshVolunteerOperation == null || _refreshVolunteerOperation.Status == DispatcherOperationStatus.Completed)
+            {
+                _refreshVolunteerOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    if (CurrentVolunteer != null)
+                    {
+                        var id = CurrentVolunteer.Id;
+                        CurrentVolunteer = null;
+                        CurrentVolunteer = s_bl.Volunteer.GetVolunteerDetails(id);
+                    }
+                });
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -86,7 +99,6 @@ namespace PL.Admin
             if (CurrentVolunteer != null && CurrentVolunteer.Id != 0)
                 s_bl.Volunteer.AddObserver(CurrentVolunteer.Id, volunteerObserver);
         }
-
 
         private void Window_Closed(object sender, EventArgs e)
         {

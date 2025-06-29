@@ -1,6 +1,7 @@
 ﻿namespace Dal;
 using DalApi;
 using DO;
+using System.Runtime.CompilerServices;
 
 internal class VolunteerImplementation : IVolunteer
 {
@@ -9,6 +10,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="item">The volunteer to be created.</param>
     /// <exception cref="Exception">Thrown if a volunteer with the given ID already exists.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Volunteer item)
     {
         if (this.Read(item.Id) is not null)
@@ -21,6 +23,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="id">The ID of the volunteer to be retrieved.</param>
     /// <returns>The volunteer object if found; otherwise, null.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(int id)
     {
         return DataSource.Volunteers.FirstOrDefault(v => v.Id == id);
@@ -30,6 +33,7 @@ internal class VolunteerImplementation : IVolunteer
     /// Reads all volunteers.
     /// </summary>
     /// <returns>A list of all volunteer objects.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null) //stage 2
       => filter == null
           ? DataSource.Volunteers.Select(item => item)
@@ -40,6 +44,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="id">The ID of the volunteer to be deleted.</param>
     /// <exception cref="Exception">Thrown if the volunteer with the given ID does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         Volunteer? existingVolunteer = DataSource.Volunteers.FirstOrDefault(v => v.Id == id) ?? throw new DalDoesNotExistException($"Volunteer Object with {id} doesn't exist");
@@ -49,6 +54,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Deletes all volunteers.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         DataSource.Volunteers.Clear();
@@ -59,6 +65,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="item">The volunteer object with updated values.</param>
     /// <exception cref="Exception">Thrown if the volunteer with the given ID does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Volunteer item)
     {
         Volunteer? existingVolunteer = DataSource.Volunteers.FirstOrDefault(v => v.Id == item.Id) ?? throw new DalDoesNotExistException($"Volunteer Object with {item.Id} doesn't exist");
@@ -84,6 +91,7 @@ internal class VolunteerImplementation : IVolunteer
         DataSource.Volunteers.Add(updatedVolunteer);
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         return DataSource.Volunteers.FirstOrDefault(filter);

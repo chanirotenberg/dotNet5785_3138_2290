@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Threading;
 using System.Windows;
 using BlApi;
 using BO;
@@ -79,21 +80,30 @@ namespace PL.Admin
         }
 
 
+        // שדה חדש מחוץ למתודות, בתוך המחלקה
+        private volatile DispatcherOperation? _refreshCallOperation = null;
+
+        // מתודת ההשקפה המעודכנת
         private void RefreshCall()
         {
-            try
-            {
-                CurrentCall = s_bl.Call.GetCallDetails(CurrentCall.Id);
-                OnPropertyChanged(nameof(CurrentCall));
-                OnPropertyChanged(nameof(CanEditAll));
-                OnPropertyChanged(nameof(CanEditMaxOnly));
-                OnPropertyChanged(nameof(AssignmentsVisibility));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"שגיאה ברענון הקריאה: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            if (_refreshCallOperation is null || _refreshCallOperation.Status == System.Windows.Threading.DispatcherOperationStatus.Completed)
+                _refreshCallOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    try
+                    {
+                        CurrentCall = s_bl.Call.GetCallDetails(CurrentCall.Id);
+                        OnPropertyChanged(nameof(CurrentCall));
+                        OnPropertyChanged(nameof(CanEditAll));
+                        OnPropertyChanged(nameof(CanEditMaxOnly));
+                        OnPropertyChanged(nameof(AssignmentsVisibility));
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"שגיאה ברענון הקריאה: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                });
         }
+
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {

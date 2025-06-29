@@ -4,6 +4,7 @@ using DalApi;
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 internal class VolunteerImplementation : IVolunteer
 {
@@ -14,6 +15,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="DalAlreadyExistsException">
     /// Thrown if a volunteer with the same ID already exists in the XML file.
     /// </exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Volunteer item)
     {
         // Load the list of volunteers from the XML file
@@ -33,6 +35,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="id">The ID of the volunteer to retrieve.</param>
     /// <returns>The volunteer entity if found; otherwise, null.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(int id)
     {
         List<Volunteer> Volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(Config.s_volunteers_xml);
@@ -44,6 +47,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="filter">Optional filter function to select specific volunteers.</param>
     /// <returns>An IEnumerable of volunteers based on the filter or all volunteers if no filter is provided.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null) // Stage 2
     {
         List<Volunteer> Volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(Config.s_volunteers_xml);
@@ -61,6 +65,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="DalDoesNotExistException">
     /// Thrown if the volunteer with the given ID does not exist in the XML file.
     /// </exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         List<Volunteer> Volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(Config.s_volunteers_xml);
@@ -76,6 +81,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Deletes all volunteer entities from the XML file.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         // Save an empty list of volunteers back to the XML file
@@ -89,6 +95,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="DalDoesNotExistException">
     /// Thrown if the volunteer with the given ID does not exist in the XML file.
     /// </exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Volunteer item)
     {
         List<Volunteer> Volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(Config.s_volunteers_xml);
@@ -107,6 +114,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="filter">A filter function to find the desired volunteer.</param>
     /// <returns>The first volunteer entity that matches the filter criteria or null if no match is found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         List<Volunteer> Volunteers = XMLTools.LoadListFromXMLSerializer<Volunteer>(Config.s_volunteers_xml);

@@ -1,6 +1,9 @@
-﻿
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Web;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Collections.Generic;
+using BO;
 
 namespace Helpers;
 
@@ -9,18 +12,13 @@ internal static class Tools
     /// <summary>
     /// Generates a string with all properties and their values of the given object.
     /// </summary>
-    /// <typeparam name="T">The type of the object being processed.</typeparam>
-    /// <param name="t">The object to process.</param>
-    /// <returns>A string representing all properties and their values.</returns>
     public static string ToStringProperty<T>(this T t)
     {
         if (t == null)
             return "Object is null";
 
-        // Using reflection to get all public properties of the object
         var properties = t.GetType().GetProperties();
 
-        // Build the output string by iterating over the properties
         var result = new System.Text.StringBuilder();
         result.AppendLine($"Type: {t.GetType().Name}");
 
@@ -33,27 +31,20 @@ internal static class Tools
         return result.ToString();
     }
 
-    /// <summary>
-    /// API key for the LocationIQ mapping service.
-    /// </summary>
     private const string LocationIqApiKey = "pk.e7a4b1005a41f28c0d56501fccf80b77";
 
-    /// <summary>
-    /// Cache for storing address coordinates to reduce API calls.
-    /// </summary>
     private static readonly Dictionary<string, (double Latitude, double Longitude)> _addressCache = new();
 
     /// <summary>
-    /// Retrieves the latitude and longitude coordinates for a given address.
+    /// Retrieves the latitude and longitude coordinates for a given address asynchronously.
     /// </summary>
     /// <param name="address">The address to fetch coordinates for.</param>
-    /// <returns>A tuple containing latitude and longitude.</returns>
-    public static (double Latitude, double Longitude) GetCoordinates(string address)
+    /// <returns>A task that returns a tuple containing latitude and longitude.</returns>
+    public static async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string address)
     {
         if (string.IsNullOrWhiteSpace(address))
             throw new BO.BlValidationException("Address cannot be null or empty.");
 
-        // Check if the coordinates are cached
         if (_addressCache.TryGetValue(address, out var cachedCoordinates))
             return cachedCoordinates;
 
@@ -64,13 +55,13 @@ internal static class Tools
         {
             try
             {
-                var response = client.GetAsync(url).Result;
+                var response = await client.GetAsync(url);
 
                 if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
                 {
-                    if (i < 2) // If not the last attempt, wait and retry
+                    if (i < 2)
                     {
-                        Thread.Sleep(1000);
+                        await Task.Delay(1000);
                         continue;
                     }
                     throw new BO.BlException("Too many requests to the mapping service. Please try again later.");
@@ -79,7 +70,7 @@ internal static class Tools
                 if (!response.IsSuccessStatusCode)
                     throw new BO.BlException($"Failed to retrieve coordinates. Status: {response.StatusCode}");
 
-                var json = response.Content.ReadAsStringAsync().Result;
+                var json = await response.Content.ReadAsStringAsync();
                 var results = JsonDocument.Parse(json).RootElement.EnumerateArray();
                 if (!results.MoveNext())
                     throw new BO.BlException("No results found for the given address.");
@@ -88,7 +79,6 @@ internal static class Tools
                 double latitude = double.Parse(location.GetProperty("lat").GetString());
                 double longitude = double.Parse(location.GetProperty("lon").GetString());
 
-                // Store the address in the cache
                 _addressCache[address] = (latitude, longitude);
                 return (latitude, longitude);
             }
@@ -98,6 +88,13 @@ internal static class Tools
             }
         }
 
+
         throw new BO.BlException($"Failed to retrieve coordinates for address: {address}. Too many attempts.");
     }
+    public static (double Latitude, double Longitude) GetCoordinatesSync(string address)
+    {
+        return Task.Run(() => GetCoordinatesAsync(address)).Result;
+    }
+
+
 }

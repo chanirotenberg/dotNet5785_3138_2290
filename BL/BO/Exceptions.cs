@@ -88,3 +88,15 @@ public class BlException : Exception
     public BlException(string message, Exception innerException) : base(message, innerException) { }
 }
 
+/// <summary>
+/// Exception thrown when an operation cannot be performed because the simulator is running.
+/// </summary>
+[Serializable]
+public class BLTemporaryNotAvailableException : Exception
+{
+    public BLTemporaryNotAvailableException(string? message) : base(message) { }
+    public BLTemporaryNotAvailableException(string message, Exception innerException)
+        : base(message, innerException) { }
+}
+
+

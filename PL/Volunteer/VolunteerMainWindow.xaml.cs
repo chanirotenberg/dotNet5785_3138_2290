@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Threading;
 using BO;
 using BlApi;
 
@@ -11,7 +12,6 @@ namespace PL.Volunteer
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private readonly IBl _bl = Factory.Get();
-
         private readonly int volunteerId;
 
         private BO.Volunteer _currentVolunteer;
@@ -30,6 +30,8 @@ namespace PL.Volunteer
         public CallInProgress? CallInProgress => CurrentVolunteer.CallInProgress;
         public bool CanChooseCall => CurrentVolunteer.IsActive && CurrentVolunteer.CallInProgress == null;
 
+        private volatile DispatcherOperation? _refreshOperation = null; // שלב 7
+
         public VolunteerMainWindow(BO.Volunteer volunteer)
         {
             InitializeComponent();
@@ -42,19 +44,20 @@ namespace PL.Volunteer
             _bl.Volunteer.AddObserver(volunteerId, RefreshVolunteer);
         }
 
-        private void RefreshVolunteer()
+        private void RefreshVolunteer() // Stage 7
         {
-            Dispatcher.Invoke(() =>
+            if (_refreshOperation is null || _refreshOperation.Status == DispatcherOperationStatus.Completed)
             {
-                CurrentVolunteer = _bl.Volunteer.GetVolunteerDetails(volunteerId);
-                DataContext = this;
-                UpdateMap();
-            });
+                _refreshOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    CurrentVolunteer = _bl.Volunteer.GetVolunteerDetails(volunteerId);
+                    UpdateMap();
+                });
+            }
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            // התנתקות מהמשקיף
             _bl.Volunteer.RemoveObserver(volunteerId, RefreshVolunteer);
         }
 
@@ -97,7 +100,7 @@ namespace PL.Volunteer
             try
             {
                 var window = new ChooseCallWindow(CurrentVolunteer.Id);
-                window.Show(); // אין צורך ב־Refresh כאן, observer כבר יעדכן
+                window.Show(); // observer יעדכן
             }
             catch (Exception ex)
             {
@@ -114,7 +117,6 @@ namespace PL.Volunteer
                 {
                     _bl.Call.CloseCall(CurrentVolunteer.Id, CurrentVolunteer.CallInProgress.Id);
                     MessageBox.Show("הקריאה נסגרה בהצלחה!", "סיום קריאה", MessageBoxButton.OK, MessageBoxImage.Information);
-                    // לא צריך לקרוא ל־Refresh – observer יעדכן
                 }
             }
             catch (Exception ex)
@@ -132,7 +134,6 @@ namespace PL.Volunteer
                 {
                     _bl.Call.CancelCall(CurrentVolunteer.Id, CurrentVolunteer.CallInProgress.Id);
                     MessageBox.Show("הקריאה בוטלה בהצלחה.", "ביטול קריאה", MessageBoxButton.OK, MessageBoxImage.Information);
-                    // לא צריך לקרוא ל־Refresh – observer יעדכן
                 }
             }
             catch (Exception ex)

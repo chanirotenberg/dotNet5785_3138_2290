@@ -2,10 +2,9 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Threading; // חשוב!
 using BlApi;
 using BO;
-using PL.Admin;
-using PL.Volunteer;
 
 namespace PL.Volunteer
 {
@@ -55,6 +54,9 @@ namespace PL.Volunteer
             set { _sortField = value; OnPropertyChanged(nameof(SortField)); RefreshOpenCalls(); }
         }
 
+        // שלב 7 – DispatcherOperation עבור מתודת ההשקפה
+        private volatile DispatcherOperation? _refreshCallListOperation = null;
+
         public ChooseCallWindow(int volunteerId)
         {
             InitializeComponent();
@@ -63,7 +65,6 @@ namespace PL.Volunteer
             LoadVolunteerAddress();
             RefreshOpenCalls();
 
-            // הרשמה למשקיף על קריאות
             callListObserver = RefreshOpenCalls;
             _bl.Call.AddObserver(callListObserver);
         }
@@ -89,22 +90,26 @@ namespace PL.Volunteer
 
         private void RefreshOpenCalls()
         {
-            try
+            if (_refreshCallListOperation is null || _refreshCallListOperation.Status == DispatcherOperationStatus.Completed)
             {
-                var result = _bl.Call.GetOpenCallsForVolunteer(_volunteerId, SelectedCallType, SortField);
+                _refreshCallListOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    try
+                    {
+                        var result = _bl.Call.GetOpenCallsForVolunteer(_volunteerId, SelectedCallType, SortField);
 
-                // לא מחליפים את כל האוסף, אלא מרוקנים ומוסיפים מחדש
-                OpenCalls.Clear();
-                foreach (var call in result)
-                    OpenCalls.Add(call);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("אירעה שגיאה בעת טעינת הקריאות: " + ex.Message, "שגיאה בטעינת נתונים", MessageBoxButton.OK, MessageBoxImage.Error);
-                Close();
+                        OpenCalls.Clear();
+                        foreach (var call in result)
+                            OpenCalls.Add(call);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("אירעה שגיאה בעת טעינת הקריאות: " + ex.Message, "שגיאה בטעינת נתונים", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Close();
+                    }
+                });
             }
         }
-
 
         private void UpdateAddressButton_Click(object sender, RoutedEventArgs e)
         {

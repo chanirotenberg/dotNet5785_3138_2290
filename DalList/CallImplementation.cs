@@ -2,6 +2,7 @@
 using DalApi;
 using DO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 internal class CallImplementation : ICall
 {
@@ -10,6 +11,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="item">The call to be created.</param>
     /// <exception cref="DalAlreadyExistsException">Thrown if a call with the given ID already exists.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Call item)
     {
         int newId = Config.NextCallId;
@@ -22,6 +24,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id">The ID of the call to be retrieved.</param>
     /// <returns>The call object if found; otherwise, null.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(int id)
     {
         return DataSource.Calls.FirstOrDefault(a => a.Id == id);
@@ -32,6 +35,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="filter">An optional filter function to apply to the calls.</param>
     /// <returns>A list of all call objects, filtered if the filter is provided.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null) //stage 2
         => filter == null
             ? DataSource.Calls.Select(item => item)
@@ -42,6 +46,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id">The ID of the call to be deleted.</param>
     /// <exception cref="DalDoesNotExistException">Thrown if the call with the given ID does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         Call? call = DataSource.Calls.FirstOrDefault(c => c.Id == id) ?? throw new DalDoesNotExistException($"Call Object with {id} doesn't exist");
@@ -51,6 +56,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Deletes all calls.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         DataSource.Calls.Clear();
@@ -61,6 +67,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="item">The call object with updated values.</param>
     /// <exception cref="DalDoesNotExistException">Thrown if the call with the given ID does not exist.</exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Call item)
     {
         Call? existingCall = DataSource.Calls.FirstOrDefault(c => c.Id == item.Id) ?? throw new DalDoesNotExistException($"Call Object with {item.Id} doesn't exist");
@@ -87,6 +94,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="filter">The filter function to be applied on the call.</param>
     /// <returns>The first call that matches the filter, or null if none matches.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(Func<Call, bool> filter)
     {
         return DataSource.Calls.FirstOrDefault(filter);

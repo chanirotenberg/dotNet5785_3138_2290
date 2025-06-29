@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace PL.Admin
 {
@@ -51,6 +52,9 @@ namespace PL.Admin
         /// </summary>
         public BO.CallType calls { get; set; } = BO.CallType.None;
 
+        // שדה DispatcherOperation ייעודי למתודת ההשקפה RefreshVolunteerList
+        private volatile DispatcherOperation? _refreshVolunteerListOperation = null;
+
         /// <summary>
         /// Handles double-clicking a volunteer in the ListView to open their detailed window.
         /// </summary>
@@ -95,9 +99,18 @@ namespace PL.Admin
         }
 
         /// <summary>
-        /// Refreshes the current list of volunteers by re-querying it.
+        /// Refreshes the current list of volunteers by re-querying it asynchronously on the Dispatcher.
         /// </summary>
-        private void RefreshVolunteerList() => queryCallList();
+        private void RefreshVolunteerList()
+        {
+            if (_refreshVolunteerListOperation is null || _refreshVolunteerListOperation.Status == DispatcherOperationStatus.Completed)
+            {
+                _refreshVolunteerListOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    queryCallList();
+                });
+            }
+        }
 
         /// <summary>
         /// Handles logic to be executed when the window loads.
