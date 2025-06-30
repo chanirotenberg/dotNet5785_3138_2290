@@ -89,8 +89,6 @@ namespace Helpers
             }
         }
 
-       
-
         /// <summary>
         /// Checks if a password is strong.
         /// </summary>
@@ -164,7 +162,6 @@ namespace Helpers
         }
         internal static async Task SimulateVolunteerActivityAsync()
         {
-            // סימולציה שתרוץ בלולאה חזרה (כל שניה) - קריאה חיצונית ממומשת מחוץ
             List<int> volunteersToNotify = new();
             List<int> assignmentsToNotify = new();
 
@@ -179,58 +176,36 @@ namespace Helpers
             {
                 try
                 {
-                    DO.Assignment? currentAssignment = null;
+                    DO.Assignment? currentAssignment;
+
                     lock (_lock)
                     {
-                        currentAssignment = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteer.Id && a.ActualEndTime == null)
+                        currentAssignment = _dal.Assignment
+                            .ReadAll(a => a.VolunteerId == volunteer.Id && a.ActualEndTime == null)
                             .FirstOrDefault();
                     }
 
                     if (currentAssignment == null)
                     {
-                        // אין קריאה בטיפול - בסבירות ~20% נבחר קריאה פתוחה לטיפול
                         if (s_rand.NextDouble() < 0.2)
                         {
-                            List<BO.Call> openCalls;
-                            lock (_lock)
+                            List<BO.OpenCallInList> openCallsForVolunteer;
+
+                            try
                             {
-                                openCalls = _dal.Call.ReadAll(c =>
-                                    c.MaximumTime > DateTime.Now &&
-                                    c.Latitude != 0 &&
-                                    c.Longitude != 0
-                                )
-                                .Select(c => new BO.Call
-                                {
-                                    Id = c.Id,
-                                    CallType = (BO.CallType)c.CallType,
-                                    VerbalDescription = c.VerbalDescription,
-                                    Address = c.Address,
-                                    Latitude = c.Latitude,
-                                    Longitude = c.Longitude,
-                                    OpeningTime = c.OpeningTime,
-                                    MaximumTime = c.MaximumTime,
-                                    Status = (BO.CallStatus)CallManager.DetermineCallStatus(c.Id),
-                                    Assignments = null // סימולציה – אין צורך ברשימת שיוכים, ואם כן תוכל למלא כשתצטרך
-                                })
-                                .ToList();
+                                openCallsForVolunteer = GetOpenCallsForVolunteer(volunteer.Id).ToList();
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Failed to get open calls for volunteer {volunteer.Id}: {ex.Message}");
+                                continue;
                             }
 
-
-
-                            // סינון קריאות בתוך טווח המתנדב (לפי מרחק, כפי שמוגדר בלוגיקה קיימת)
-                            var possibleCalls = openCalls
-                                .Where(call =>
-                                {
-                                    double dist = CallManager.CalculateDistance(volunteer, call.Address);
-                                    return dist <= volunteer.MaxDistance;
-                                })
-                                .ToList();
-
-                            if (possibleCalls.Count > 0)
+                            if (openCallsForVolunteer.Count > 0)
                             {
-                                var chosenCall = possibleCalls[s_rand.Next(possibleCalls.Count)];
+                                var chosenCall = openCallsForVolunteer[s_rand.Next(openCallsForVolunteer.Count)];
 
-                                DO.Assignment newAssignment = new DO.Assignment
+                                var newAssignment = new DO.Assignment
                                 {
                                     CallId = chosenCall.Id,
                                     VolunteerId = volunteer.Id,
@@ -251,16 +226,15 @@ namespace Helpers
                     }
                     else
                     {
-                        // למתנדב יש קריאה בטיפול
-                        // בודקים האם "עבר מספיק זמן" לסגור את הקריאה או לבטל
-
-                        // חישוב זמן טיפול אקראי + מרחק בין מתנדב לקריאה
                         double distanceKm;
+                        DO.Call call;
+
                         lock (_lock)
                         {
-                            var call = _dal.Call.Read(currentAssignment.CallId);
-                            distanceKm = CallManager.CalculateDistance(volunteer, call.Address);
+                            call = _dal.Call.Read(currentAssignment.CallId);
                         }
+
+                        distanceKm = CallManager.CalculateDistance(volunteer, call.Address);
 
                         var timeSinceStart = DateTime.Now - currentAssignment.EntryTime;
                         var randomAdditionalTime = TimeSpan.FromMinutes(s_rand.Next(1, 20));
@@ -268,7 +242,6 @@ namespace Helpers
 
                         if (timeSinceStart >= threshold)
                         {
-                            // סוגרים את הקריאה כסיימו טיפול
                             var updatedAssignment = currentAssignment with
                             {
                                 ActualEndTime = DateTime.Now,
@@ -285,7 +258,6 @@ namespace Helpers
                         }
                         else
                         {
-                            // בהסתברות 10% מבטלים את הטיפול
                             if (s_rand.NextDouble() < 0.1)
                             {
                                 var updatedAssignment = currentAssignment with
@@ -307,16 +279,17 @@ namespace Helpers
                 }
                 catch (Exception ex)
                 {
-                    // טיפול שגיאות לפי צורך, למשל רישום לוג
                     Console.WriteLine($"Error during volunteer simulation for volunteer {volunteer.Id}: {ex.Message}");
                 }
             }
 
-            // מחוץ ל-lock: להודיע למשקיפים על העדכונים
+            // מחוץ ל־lock: הודעה למשקיפים
             foreach (var assignmentId in assignmentsToNotify)
             {
                 Observers.NotifyItemUpdated(assignmentId);
             }
+
+            Observers.NotifyListUpdated();
 
             foreach (var volunteerId in volunteersToNotify)
             {
@@ -326,8 +299,59 @@ namespace Helpers
                 }
             }
 
-            // אפשר להוסיף הודעה כללית אם יש צורך
-            Observers.NotifyListUpdated();
+        }
+
+
+        public static IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortAndFilterField? sortBy = null)
+        {
+            try
+            {
+                DO.Volunteer volunteer;
+
+                lock (AdminManager.BlMutex)
+                {
+                    volunteer = _dal.Volunteer.Read(volunteerId)
+                        ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does not exist.");
+                }
+
+                double? maxDistance = volunteer.MaxDistance;
+
+                List<BO.OpenCallInList> calls;
+
+                lock (AdminManager.BlMutex)
+                {
+                    calls = _dal.Call.ReadAll()
+                        .Where(c => CallManager.DetermineCallStatus(c.Id) == 0 || CallManager.DetermineCallStatus(c.Id) == 5)
+                        .Where(c => callType == null || (BO.CallType)c.CallType == callType)
+                        .Select(c =>
+                        {
+                            double distance = CallManager.CalculateDistance(volunteer, c.Address);
+                            return new BO.OpenCallInList
+                            {
+                                Id = c.Id,
+                                CallType = (BO.CallType)c.CallType,
+                                VerbalDescription = c.VerbalDescription,
+                                Address = c.Address,
+                                OpeningTime = c.OpeningTime,
+                                MaximumTime = c.MaximumTime,
+                                DistanceFromVolunteer = distance
+                            };
+                        }).ToList();
+                }
+
+                if (maxDistance != null)
+                {
+                    calls = calls.Where(c => c.DistanceFromVolunteer <= maxDistance.Value).ToList();
+                }
+
+                return sortBy.HasValue
+                    ? calls.OrderBy(c => c.GetType().GetProperty(sortBy.ToString())?.GetValue(c))
+                    : calls.OrderBy(c => c.Id);
+            }
+            catch (Exception ex)
+            {
+                throw new BO.BlException("Failed to retrieve open calls for volunteer.", ex);
+            }
         }
 
         public static readonly Dictionary<int, Action?> SpecificVolunteerObservers = new();

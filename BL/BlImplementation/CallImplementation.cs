@@ -256,55 +256,9 @@ internal class CallImplementation : ICall
 
     public IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortAndFilterField? sortBy = null)
     {
-        try
-        {
-            DO.Volunteer volunteer;
-
-            lock (AdminManager.BlMutex)
-            {
-                volunteer = _dal.Volunteer.Read(volunteerId)
-                    ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does not exist.");
-            }
-
-            double? maxDistance = volunteer.MaxDistance;
-
-            List<BO.OpenCallInList> calls;
-
-            lock (AdminManager.BlMutex)
-            {
-                calls = _dal.Call.ReadAll()
-                    .Where(c => CallManager.DetermineCallStatus(c.Id) == 0 || CallManager.DetermineCallStatus(c.Id) == 5)
-                    .Where(c => callType == null || (BO.CallType)c.CallType == callType)
-                    .Select(c =>
-                    {
-                        double distance = CallManager.CalculateDistance(volunteer, c.Address);
-                        return new BO.OpenCallInList
-                        {
-                            Id = c.Id,
-                            CallType = (BO.CallType)c.CallType,
-                            VerbalDescription = c.VerbalDescription,
-                            Address = c.Address,
-                            OpeningTime = c.OpeningTime,
-                            MaximumTime = c.MaximumTime,
-                            DistanceFromVolunteer = distance
-                        };
-                    }).ToList();
-            }
-
-            if (maxDistance != null)
-            {
-                calls = calls.Where(c => c.DistanceFromVolunteer <= maxDistance.Value).ToList();
-            }
-
-            return sortBy.HasValue
-                ? calls.OrderBy(c => c.GetType().GetProperty(sortBy.ToString())?.GetValue(c))
-                : calls.OrderBy(c => c.Id);
-        }
-        catch (Exception ex)
-        {
-            throw new BO.BlException("Failed to retrieve open calls for volunteer.", ex);
-        }
+        return VolunteerManager.GetOpenCallsForVolunteer(volunteerId, callType, sortBy);
     }
+       
 
     public void CloseCall(int volunteerId, int assignmentId)
     {

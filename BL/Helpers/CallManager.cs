@@ -359,7 +359,9 @@ namespace Helpers
             foreach (var assignmentId in updatedAssignmentIds)
             {
                 Observers.NotifyItemUpdated(assignmentId);
+                
             }
+            Observers.NotifyListUpdated();
 
             // מחוץ ל-lock: שליחת התראות למשקיפים ספציפיים לקריאות
             foreach (var callId in updatedCallIds)
@@ -373,6 +375,6 @@ namespace Helpers
             // מחוץ ל-lock: שליחת התראה על עדכון רשימת הקריאות
             CallListUpdatedObserver?.Invoke();
         }
-
+      
     }
 }
