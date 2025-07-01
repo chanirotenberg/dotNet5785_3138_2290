@@ -1,10 +1,20 @@
 ﻿namespace Dal;
 using DalApi;
+using System;
 
 sealed internal class DalXml : IDal
 {
-    public static IDal Instance { get; } = new DalXml();
+    // Lazy, Thread-Safe Singleton instance
+    private static readonly Lazy<IDal> lazyInstance = new(() => new DalXml());
+
+    /// <summary>
+    /// Gets the singleton instance of DalXml.
+    /// </summary>
+    public static IDal Instance => lazyInstance.Value;
+
+    // Private constructor prevents external instantiation
     private DalXml() { }
+
     /// <summary>
     /// Gets the IAssignment implementation for managing assignments.
     /// </summary>

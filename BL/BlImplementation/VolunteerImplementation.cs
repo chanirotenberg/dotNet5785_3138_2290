@@ -85,13 +85,13 @@ internal class VolunteerImplementation : IVolunteer
         }
     }
 
-    public void CreateVolunteer(BO.Volunteer boVolunteer)
+    public async Task CreateVolunteer(BO.Volunteer boVolunteer)
     {
         try
         {
             AdminManager.ThrowOnSimulatorIsRunning();
 
-            VolunteerManager.ValidateVolunteerAsync(boVolunteer, isPartial: true);
+            await VolunteerManager.ValidateVolunteerAsync(boVolunteer, isPartial: true);
 
             var doVolunteer = new DO.Volunteer
             {
@@ -245,7 +245,7 @@ internal class VolunteerImplementation : IVolunteer
         }
     }
 
-    public void UpdateVolunteer(int requesterId, BO.Volunteer boVolunteer)
+    public async Task UpdateVolunteer(int requesterId, BO.Volunteer boVolunteer)
     {
         AdminManager.ThrowOnSimulatorIsRunning();
 
@@ -287,7 +287,7 @@ internal class VolunteerImplementation : IVolunteer
                 }
             }
 
-            VolunteerManager.ValidateVolunteerAsync(boVolunteer, isPartial: true, requester.Password);
+            await VolunteerManager.ValidateVolunteerAsync(boVolunteer, isPartial: true, requester.Password);
 
             var doVolunteer = new DO.Volunteer
             {

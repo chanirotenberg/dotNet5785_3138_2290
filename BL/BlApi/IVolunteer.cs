@@ -39,7 +39,7 @@ public interface IVolunteer : IObservable //stage 5
     /// <param name="volunteer">The updated volunteer data.</param>
     /// <exception cref="KeyNotFoundException">Thrown if the volunteer is not found.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown if the user is not authorized to update.</exception>
-    void UpdateVolunteer(int id, BO.Volunteer volunteer);
+    Task UpdateVolunteer(int id, BO.Volunteer volunteer);
 
     /// <summary>
     /// Deletes a volunteer by ID.
@@ -54,6 +54,6 @@ public interface IVolunteer : IObservable //stage 5
     /// </summary>
     /// <param name="volunteer">The volunteer object to add.</param>
     /// <exception cref="InvalidOperationException">Thrown if the volunteer already exists.</exception>
-    void CreateVolunteer(BO.Volunteer volunteer);
+    Task CreateVolunteer(BO.Volunteer volunteer);
     public IEnumerable<VolunteerInList> GetVolunteersFilterList(BO.CallType? callType);
 }

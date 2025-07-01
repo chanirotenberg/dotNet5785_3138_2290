@@ -301,9 +301,15 @@ public static class Program
     /// </summary>
     private static int PromptInt(string prompt)
     {
-        Console.Write(prompt); // Prompts for an integer input
-        return int.Parse(Console.ReadLine()!); // Parses and returns the integer
+        while (true)
+        {
+            Console.Write(prompt);
+            if (int.TryParse(Console.ReadLine(), out int value))
+                return value;
+            Console.WriteLine("Invalid input. Please enter an integer.");
+        }
     }
+
 
     /// <summary>
     /// Prompt for string input from the user.
@@ -319,18 +325,30 @@ public static class Program
     /// </summary>
     private static bool PromptBool(string prompt)
     {
-        Console.Write(prompt); // Prompts for a boolean input
-        return bool.Parse(Console.ReadLine()!); // Parses and returns the boolean value
+        while (true)
+        {
+            Console.Write(prompt);
+            if (bool.TryParse(Console.ReadLine(), out bool value))
+                return value;
+            Console.WriteLine("Invalid input. Please enter true or false.");
+        }
     }
+
 
     /// <summary>
     /// Prompt for double input from the user.
     /// </summary>
     private static double PromptDouble(string prompt)
     {
-        Console.Write(prompt); // Prompts for a double input
-        return double.Parse(Console.ReadLine()!); // Parses and returns the double value
+        while (true)
+        {
+            Console.Write(prompt);
+            if (double.TryParse(Console.ReadLine(), out double value))
+                return value;
+            Console.WriteLine("Invalid input. Please enter a valid number.");
+        }
     }
+
 
     /// <summary>
     /// Prompt for DateTime input from the user.

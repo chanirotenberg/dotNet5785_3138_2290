@@ -111,13 +111,13 @@ namespace PL.Volunteer
             }
         }
 
-        private void UpdateAddressButton_Click(object sender, RoutedEventArgs e)
+        private async void UpdateAddressButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 var volunteer = _bl.Volunteer.GetVolunteerDetails(_volunteerId);
                 volunteer.Address = VolunteerAddress;
-                _bl.Volunteer.UpdateVolunteer(volunteer.Id, volunteer);
+                await _bl.Volunteer.UpdateVolunteer(volunteer.Id, volunteer);
                 MessageBox.Show("כתובת עודכנה בהצלחה.", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
                 RefreshOpenCalls();
             }

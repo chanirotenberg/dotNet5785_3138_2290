@@ -61,7 +61,7 @@ namespace PL.Volunteer
             _bl.Volunteer.RemoveObserver(volunteerId, RefreshVolunteer);
         }
 
-        private void UpdateVolunteer_Click(object sender, RoutedEventArgs e)
+        private async void UpdateVolunteer_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace PL.Volunteer
                     CurrentVolunteer.Password = existing.Password;
                 }
 
-                _bl.Volunteer.UpdateVolunteer(CurrentVolunteer.Id, CurrentVolunteer);
+                await _bl.Volunteer.UpdateVolunteer(CurrentVolunteer.Id, CurrentVolunteer);
                 MessageBox.Show("הפרטים עודכנו בהצלחה.", "עדכון מתנדב", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -150,69 +150,62 @@ namespace PL.Volunteer
             double volunteerLat = (double)CurrentVolunteer.Latitude;
             double volunteerLng = (double)CurrentVolunteer.Longitude;
 
-            string mapHtml;
+            var openCalls = _bl.Call.GetOpenCallsForVolunteer(_currentVolunteer.Id)
+                .ToList();
 
-            if (CurrentVolunteer.CallInProgress != null)
+            string markers = $@"
+        L.marker([{volunteerLat}, {volunteerLng}]).addTo(map)
+            .bindPopup('מתנדב')
+            .openPopup();";
+
+            foreach (var call in openCalls)
             {
-                var callDetails = _bl.Call.GetCallDetails(CurrentVolunteer.CallInProgress.CallId);
-                double callLat = callDetails.Latitude;
-                double callLng = callDetails.Longitude;
+                var callDetails = _bl.Call.GetCallDetails(call.Id);
+                markers += $@"
+        L.marker([{callDetails.Latitude}, {callDetails.Longitude}]).addTo(map)
+            .bindPopup('קריאה {call.Id}');";
 
-                mapHtml = $@"
-        <html>
-        <head>
-            <meta charset='utf-8' />
-            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-            <link rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css'/>
-            <script src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js'></script>
-        </head>
-        <body>
-            <div id='map' style='width:100%;height:100%;'></div>
-            <script>
-                var map = L.map('map').setView([{volunteerLat}, {volunteerLng}], 13);
+                // קו אווירי
+                markers += $@"
+        L.polyline([
+            [{volunteerLat}, {volunteerLng}],
+            [{callDetails.Latitude}, {callDetails.Longitude}]
+        ], {{ color: 'red' }}).addTo(map);";
 
-                L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
-                    maxZoom: 19
-                }}).addTo(map);
-
-                L.marker([{volunteerLat}, {volunteerLng}]).addTo(map)
-                    .bindPopup('Volunteer')
-                    .openPopup();
-
-                L.marker([{callLat}, {callLng}]).addTo(map)
-                    .bindPopup('Call');
-            </script>
-        </body>
-        </html>";
+                // מסלול הליכה/נסיעה (באמצעות OSRM)
+                markers += $@"
+        fetch(`https://router.project-osrm.org/route/v1/driving/{volunteerLng},{volunteerLat};{callDetails.Longitude},{callDetails.Latitude}?overview=full&geometries=geojson`)
+            .then(response => response.json())
+            .then(data => {{
+                var coords = data.routes[0].geometry.coordinates;
+                var latlngs = coords.map(c => [c[1], c[0]]);
+                L.polyline(latlngs, {{color: 'blue'}}).addTo(map);
+            }});";
             }
-            else
-            {
-                mapHtml = $@"
-        <html>
-        <head>
-            <meta charset='utf-8' />
-            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-            <link rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css'/>
-            <script src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js'></script>
-        </head>
-        <body>
-            <div id='map' style='width:100%;height:100%;'></div>
-            <script>
-                var map = L.map('map').setView([{volunteerLat}, {volunteerLng}], 13);
 
-                L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
-                    maxZoom: 19
-                }}).addTo(map);
+            string mapHtml = $@"
+    <html>
+    <head>
+        <meta charset='utf-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <link rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css'/>
+        <script src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js'></script>
+    </head>
+    <body>
+        <div id='map' style='width:100%;height:100%;'></div>
+        <script>
+            var map = L.map('map').setView([{volunteerLat}, {volunteerLng}], 13);
+            L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+                maxZoom: 19
+            }}).addTo(map);
 
-                L.marker([{volunteerLat}, {volunteerLng}]).addTo(map)
-                    .bindPopup('Volunteer')
-                    .openPopup();
-            </script>
-        </body>
-        </html>";
-            }
+            {markers}
+        </script>
+    </body>
+    </html>";
 
             MapBrowser.NavigateToString(mapHtml);
         }
+
     }
 }

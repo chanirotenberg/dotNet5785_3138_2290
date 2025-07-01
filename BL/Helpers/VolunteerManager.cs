@@ -23,6 +23,73 @@ namespace Helpers
         /// Validates a volunteer object to ensure correct data input.
         /// </summary>
         /// <param name="volunteer">The volunteer object to validate.</param>
+        //public static void ValidateVolunteer(BO.Volunteer volunteer, bool isPartial = false, string? oldPassword = null)
+        //{
+        //    lock (_lock)
+        //    {
+        //        if (!isPartial)
+        //        {
+        //            if (string.IsNullOrWhiteSpace(volunteer.Name) || volunteer.Name.Length < 2)
+        //                throw new BO.BlValidationException("Name must be at least 2 characters long.");
+        //        }
+
+        //        if (!string.IsNullOrWhiteSpace(volunteer.Email))
+        //        {
+        //            if (!volunteer.Email.Contains("@") || !volunteer.Email.Contains("."))
+        //                throw new BO.BlValidationException("Invalid email format.");
+        //        }
+        //        else if (!isPartial)
+        //        {
+        //            throw new BO.BlValidationException("Email is required.");
+        //        }
+
+        //        if (volunteer.Password != oldPassword)
+        //        {
+        //            if (!IsStrongPassword(volunteer.Password, oldPassword))
+        //                throw new BO.BlValidationException("Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.");
+        //            volunteer.Password = EncryptPassword(volunteer.Password);
+        //        }
+
+        //        if (!IsValidIsraeliId(volunteer.Id))
+        //            throw new BO.BlValidationException("Invalid ID.");
+
+        //        if (!string.IsNullOrWhiteSpace(volunteer.Phone))
+        //        {
+        //            if (!IsNumeric(volunteer.Phone) || volunteer.Phone.Length != 10)
+        //                throw new BO.BlValidationException("Phone number must be numeric and 10 digits long.");
+        //        }
+        //        else if (!isPartial)
+        //        {
+        //            throw new BO.BlValidationException("Phone number is required.");
+        //        }
+
+        //        if (volunteer.Latitude.HasValue && (volunteer.Latitude < -90 || volunteer.Latitude > 90))
+        //            throw new BO.BlValidationException("Latitude must be between -90 and 90.");
+
+        //        if (volunteer.Longitude.HasValue && (volunteer.Longitude < -180 || volunteer.Longitude > 180))
+        //            throw new BO.BlValidationException("Longitude must be between -180 and 180.");
+
+        //        if (volunteer.MaxDistance.HasValue && volunteer.MaxDistance <= 0)
+        //            throw new BO.BlValidationException("MaxDistance must be positive.");
+
+        //        if (string.IsNullOrWhiteSpace(volunteer.Address))
+        //            throw new BO.BlValidationException("Address is required.");
+        //    }
+        //}
+        //public static async Task CompleteCoordinatesAsync(BO.Volunteer volunteer)
+        //{
+        //    try
+        //    {
+        //        var (latitude, longitude) = await Tools.GetCoordinatesAsync(volunteer.Address);
+        //        volunteer.Latitude = latitude;
+        //        volunteer.Longitude = longitude;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new BO.BlValidationException($"Invalid address: {volunteer.Address}. Details: {ex.Message}");
+        //    }
+        //}
+
         public static async Task ValidateVolunteerAsync(BO.Volunteer volunteer, bool isPartial = false, string? oldPassword = null)
         {
             lock (_lock)
@@ -38,7 +105,7 @@ namespace Helpers
                     if (!volunteer.Email.Contains("@") || !volunteer.Email.Contains("."))
                         throw new BO.BlValidationException("Invalid email format.");
                 }
-                else if (!isPartial)
+                else
                 {
                     throw new BO.BlValidationException("Email is required.");
                 }
@@ -128,9 +195,10 @@ namespace Helpers
         /// <returns>True if the ID is valid, otherwise false.</returns>
         private static bool IsValidIsraeliId(int id)
         {
+            if (id <= 0)
+                return false;
             var idStr = id.ToString("D9");
-            if (idStr.Length < 9)
-                return false; // Pad to 9 digits
+         
             int sum = 0;
             for (int i = 0; i < idStr.Length; i++)
             {

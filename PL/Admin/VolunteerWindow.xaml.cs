@@ -43,15 +43,16 @@ namespace PL.Admin
             DataContext = this;
         }
 
-        private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
+        private async void btnAddUpdate_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (ButtonText == "Add")
                 {
-                    s_bl.Volunteer.CreateVolunteer(CurrentVolunteer!);
+                    await s_bl.Volunteer.CreateVolunteer(CurrentVolunteer!);
                     MessageBox.Show("המתנדב נוסף בהצלחה", "הוספה", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+
                 else
                 {
                     if (string.IsNullOrWhiteSpace(CurrentVolunteer!.Password))
@@ -60,7 +61,7 @@ namespace PL.Admin
                         CurrentVolunteer.Password = existing.Password;
                     }
 
-                    s_bl.Volunteer.UpdateVolunteer(CurrentVolunteer.Id, CurrentVolunteer);
+                    await s_bl.Volunteer.UpdateVolunteer(CurrentVolunteer.Id, CurrentVolunteer);
                     MessageBox.Show("המתנדב עודכן בהצלחה", "עדכון", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
