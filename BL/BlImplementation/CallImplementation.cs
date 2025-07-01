@@ -128,6 +128,8 @@ internal class CallImplementation : ICall
     {
         try
         {
+            AdminManager.ThrowOnSimulatorIsRunning();
+
             CallManager.ValidateCall(call);
 
             DO.Call doCall;
@@ -162,6 +164,8 @@ internal class CallImplementation : ICall
     {
         try
         {
+            AdminManager.ThrowOnSimulatorIsRunning();
+
             bool shouldDelete = false;
 
             lock (AdminManager.BlMutex)
@@ -190,6 +194,8 @@ internal class CallImplementation : ICall
     {
         try
         {
+            AdminManager.ThrowOnSimulatorIsRunning();
+
             CallManager.ValidateCall(call);
 
             var doCall = new DO.Call
@@ -256,148 +262,31 @@ internal class CallImplementation : ICall
 
     public IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortAndFilterField? sortBy = null)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();
+
         return VolunteerManager.GetOpenCallsForVolunteer(volunteerId, callType, sortBy);
     }
        
 
     public void CloseCall(int volunteerId, int assignmentId)
     {
-        try
-        {
-            DO.Assignment assignment;
+        AdminManager.ThrowOnSimulatorIsRunning();
 
-            lock (AdminManager.BlMutex)
-            {
-                assignment = _dal.Assignment.Read(assignmentId)
-                    ?? throw new BO.BlDoesNotExistException($"Assignment with ID={assignmentId} does not exist.");
-
-                if (assignment.VolunteerId != volunteerId)
-                    throw new BO.BlAuthorizationException($"Volunteer with ID={volunteerId} is not authorized to close this call.");
-
-                if (assignment.ActualEndTime != null || assignment.EndType != null)
-                    throw new BO.BlLogicException($"The assignment with ID={assignmentId} is already closed or expired.");
-
-                assignment = assignment with
-                {
-                    ActualEndTime = _dal.Config.Clock,
-                    EndType = DO.EndType.Cared
-                };
-
-                _dal.Assignment.Update(assignment);
-            }
-
-            VolunteerManager.Observers.NotifyItemUpdated(assignment.VolunteerId);
-            CallManager.Observers.NotifyItemUpdated(volunteerId);
-            CallManager.Observers.NotifyListUpdated();
-        }
-        catch (Exception ex)
-        {
-            throw new BO.BlException("Failed to close the call.", ex);
-        }
+        VolunteerManager.CloseCall(volunteerId, assignmentId);
     }
 
     public void CancelCall(int requesterId, int assignmentId)
     {
-        try
-        {
-            DO.Assignment assignment;
+        AdminManager.ThrowOnSimulatorIsRunning();
 
-            lock (AdminManager.BlMutex)
-            {
-                assignment = _dal.Assignment.Read(assignmentId)
-                    ?? throw new BO.BlDoesNotExistException($"Assignment with ID={assignmentId} does not exist.");
-
-                if (assignment.ActualEndTime != null || assignment.EndType != null)
-                    throw new BO.BlLogicException($"The assignment with ID={assignmentId} is already closed or expired.");
-
-                var isRequesterAuthorized =
-                    assignment.VolunteerId == requesterId ||
-                    _dal.Volunteer.Read(requesterId)?.Jobs == DO.Jobs.Administrator;
-
-                if (!isRequesterAuthorized)
-                    throw new BO.BlAuthorizationException($"Requester with ID={requesterId} is not authorized to cancel this call.");
-
-                assignment = assignment with
-                {
-                    ActualEndTime = _dal.Config.Clock,
-                    EndType = assignment.VolunteerId == requesterId ? DO.EndType.SelfCancellation : DO.EndType.AdministratorCancellation
-                };
-
-                _dal.Assignment.Update(assignment);
-            }
-
-            VolunteerManager.Observers.NotifyItemUpdated(assignment.VolunteerId);
-            CallManager.Observers.NotifyItemUpdated(assignment.VolunteerId);
-            CallManager.Observers.NotifyListUpdated();
-
-            if (assignment.EndType == DO.EndType.AdministratorCancellation)
-            {
-                DO.Volunteer volunteer;
-                DO.Call call;
-
-                lock (AdminManager.BlMutex)
-                {
-                    volunteer = _dal.Volunteer.Read(assignment.VolunteerId)
-                        ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={assignment.VolunteerId} does not exist.");
-
-                    call = _dal.Call.Read(assignment.CallId)
-                        ?? throw new BO.BlDoesNotExistException($"Call with ID={assignment.CallId} does not exist.");
-                }
-
-                CallManager.SendCancellationEmailAsync(volunteer.Email, new BO.Call
-                {
-                    Address = call.Address,
-                    VerbalDescription = call.VerbalDescription
-                });
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new BO.BlException("Failed to cancel the call.", ex);
-        }
+        VolunteerManager.CancelCall(requesterId, assignmentId);
     }
 
     public void AssignCallToVolunteer(int volunteerId, int callId)
     {
-        try
-        {
-            DO.Call call;
-            bool isCallOpen;
-            bool hasExistingAssignments;
+        AdminManager.ThrowOnSimulatorIsRunning();
 
-            lock (AdminManager.BlMutex)
-            {
-                call = _dal.Call.Read(callId)
-                    ?? throw new BO.BlDoesNotExistException($"Call with ID={callId} does not exist.");
-
-                isCallOpen = CallManager.DetermineCallStatus(call.Id) == 0 || CallManager.DetermineCallStatus(call.Id) == 5;
-                if (!isCallOpen)
-                    throw new BO.BlLogicException($"Call with ID={callId} is not open for assignment.");
-
-                hasExistingAssignments = _dal.Assignment.ReadAll(a => a.CallId == callId && a.ActualEndTime == null).Any();
-                if (hasExistingAssignments)
-                    throw new BO.BlLogicException($"Call with ID={callId} is already assigned to a volunteer.");
-
-                var assignment = new DO.Assignment
-                {
-                    CallId = callId,
-                    VolunteerId = volunteerId,
-                    EntryTime = _dal.Config.Clock,
-                    ActualEndTime = null,
-                    EndType = null
-                };
-
-                _dal.Assignment.Create(assignment);
-            }
-
-            CallManager.Observers.NotifyItemUpdated(volunteerId);
-            CallManager.Observers.NotifyListUpdated();
-            VolunteerManager.Observers.NotifyItemUpdated(volunteerId);
-        }
-        catch (Exception ex)
-        {
-            throw new BO.BlException("Failed to assign call to volunteer.", ex);
-        }
+        VolunteerManager.AssignCallToVolunteer(volunteerId, callId);
     }
 
     #region Stage 5

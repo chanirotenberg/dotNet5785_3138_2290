@@ -68,10 +68,11 @@ namespace PL.Admin
             }
             catch (Exception ex)
             {
-                string userMessage = "אירעה שגיאה בעת שמירת המתנדב. אנא בדוק את הפרטים ונסה שוב.";
+                string userMessage = "אירעה שגיאה בעת שמירת המתנדב. ";
                 if (ex.InnerException != null)
                     userMessage += "\n\nDetails: " + ex.InnerException.Message;
-
+                //else
+                //    userMessage += "\n\nDetails: " + ex.Message;
                 MessageBox.Show(userMessage, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

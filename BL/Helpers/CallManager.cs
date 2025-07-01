@@ -38,7 +38,6 @@ namespace Helpers
                             return 3; // Expired
                         if (latestAssignment.EndType == DO.EndType.Cared)
                             return 2; // Closed
-                        return 0; // Open
                     }
                 }
 
@@ -284,7 +283,7 @@ namespace Helpers
                 lock (_lock)
                 {
                     expiredCalls = _dal.Call.ReadAll()
-                        .Where(c => c.MaximumTime.HasValue && c.MaximumTime > oldClock && c.MaximumTime <= newClock)
+                        .Where(c => c.MaximumTime.HasValue && c.MaximumTime <= newClock)
                         .ToList();
                 }
             }

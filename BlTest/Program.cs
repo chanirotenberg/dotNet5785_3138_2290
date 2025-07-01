@@ -154,7 +154,7 @@ public static class Program
                         Console.WriteLine("Volunteer deleted successfully.");
                         break;
                     case 6:
-                        string username = PromptString("Enter Username: ");
+                        int username=0;
                         password = PromptString("Enter Password: ");
                         job = s_bl.Volunteer.Login(username, password);
                         Console.WriteLine($"Login successful. User role: {job}");

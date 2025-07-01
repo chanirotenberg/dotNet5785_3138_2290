@@ -38,6 +38,10 @@ namespace PL
         {
             InitializeComponent();
         }
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {

@@ -4,34 +4,34 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="VolunteerListWindow"
-        Height="640" Width="800"
+        Title="Volunteer List"
+        Height="640" Width="900"
         Loaded="Window_Loaded"
         Closed="Window_Closed"
+        WindowStartupLocation="CenterScreen"
+        Background="#F8F9FA"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
 
-    <!-- Window Resources: Styles for DataGrid cells, rows, and the delete button -->
     <Window.Resources>
         <!-- Style for centering content in DataGrid cells -->
         <Style TargetType="DataGridCell">
             <Setter Property="TextBlock.TextAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderThickness" Value="10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
         </Style>
 
-        <!-- Custom round delete button with trash emoji -->
+        <!-- Rounded delete button -->
         <Style x:Key="RoundDeleteButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="30"/>
             <Setter Property="Height" Value="30"/>
-            <Setter Property="Background" Value="#FF66B2FF"/>
+            <Setter Property="Background" Value="#667EEA"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Content" Value="🗑"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -46,79 +46,107 @@
             </Setter>
         </Style>
 
-        <!-- Alternating row style for DataGrid -->
+        <!-- Alternating rows -->
         <Style TargetType="DataGridRow">
             <Setter Property="Padding" Value="4"/>
-            <Setter Property="Height" Value="50"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="13"/>
             <Setter Property="Background" Value="White"/>
             <Style.Triggers>
                 <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                    <Setter Property="Background" Value="#F2F2F2"/>
+                    <Setter Property="Background" Value="#EFF2F7"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Modern ComboBox -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="0,5,20,5"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#D1D1D1"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <!-- Add Button -->
+        <Style TargetType="Button" x:Key="AddButtonStyle">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Margin" Value="0,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
-    <!-- Main layout grid -->
-    <Grid>
-        <!-- Grid structure: 2 columns, 3 rows -->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="769*"/>
-            <ColumnDefinition Width="31*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="40*"/>
-            <RowDefinition Height="500*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Border CornerRadius="15" Margin="15">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#F8F9FA" Offset="0"/>
+                <GradientStop Color="#E9ECEF" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Border.Effect>
+            <DropShadowEffect Color="#ADB5BD" BlurRadius="25" ShadowDepth="0" Opacity="0.2"/>
+        </Border.Effect>
 
-        <!-- Top row: Filter selection with ComboBox -->
-        <Grid Grid.Row="0" Grid.ColumnSpan="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0"/>
-            <!-- ComboBox for filtering by call type -->
-            <ComboBox Grid.Column="1"
-                      SelectedValue="{Binding Path=calls, Mode=TwoWay}"
-                      ItemsSource="{Binding Source={StaticResource CallCollection}}"
-                      SelectionChanged="CallTypeComboBox_SelectionChanged"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Filter Row -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10" Grid.Row="0">
+                <TextBlock Text="Filter by Call Type:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="14"/>
+                <ComboBox SelectedValue="{Binding Path=calls, Mode=TwoWay}"
+                          ItemsSource="{Binding Source={StaticResource CallCollection}}"
+                          SelectionChanged="CallTypeComboBox_SelectionChanged"
+                          Width="200"/>
+            </StackPanel>
+
+            <!-- Data Grid -->
+            <DataGrid Grid.Row="1"
+                      Margin="10"
+                      IsReadOnly="True"
+                      AutoGenerateColumns="True"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="None"
+                      BorderThickness="0"
+                      AlternationCount="2"
+                      ItemsSource="{Binding VolunteerList}"
+                      SelectedItem="{Binding SelectedVolunteer}"
+                      MouseDoubleClick="lsvVolunteerList_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header=" " Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource RoundDeleteButtonStyle}"
+                                        Click="DeleteButton_Click"
+                                        CommandParameter="{Binding}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Add Button -->
+            <Button Grid.Row="2" Content="Add" Click="AddVolunteer_Click" HorizontalAlignment="Center" Style="{StaticResource AddButtonStyle}"/>
         </Grid>
-
-        <!-- Middle row: DataGrid to display the volunteer list -->
-        <DataGrid Grid.Row="1"
-                  Margin="5"
-                  IsReadOnly="True"
-                  AutoGenerateColumns="True"
-                  HeadersVisibility="Column"
-                  GridLinesVisibility="None"
-                  BorderThickness="0"
-                  AlternationCount="2"
-                  RowHeight="40"
-                  ItemsSource="{Binding VolunteerList}"
-                  SelectedItem="{Binding SelectedVolunteer}"
-                  MouseDoubleClick="lsvVolunteerList_MouseDoubleClick">
-            <DataGrid.Columns>
-                <!-- Column for delete button per row -->
-                <DataGridTemplateColumn Header=" " Width="50">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Style="{StaticResource RoundDeleteButtonStyle}"
-                                    Click="DeleteButton_Click"
-                                    CommandParameter="{Binding}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <!-- Bottom row: Add volunteer button -->
-        <Button Content="Add"
-                Grid.Row="2"
-                HorizontalAlignment="Center"
-                Height="50"
-                Width="100"
-                Click="AddVolunteer_Click"/>
-    </Grid>
+    </Border>
 </Window>

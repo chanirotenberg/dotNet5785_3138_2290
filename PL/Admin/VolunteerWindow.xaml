@@ -4,82 +4,77 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="VolunteerWindow" Height="600" Width="400"
-        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        Title="Volunteer Details" Height="700" Width="500"
+        WindowStartupLocation="CenterScreen"
+        Background="#F8F9FA"
         Loaded="Window_Loaded"
-        Closed="Window_Closed">
+        Closed="Window_Closed"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
 
-    <!-- Window-wide resources: unified styles for common controls -->
     <Window.Resources>
-        <!-- Common style for Label elements -->
-        <Style TargetType="Label">
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5,8,5,8"/>
-            <Setter Property="Foreground" Value="#333333"/>
+        <Style x:Key="ModernCard" TargetType="Border">
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="15"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="0" Opacity="0.2"/>
+                </Setter.Value>
+            </Setter>
         </Style>
 
-        <!-- Common style for TextBox -->
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
         <Style TargetType="TextBox">
             <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Padding" Value="6"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="BorderBrush" Value="#888"/>
-            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Margin" Value="5,5,0,10"/>
+            <Setter Property="BorderBrush" Value="#D1D1D1"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
             <Setter Property="Background" Value="White"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="MinHeight" Value="30"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                  VerticalAlignment="Center"
+                                  HorizontalScrollBarVisibility="Hidden"
+                                  VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
-        <!-- Common style for PasswordBox -->
-        <Style TargetType="PasswordBox">
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Padding" Value="6"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="BorderBrush" Value="#888"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="MinHeight" Value="30"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-        </Style>
 
-        <!-- Common style for ComboBox -->
         <Style TargetType="ComboBox">
             <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Padding" Value="4"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="BorderBrush" Value="#888"/>
-            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Margin" Value="5,5,0,10"/>
+            <Setter Property="BorderBrush" Value="#D1D1D1"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
             <Setter Property="Background" Value="White"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="MinHeight" Value="30"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
         </Style>
 
-        <!-- Common style for CheckBox -->
-        <Style TargetType="CheckBox">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-
-        <!-- Common style for buttons (Add/Update) -->
         <Style TargetType="Button">
-            <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Background" Value="#FF66B2FF"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#667eea"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Width" Value="100"/>
-            <Setter Property="Height" Value="35"/>
-            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Margin" Value="15,20,15,10"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Width" Value="150"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -92,98 +87,65 @@
         </Style>
     </Window.Resources>
 
-    <!-- ScrollViewer allows vertical scrolling for form -->
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="20">
-            <!-- Rows defined per form field -->
-            <Grid.RowDefinitions>
-                <!-- Each RowDefinition represents one field row -->
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="50" />
-            </Grid.RowDefinitions>
+        <Border Style="{StaticResource ModernCard}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <!-- 2-column layout: Label + Input -->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+                <TextBlock Text="Volunteer Profile" FontSize="24" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,20" Grid.Row="0" HorizontalAlignment="Center"/>
 
-            <!-- Field entries: Label + Control per row -->
-            <Label Content="Id:" Grid.Row="0" Grid.Column="0" Margin="5"/>
-            <!-- ID is read-only if in update mode -->
-            <TextBox Text="{Binding CurrentVolunteer.Id}" Grid.Row="0" Grid.Column="1" Margin="5"
-                      IsReadOnly="{Binding ButtonText, Converter={StaticResource ConvertUpdateToTrueKey}}"/>
+                <StackPanel Grid.Row="1">
+                    <Label Content="ID"/>
+                    <TextBox Text="{Binding CurrentVolunteer.Id}" IsReadOnly="True"/>
 
-            <Label Content="Name:" Grid.Row="1" Grid.Column="0" Margin="5"/>
-            <TextBox Text="{Binding CurrentVolunteer.Name, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="1" Grid.Column="1" Margin="5"/>
+                    <Label Content="Name"/>
+                    <TextBox Text="{Binding CurrentVolunteer.Name}"/>
 
-            <Label Content="Phone:" Grid.Row="2" Grid.Column="0" Margin="5"/>
-            <TextBox Text="{Binding CurrentVolunteer.Phone, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="2" Grid.Column="1" Margin="5"/>
+                    <Label Content="Phone"/>
+                    <TextBox Text="{Binding CurrentVolunteer.Phone}"/>
 
-            <Label Content="Email:" Grid.Row="3" Grid.Column="0" Margin="5"/>
-            <TextBox Text="{Binding CurrentVolunteer.Email, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="3" Grid.Column="1" Margin="5"/>
+                    <Label Content="Email"/>
+                    <TextBox Text="{Binding CurrentVolunteer.Email}"/>
 
-            <Label Content="Password:" Grid.Row="4" Grid.Column="0" Margin="5"/>
-            <!-- Password is only sent one-way to model -->
-            <TextBox Grid.Row="4" Grid.Column="1" Margin="5"
-                     Text="{Binding CurrentVolunteer.Password, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Label Content="Password"/>
+                    <TextBox Text="{Binding CurrentVolunteer.Password, Mode=OneWayToSource}"/>
 
-            <Label Content="Address:" Grid.Row="5" Grid.Column="0" Margin="5"/>
-            <TextBox Text="{Binding CurrentVolunteer.Address, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="5" Grid.Column="1" Margin="5"/>
+                    <Label Content="Address"/>
+                    <TextBox Text="{Binding CurrentVolunteer.Address}"/>
 
-            <Label Content="Job:" Grid.Row="8" Grid.Column="0" Margin="5"/>
-            <!-- Job selection from predefined list -->
-            <ComboBox ItemsSource="{Binding Source={StaticResource JobsCollectionKey}}"
-                      SelectedValue="{Binding CurrentVolunteer.Jobs, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
-                      Grid.Row="8" Grid.Column="1" Margin="5"/>
+                    <Label Content="Job"/>
+                    <ComboBox ItemsSource="{Binding Source={StaticResource JobsCollectionKey}}"
+                              SelectedValue="{Binding CurrentVolunteer.Jobs}"/>
 
-            <Label Content="Is Active:" Grid.Row="9" Grid.Column="0" Margin="5"/>
-            <CheckBox IsChecked="{Binding CurrentVolunteer.IsActive, Mode=TwoWay}" Grid.Row="9" Grid.Column="1" Margin="5"/>
+                    <Label Content="Is Active"/>
+                    <CheckBox IsChecked="{Binding CurrentVolunteer.IsActive}" Margin="5"/>
 
-            <Label Content="Max Distance:" Grid.Row="10" Grid.Column="0" Margin="5"/>
-            <TextBox Text="{Binding CurrentVolunteer.MaxDistance, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}" Grid.Row="10" Grid.Column="1" Margin="5"/>
+                    <Label Content="Max Distance"/>
+                    <TextBox Text="{Binding CurrentVolunteer.MaxDistance}"/>
 
-            <Label Content="Distance Type:" Grid.Row="11" Grid.Column="0" Margin="5"/>
-            <!-- Distance type selection -->
-            <ComboBox ItemsSource="{Binding Source={StaticResource DistanceCollectionKey}}"
-                      SelectedValue="{Binding CurrentVolunteer.DistanceType, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=True}"
-                      Grid.Row="11" Grid.Column="1" Margin="5"/>
+                    <Label Content="Distance Type"/>
+                    <ComboBox ItemsSource="{Binding Source={StaticResource DistanceCollectionKey}}"
+                              SelectedValue="{Binding CurrentVolunteer.DistanceType}"/>
 
-            <Label Content="Sum of Calls:" Grid.Row="12" Grid.Column="0" Margin="5"/>
-            <TextBox Text="{Binding CurrentVolunteer.SumOfCalls}" IsReadOnly="True" Grid.Row="12" Grid.Column="1" Margin="5"/>
+                    <Label Content="Sum of Calls"/>
+                    <TextBox Text="{Binding CurrentVolunteer.SumOfCalls}" IsReadOnly="True"/>
 
-            <Label Content="Cancellations:" Grid.Row="13" Grid.Column="0" Margin="5"/>
-            <TextBox Text="{Binding CurrentVolunteer.SumOfCancellation}" IsReadOnly="True" Grid.Row="13" Grid.Column="1" Margin="5"/>
+                    <Label Content="Cancellations"/>
+                    <TextBox Text="{Binding CurrentVolunteer.SumOfCancellation}" IsReadOnly="True"/>
 
-            <Label Content="Expired Calls:" Grid.Row="14" Grid.Column="0" Margin="5"/>
-            <TextBox Text="{Binding CurrentVolunteer.SumOfExpiredCalls}" IsReadOnly="True" Grid.Row="14" Grid.Column="1" Margin="5"/>
+                    <Label Content="Expired Calls"/>
+                    <TextBox Text="{Binding CurrentVolunteer.SumOfExpiredCalls}" IsReadOnly="True"/>
 
-            <Label Content="Current Call:" Grid.Row="15" Grid.Column="0" Margin="5"/>
-            <!-- Shows the active call status -->
-            <TextBox Text="{Binding CurrentVolunteer.CallInProgress, Converter={StaticResource CallInProgressConverter}}"
-                     IsReadOnly="True" Grid.Row="15" Grid.Column="1" Margin="5"/>
+                    <Label Content="Current Call"/>
+                    <TextBox Text="{Binding CurrentVolunteer.CallInProgress, Converter={StaticResource CallInProgressConverter}}" IsReadOnly="True"/>
+                </StackPanel>
 
-            <!-- Submit button for Add or Update -->
-            <Button Content="{Binding ButtonText}" Grid.Row="16" Grid.ColumnSpan="2" Height="30" Width="100" HorizontalAlignment="Center" Margin="10"
-                    Click="btnAddUpdate_Click"/>
-        </Grid>
+                <Button Grid.Row="2" Content="{Binding ButtonText}" Click="btnAddUpdate_Click" HorizontalAlignment="Center"/>
+            </Grid>
+        </Border>
     </ScrollViewer>
 </Window>

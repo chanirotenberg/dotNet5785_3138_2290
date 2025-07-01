@@ -59,7 +59,7 @@ internal class VolunteerImplementation : IVolunteer
                             Name = v.Name,
                             IsActive = v.active,
                             TotalHandledCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndType == DO.EndType.Cared).Count(),
-                            TotalCanceledCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndType == DO.EndType.AdministratorCancellation).Count(),
+                            TotalCanceledCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && (a.EndType == DO.EndType.AdministratorCancellation || a.EndType == DO.EndType.SelfCancellation)).Count(),
                             TotalExpiredCalls = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id && a.EndType == DO.EndType.ExpiredCancellation).Count(),
                             CurrentCallId = currentCallId,
                             CallType = callType
@@ -89,6 +89,8 @@ internal class VolunteerImplementation : IVolunteer
     {
         try
         {
+            AdminManager.ThrowOnSimulatorIsRunning();
+
             VolunteerManager.ValidateVolunteerAsync(boVolunteer, isPartial: true);
 
             var doVolunteer = new DO.Volunteer
@@ -203,6 +205,8 @@ internal class VolunteerImplementation : IVolunteer
 
     public void DeleteVolunteer(int id)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();
+
         try
         {
             DO.Volunteer volunteer;
@@ -243,6 +247,8 @@ internal class VolunteerImplementation : IVolunteer
 
     public void UpdateVolunteer(int requesterId, BO.Volunteer boVolunteer)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();
+
         try
         {
             DO.Volunteer requester;

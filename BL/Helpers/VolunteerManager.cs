@@ -151,15 +151,6 @@ namespace Helpers
             return value.All(char.IsDigit);
         }
 
-        /// <summary>
-        /// Checks if a given string represents a positive integer.
-        /// </summary>
-        /// <param name="value">The string to check.</param>
-        /// <returns>True if the string is a positive integer, otherwise false.</returns>
-        private static bool IsPositiveInteger(string value)
-        {
-            return int.TryParse(value, out int result) && result > 0;
-        }
         internal static async Task SimulateVolunteerActivityAsync()
         {
             List<int> volunteersToNotify = new();
@@ -204,23 +195,7 @@ namespace Helpers
                             if (openCallsForVolunteer.Count > 0)
                             {
                                 var chosenCall = openCallsForVolunteer[s_rand.Next(openCallsForVolunteer.Count)];
-
-                                var newAssignment = new DO.Assignment
-                                {
-                                    CallId = chosenCall.Id,
-                                    VolunteerId = volunteer.Id,
-                                    EntryTime = DateTime.Now,
-                                    ActualEndTime = null,
-                                    EndType = null
-                                };
-
-                                lock (_lock)
-                                {
-                                    _dal.Assignment.Create(newAssignment);
-                                }
-
-                                assignmentsToNotify.Add(newAssignment.Id);
-                                volunteersToNotify.Add(volunteer.Id);
+                                AssignCallToVolunteer(volunteer.Id, chosenCall.Id);
                             }
                         }
                     }
@@ -242,37 +217,13 @@ namespace Helpers
 
                         if (timeSinceStart >= threshold)
                         {
-                            var updatedAssignment = currentAssignment with
-                            {
-                                ActualEndTime = DateTime.Now,
-                                EndType = DO.EndType.Cared
-                            };
-
-                            lock (_lock)
-                            {
-                                _dal.Assignment.Update(updatedAssignment);
-                            }
-
-                            assignmentsToNotify.Add(updatedAssignment.Id);
-                            volunteersToNotify.Add(volunteer.Id);
+                            CloseCall(volunteer.Id, currentAssignment.Id);
                         }
                         else
                         {
                             if (s_rand.NextDouble() < 0.1)
                             {
-                                var updatedAssignment = currentAssignment with
-                                {
-                                    ActualEndTime = DateTime.Now,
-                                    EndType = DO.EndType.SelfCancellation
-                                };
-
-                                lock (_lock)
-                                {
-                                    _dal.Assignment.Update(updatedAssignment);
-                                }
-
-                                assignmentsToNotify.Add(updatedAssignment.Id);
-                                volunteersToNotify.Add(volunteer.Id);
+                                CancelCall(volunteer.Id, currentAssignment.Id);
                             }
                         }
                     }
@@ -351,6 +302,150 @@ namespace Helpers
             catch (Exception ex)
             {
                 throw new BO.BlException("Failed to retrieve open calls for volunteer.", ex);
+            }
+        }
+
+        public static void CloseCall(int volunteerId, int assignmentId)
+        {
+            try
+            {
+                DO.Assignment assignment;
+
+                lock (AdminManager.BlMutex)
+                {
+                    assignment = _dal.Assignment.Read(assignmentId)
+                        ?? throw new BO.BlDoesNotExistException($"Assignment with ID={assignmentId} does not exist.");
+
+                    if (assignment.VolunteerId != volunteerId)
+                        throw new BO.BlAuthorizationException($"Volunteer with ID={volunteerId} is not authorized to close this call.");
+
+                    if (assignment.ActualEndTime != null || assignment.EndType != null)
+                        throw new BO.BlLogicException($"The assignment with ID={assignmentId} is already closed or expired.");
+
+                    assignment = assignment with
+                    {
+                        ActualEndTime = _dal.Config.Clock,
+                        EndType = DO.EndType.Cared
+                    };
+
+                    _dal.Assignment.Update(assignment);
+                }
+
+                Observers.NotifyItemUpdated(assignment.VolunteerId);
+                Observers.NotifyListUpdated();
+                CallManager.Observers.NotifyItemUpdated(volunteerId);
+                CallManager.Observers.NotifyListUpdated();
+            }
+            catch (Exception ex)
+            {
+                throw new BO.BlException("Failed to close the call.", ex);
+            }
+        }
+        public static void CancelCall(int requesterId, int assignmentId)
+        {
+            try
+            {
+                DO.Assignment assignment;
+
+                lock (AdminManager.BlMutex)
+                {
+                    assignment = _dal.Assignment.Read(assignmentId)
+                        ?? throw new BO.BlDoesNotExistException($"Assignment with ID={assignmentId} does not exist.");
+
+                    if (assignment.ActualEndTime != null || assignment.EndType != null)
+                        throw new BO.BlLogicException($"The assignment with ID={assignmentId} is already closed or expired.");
+
+                    var isRequesterAuthorized =
+                        assignment.VolunteerId == requesterId ||
+                        _dal.Volunteer.Read(requesterId)?.Jobs == DO.Jobs.Administrator;
+
+                    if (!isRequesterAuthorized)
+                        throw new BO.BlAuthorizationException($"Requester with ID={requesterId} is not authorized to cancel this call.");
+
+                    assignment = assignment with
+                    {
+                        ActualEndTime = _dal.Config.Clock,
+                        EndType = assignment.VolunteerId == requesterId ? DO.EndType.SelfCancellation : DO.EndType.AdministratorCancellation
+                    };
+
+                    _dal.Assignment.Update(assignment);
+                }
+
+                Observers.NotifyItemUpdated(assignment.VolunteerId);
+                Observers.NotifyListUpdated();
+                CallManager.Observers.NotifyItemUpdated(requesterId);
+                CallManager.Observers.NotifyItemUpdated(assignment.CallId); // ← הוסיפי שורה זו
+                CallManager.Observers.NotifyListUpdated();
+
+
+                if (assignment.EndType == DO.EndType.AdministratorCancellation)
+                {
+                    DO.Volunteer volunteer;
+                    DO.Call call;
+
+                    lock (AdminManager.BlMutex)
+                    {
+                        volunteer = _dal.Volunteer.Read(assignment.VolunteerId)
+                            ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={assignment.VolunteerId} does not exist.");
+
+                        call = _dal.Call.Read(assignment.CallId)
+                            ?? throw new BO.BlDoesNotExistException($"Call with ID={assignment.CallId} does not exist.");
+                    }
+
+                    CallManager.SendCancellationEmailAsync(volunteer.Email, new BO.Call
+                    {
+                        Address = call.Address,
+                        VerbalDescription = call.VerbalDescription
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new BO.BlException("Failed to cancel the call.", ex);
+            }
+        }
+
+        public static void AssignCallToVolunteer(int volunteerId, int callId)
+        {
+            try
+            {
+                DO.Call call;
+                bool isCallOpen;
+                bool hasExistingAssignments;
+
+                lock (AdminManager.BlMutex)
+                {
+                    call = _dal.Call.Read(callId)
+                        ?? throw new BO.BlDoesNotExistException($"Call with ID={callId} does not exist.");
+
+                    isCallOpen = CallManager.DetermineCallStatus(call.Id) == 0 || CallManager.DetermineCallStatus(call.Id) == 5;
+                    if (!isCallOpen)
+                        throw new BO.BlLogicException($"Call with ID={callId} is not open for assignment.");
+
+                    hasExistingAssignments = _dal.Assignment.ReadAll(a => a.CallId == callId && a.ActualEndTime == null).Any();
+                    if (hasExistingAssignments)
+                        throw new BO.BlLogicException($"Call with ID={callId} is already assigned to a volunteer.");
+
+                    var assignment = new DO.Assignment
+                    {
+                        CallId = callId,
+                        VolunteerId = volunteerId,
+                        EntryTime = _dal.Config.Clock,
+                        ActualEndTime = null,
+                        EndType = null
+                    };
+
+                    _dal.Assignment.Create(assignment);
+                }
+
+                CallManager.Observers.NotifyItemUpdated(volunteerId);
+                CallManager.Observers.NotifyListUpdated();
+                VolunteerManager.Observers.NotifyItemUpdated(volunteerId);
+                VolunteerManager.Observers.NotifyListUpdated();
+            }
+            catch (Exception ex)
+            {
+                throw new BO.BlException("Failed to assign call to volunteer.", ex);
             }
         }
 
