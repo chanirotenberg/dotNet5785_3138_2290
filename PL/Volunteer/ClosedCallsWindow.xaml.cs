@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Threading; // נדרש לשימוש ב־DispatcherOperation
+using System.Windows.Threading;
 using BlApi;
 using BO;
 
@@ -39,13 +39,11 @@ namespace PL.Volunteer
             set { _sortField = value; OnPropertyChanged(nameof(SortField)); RefreshClosedCalls(); }
         }
 
-        // שלב 7 - DispatcherOperation ייעודי למתודת ההשקפה
         private volatile DispatcherOperation? _refreshClosedCallsOperation = null;
 
         public ClosedCallsWindow(int volunteerId)
         {
             InitializeComponent();
-            DataContext = this;
             _volunteerId = volunteerId;
             RefreshClosedCalls();
         }

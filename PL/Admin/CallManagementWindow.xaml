@@ -5,8 +5,21 @@
         Title="ניהול קריאות"
         Height="600" Width="1000"
         WindowStartupLocation="CenterScreen"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Loaded="Window_Loaded"
         Closed="Window_Closed">
+    <Window.Resources>
+        <Style TargetType="DataGridRow" x:Key="CallRowStyle">
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#EFF2F7"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding CallId, Converter={StaticResource CallIdToHasLocationConverter}}" Value="False">
+                    <Setter Property="Background" Value="LightCoral"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
     <DockPanel Margin="10">
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,10">
@@ -20,7 +33,8 @@
 
         <DataGrid ItemsSource="{Binding Calls}" AutoGenerateColumns="False"
                   CanUserAddRows="False" IsReadOnly="True"
-                  MouseDoubleClick="DataGrid_MouseDoubleClick">
+                  MouseDoubleClick="DataGrid_MouseDoubleClick"
+                   RowStyle="{StaticResource CallRowStyle}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="מזהה" Binding="{Binding CallId}"/>

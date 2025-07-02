@@ -60,7 +60,7 @@ namespace PL.Admin
         }
 
         public static readonly DependencyProperty IntervalProperty =
-            DependencyProperty.Register("Interval", typeof(int), typeof(MainWindow), new PropertyMetadata(1));
+            DependencyProperty.Register("Interval", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
 
         private void clockObserver()
         {

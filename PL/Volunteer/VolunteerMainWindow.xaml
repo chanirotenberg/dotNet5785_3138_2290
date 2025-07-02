@@ -4,6 +4,7 @@
         Title="Volunteer Home"
         Height="600" Width="800"
         WindowStartupLocation="CenterScreen"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Background="#FAFAFA"
         Closed="Window_Closed">
 
@@ -56,15 +57,15 @@
         <!-- Action Buttons Panel -->
         <ScrollViewer Grid.Column="1">
             <StackPanel Grid.Column="1" Margin="10">
-                
-            <TextBlock Text="ניהול קריאה" FontSize="20" FontWeight="Bold" Margin="0 10"/>
-            <TextBlock Text="{Binding CallInProgress, Converter={StaticResource CallInProgressConverter}}" Margin="0 5"/>
-           <GroupBox Header="מפה: מיקום מתנדב וקריאה" Margin="0 20" Height="250">
+
+                <TextBlock Text="ניהול קריאה" FontSize="20" FontWeight="Bold" Margin="0 10"/>
+                <TextBlock Text="{Binding CallInProgress, Converter={StaticResource CallInProgressConverter}}" Margin="0 5"/>
+                <GroupBox Header="מפה: מיקום מתנדב וקריאה" Margin="0 20" Height="250">
                     <WebBrowser Name="MapBrowser" Height="220" Margin="0,10"/>
                 </GroupBox>
 
 
-            <Button Content="View Closed Calls"
+                <Button Content="View Closed Calls"
                     Click="ViewClosedCalls_Click"
                     Height="40" FontWeight="Bold" Background="#4CAF50" Foreground="White" BorderThickness="0" Margin="0,10"/>
 
@@ -79,16 +80,15 @@
                     Height="40" FontWeight="Bold" Background="#E91E63" Foreground="White" BorderThickness="0" Margin="0,10"
                     Visibility="{Binding CurrentVolunteer.CallInProgress, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
-            <Button Content="Cancel Current Call"
+                <Button Content="Cancel Current Call"
                     Click="CancelCurrentCall_Click"
                     Height="40" FontWeight="Bold" Background="#E91E63" Foreground="White" BorderThickness="0" Margin="0,10"
                     Visibility="{Binding CurrentVolunteer.CallInProgress, Converter={StaticResource NotNullToVisibilityConverter}}"/>
 
-            <Button Content="Exit"
+                <Button Content="Exit"
                     Click="Exit_Click"
                     Height="40" FontWeight="Bold" Background="#E53935" Foreground="White" BorderThickness="0" Margin="0,10"/>
-        </StackPanel>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </Window>
-

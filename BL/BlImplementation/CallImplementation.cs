@@ -57,7 +57,7 @@ internal class CallImplementation : ICall
                             Status = (BO.CallStatus)CallManager.DetermineCallStatus(c.Id),
                             SumOfAssignments = _dal.Assignment.ReadAll(a => a.CallId == c.Id).Count()
                         };
-                    }).ToList(); // ToList כדי לסיים את הקריאה בתוך הlock
+                    }).ToList();
             }
 
             if (filterField.HasValue && filterValue != null)
@@ -133,17 +133,16 @@ internal class CallImplementation : ICall
             CallManager.ValidateCall(call);
 
             DO.Call doCall;
+            DO.Call updatedCall;
             lock (AdminManager.BlMutex)
             {
                 doCall = _dal.Call.Read(call.Id) ?? throw new BO.BlDoesNotExistException($"Call with ID={call.Id} does not exist.");
 
-                var updatedCall = doCall with
+                updatedCall = doCall with
                 {
                     CallType = (DO.CallType)call.CallType,
                     VerbalDescription = call.VerbalDescription,
                     Address = call.Address,
-                    Latitude = call.Latitude,
-                    Longitude = call.Longitude,
                     OpeningTime = call.OpeningTime,
                     MaximumTime = call.MaximumTime
                 };
@@ -151,8 +150,10 @@ internal class CallImplementation : ICall
                 _dal.Call.Update(updatedCall);
             }
 
-            CallManager.Observers.NotifyItemUpdated(doCall.Id);  // מחוץ לlock
-            CallManager.Observers.NotifyListUpdated();  // מחוץ לlock
+            CallManager.Observers.NotifyItemUpdated(doCall.Id);
+            CallManager.Observers.NotifyListUpdated();
+
+            _ = CallManager.UpdateCoordinatesForCallAsync(updatedCall);
         }
         catch (Exception ex)
         {
@@ -173,7 +174,7 @@ internal class CallImplementation : ICall
                 var call = _dal.Call.Read(callId) ?? throw new BO.BlDoesNotExistException($"Call with ID={callId} does not exist.");
                 var hasAssignments = _dal.Assignment.ReadAll(a => a.CallId == callId).Any();
 
-                if (CallManager.DetermineCallStatus(call.Id) == 0 && !hasAssignments) // רק אם לא בטיפול ולא בסיכון
+                if (CallManager.DetermineCallStatus(call.Id) == 0 && !hasAssignments)
                     shouldDelete = true;
 
                 if (shouldDelete)
@@ -182,7 +183,7 @@ internal class CallImplementation : ICall
                     throw new BO.BlDeletionImpossibleException($"Cannot delete call with ID={callId} as it is either in treatment or in risk or has assignments.");
             }
 
-            CallManager.Observers.NotifyListUpdated(); // מחוץ לlock
+            CallManager.Observers.NotifyListUpdated();
         }
         catch (Exception ex)
         {
@@ -204,8 +205,6 @@ internal class CallImplementation : ICall
                 CallType = (DO.CallType)call.CallType,
                 VerbalDescription = call.VerbalDescription,
                 Address = call.Address,
-                Latitude = call.Latitude,
-                Longitude = call.Longitude,
                 OpeningTime = call.OpeningTime,
                 MaximumTime = call.MaximumTime
             };
@@ -214,9 +213,12 @@ internal class CallImplementation : ICall
             {
                 _dal.Call.Create(doCall);
             }
+            
+            CallManager.Observers.NotifyListUpdated();
 
-            CallManager.SendNewCallEmailAsync(call);
-            CallManager.Observers.NotifyListUpdated(); // מחוץ לlock
+            _=CallManager.SendNewCallEmailAsync(call);
+
+            _ = CallManager.UpdateCoordinatesForCallAsync(doCall);
         }
         catch (Exception ex)
         {
@@ -249,6 +251,7 @@ internal class CallImplementation : ICall
                         };
                     }).ToList();
             }
+            CallManager.Observers.NotifyListUpdated();
 
             return sortBy.HasValue
                 ? assignments.OrderBy(a => a.GetType().GetProperty(sortBy.ToString())?.GetValue(a))
@@ -287,6 +290,11 @@ internal class CallImplementation : ICall
         AdminManager.ThrowOnSimulatorIsRunning();
 
         VolunteerManager.AssignCallToVolunteer(volunteerId, callId);
+    }
+    public bool CallHasCoordinates(int callId)
+    {
+        var call = _dal.Call.Read(callId);
+        return call.Latitude != null && call.Longitude != null;
     }
 
     #region Stage 5

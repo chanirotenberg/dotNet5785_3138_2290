@@ -23,74 +23,7 @@ namespace Helpers
         /// Validates a volunteer object to ensure correct data input.
         /// </summary>
         /// <param name="volunteer">The volunteer object to validate.</param>
-        //public static void ValidateVolunteer(BO.Volunteer volunteer, bool isPartial = false, string? oldPassword = null)
-        //{
-        //    lock (_lock)
-        //    {
-        //        if (!isPartial)
-        //        {
-        //            if (string.IsNullOrWhiteSpace(volunteer.Name) || volunteer.Name.Length < 2)
-        //                throw new BO.BlValidationException("Name must be at least 2 characters long.");
-        //        }
-
-        //        if (!string.IsNullOrWhiteSpace(volunteer.Email))
-        //        {
-        //            if (!volunteer.Email.Contains("@") || !volunteer.Email.Contains("."))
-        //                throw new BO.BlValidationException("Invalid email format.");
-        //        }
-        //        else if (!isPartial)
-        //        {
-        //            throw new BO.BlValidationException("Email is required.");
-        //        }
-
-        //        if (volunteer.Password != oldPassword)
-        //        {
-        //            if (!IsStrongPassword(volunteer.Password, oldPassword))
-        //                throw new BO.BlValidationException("Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.");
-        //            volunteer.Password = EncryptPassword(volunteer.Password);
-        //        }
-
-        //        if (!IsValidIsraeliId(volunteer.Id))
-        //            throw new BO.BlValidationException("Invalid ID.");
-
-        //        if (!string.IsNullOrWhiteSpace(volunteer.Phone))
-        //        {
-        //            if (!IsNumeric(volunteer.Phone) || volunteer.Phone.Length != 10)
-        //                throw new BO.BlValidationException("Phone number must be numeric and 10 digits long.");
-        //        }
-        //        else if (!isPartial)
-        //        {
-        //            throw new BO.BlValidationException("Phone number is required.");
-        //        }
-
-        //        if (volunteer.Latitude.HasValue && (volunteer.Latitude < -90 || volunteer.Latitude > 90))
-        //            throw new BO.BlValidationException("Latitude must be between -90 and 90.");
-
-        //        if (volunteer.Longitude.HasValue && (volunteer.Longitude < -180 || volunteer.Longitude > 180))
-        //            throw new BO.BlValidationException("Longitude must be between -180 and 180.");
-
-        //        if (volunteer.MaxDistance.HasValue && volunteer.MaxDistance <= 0)
-        //            throw new BO.BlValidationException("MaxDistance must be positive.");
-
-        //        if (string.IsNullOrWhiteSpace(volunteer.Address))
-        //            throw new BO.BlValidationException("Address is required.");
-        //    }
-        //}
-        //public static async Task CompleteCoordinatesAsync(BO.Volunteer volunteer)
-        //{
-        //    try
-        //    {
-        //        var (latitude, longitude) = await Tools.GetCoordinatesAsync(volunteer.Address);
-        //        volunteer.Latitude = latitude;
-        //        volunteer.Longitude = longitude;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new BO.BlValidationException($"Invalid address: {volunteer.Address}. Details: {ex.Message}");
-        //    }
-        //}
-
-        public static async Task ValidateVolunteerAsync(BO.Volunteer volunteer, bool isPartial = false, string? oldPassword = null)
+        public static void ValidateVolunteer(BO.Volunteer volunteer, bool isPartial = false, string? oldPassword = null)
         {
             lock (_lock)
             {
@@ -105,7 +38,7 @@ namespace Helpers
                     if (!volunteer.Email.Contains("@") || !volunteer.Email.Contains("."))
                         throw new BO.BlValidationException("Invalid email format.");
                 }
-                else
+                else if (!isPartial)
                 {
                     throw new BO.BlValidationException("Email is required.");
                 }
@@ -142,19 +75,28 @@ namespace Helpers
                 if (string.IsNullOrWhiteSpace(volunteer.Address))
                     throw new BO.BlValidationException("Address is required.");
             }
-
-            // קריאה אסינכרונית מחוץ ל-lock
+        }
+        public static async Task CompleteCoordinatesAsync(DO.Volunteer volunteer)
+        {
             try
             {
                 var (latitude, longitude) = await Tools.GetCoordinatesAsync(volunteer.Address);
-                volunteer.Latitude = latitude;
-                volunteer.Longitude = longitude;
+
+                var updatedVolunteer = volunteer with { Latitude = latitude, Longitude = longitude };
+
+
+                lock (AdminManager.BlMutex)
+                    _dal.Volunteer.Update(updatedVolunteer);
+
+                Observers.NotifyItemUpdated(volunteer.Id);
+                Observers.NotifyListUpdated();
             }
             catch (Exception ex)
             {
                 throw new BO.BlValidationException($"Invalid address: {volunteer.Address}. Details: {ex.Message}");
             }
         }
+        
 
         /// <summary>
         /// Checks if a password is strong.
@@ -302,7 +244,6 @@ namespace Helpers
                 }
             }
 
-            // מחוץ ל־lock: הודעה למשקיפים
             foreach (var assignmentId in assignmentsToNotify)
             {
                 Observers.NotifyItemUpdated(assignmentId);
@@ -317,9 +258,7 @@ namespace Helpers
                     observer?.Invoke();
                 }
             }
-
         }
-
 
         public static IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.CallType? callType = null, BO.CallSortAndFilterField? sortBy = null)
         {
@@ -460,7 +399,7 @@ namespace Helpers
                             ?? throw new BO.BlDoesNotExistException($"Call with ID={assignment.CallId} does not exist.");
                     }
 
-                    CallManager.SendCancellationEmailAsync(volunteer.Email, new BO.Call
+                    _=CallManager.SendCancellationEmailAsync(volunteer.Email, new BO.Call
                     {
                         Address = call.Address,
                         VerbalDescription = call.VerbalDescription
@@ -508,8 +447,8 @@ namespace Helpers
 
                 CallManager.Observers.NotifyItemUpdated(volunteerId);
                 CallManager.Observers.NotifyListUpdated();
-                VolunteerManager.Observers.NotifyItemUpdated(volunteerId);
-                VolunteerManager.Observers.NotifyListUpdated();
+                Observers.NotifyItemUpdated(volunteerId);
+                Observers.NotifyListUpdated();
             }
             catch (Exception ex)
             {

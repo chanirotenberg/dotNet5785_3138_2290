@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Choose Call to Handle" Height="600" Width="850"
         WindowStartupLocation="CenterScreen"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Closed="Window_Closed">
     <Grid Margin="10">
         <Grid.RowDefinitions>

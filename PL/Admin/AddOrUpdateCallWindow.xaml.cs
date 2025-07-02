@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BlApi;
+using BO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Threading;
+using System.Data.SqlTypes;
 using System.Windows;
-using BlApi;
-using BO;
+using System.Windows.Threading;
 
 namespace PL.Admin
 {
@@ -34,14 +35,14 @@ namespace PL.Admin
 
         public AddOrUpdateCallWindow(int? callId = null)
         {
-            InitializeComponent();
+           
 
             if (callId == null)
             {
                 IsNewCall = true;
                 CurrentCall = new Call
                 {
-                    OpeningTime = DateTime.Now,
+                    OpeningTime = s_bl.Admin.GetClock(),
                     Assignments = new List<CallAssignInList>()
                 };
             }
@@ -59,8 +60,7 @@ namespace PL.Admin
                     return;
                 }
             }
-
-            DataContext = this;
+            InitializeComponent();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -80,13 +80,11 @@ namespace PL.Admin
         }
 
 
-        // שדה חדש מחוץ למתודות, בתוך המחלקה
         private volatile DispatcherOperation? _refreshCallOperation = null;
 
-        // מתודת ההשקפה המעודכנת
         private void RefreshCall()
         {
-            if (_refreshCallOperation is null || _refreshCallOperation.Status == System.Windows.Threading.DispatcherOperationStatus.Completed)
+            if (_refreshCallOperation is null || _refreshCallOperation.Status == DispatcherOperationStatus.Completed)
                 _refreshCallOperation = Dispatcher.BeginInvoke(() =>
                 {
                     try

@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Threading; // חשוב!
+using System.Windows.Threading;
 using BlApi;
 using BO;
 
@@ -54,14 +54,12 @@ namespace PL.Volunteer
             set { _sortField = value; OnPropertyChanged(nameof(SortField)); RefreshOpenCalls(); }
         }
 
-        // שלב 7 – DispatcherOperation עבור מתודת ההשקפה
         private volatile DispatcherOperation? _refreshCallListOperation = null;
 
         public ChooseCallWindow(int volunteerId)
         {
             InitializeComponent();
             _volunteerId = volunteerId;
-            DataContext = this;
             LoadVolunteerAddress();
             RefreshOpenCalls();
 
@@ -111,13 +109,13 @@ namespace PL.Volunteer
             }
         }
 
-        private async void UpdateAddressButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateAddressButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 var volunteer = _bl.Volunteer.GetVolunteerDetails(_volunteerId);
                 volunteer.Address = VolunteerAddress;
-                await _bl.Volunteer.UpdateVolunteer(volunteer.Id, volunteer);
+                _bl.Volunteer.UpdateVolunteer(volunteer.Id, volunteer);
                 MessageBox.Show("כתובת עודכנה בהצלחה.", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
                 RefreshOpenCalls();
             }

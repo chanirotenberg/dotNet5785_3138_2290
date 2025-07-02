@@ -71,7 +71,6 @@ namespace PL
                     volunteerWindow.Show();
                 }
 
-                // נקה שדות לאחר התחברות מוצלחת
                 VolunteerId = string.Empty;
                 Password = string.Empty;
             }

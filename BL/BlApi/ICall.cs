@@ -86,4 +86,6 @@ public interface ICall : IObservable //stage 5
     /// <param name="volunteerId">The ID of the volunteer to assign the call to.</param>
     /// <param name="callId">The ID of the call to assign.</param>
     void AssignCallToVolunteer(int volunteerId, int callId);
+    bool CallHasCoordinates(int callId);
+
 }

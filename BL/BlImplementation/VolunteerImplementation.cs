@@ -3,6 +3,7 @@ using BlApi;
 using BO;
 using DO;
 using Helpers;
+using System;
 using System.Xml.Linq;
 
 internal class VolunteerImplementation : IVolunteer
@@ -85,13 +86,13 @@ internal class VolunteerImplementation : IVolunteer
         }
     }
 
-    public async Task CreateVolunteer(BO.Volunteer boVolunteer)
+    public void CreateVolunteer(BO.Volunteer boVolunteer)
     {
         try
         {
             AdminManager.ThrowOnSimulatorIsRunning();
 
-            await VolunteerManager.ValidateVolunteerAsync(boVolunteer, isPartial: true);
+            VolunteerManager.ValidateVolunteer(boVolunteer, isPartial: true);
 
             var doVolunteer = new DO.Volunteer
             {
@@ -101,8 +102,6 @@ internal class VolunteerImplementation : IVolunteer
                 Email = boVolunteer.Email,
                 Password = boVolunteer.Password,
                 Address = boVolunteer.Address,
-                Latitude = boVolunteer.Latitude,
-                Longitude = boVolunteer.Longitude,
                 Jobs = (DO.Jobs)boVolunteer.Jobs,
                 active = boVolunteer.IsActive,
                 MaxDistance = boVolunteer.MaxDistance,
@@ -115,6 +114,8 @@ internal class VolunteerImplementation : IVolunteer
             }
 
             VolunteerManager.Observers.NotifyListUpdated(); // stage 5
+
+            _=VolunteerManager.CompleteCoordinatesAsync(doVolunteer);
         }
         catch (DO.DalAlreadyExistsException ex)
         {
@@ -125,7 +126,8 @@ internal class VolunteerImplementation : IVolunteer
             throw new BO.BlException($"An error occurred while creating volunteer with ID={boVolunteer.Id}.", ex);
         }
     }
-
+  
+   
     public BO.Volunteer GetVolunteerDetails(int id)
     {
         try
@@ -228,7 +230,7 @@ internal class VolunteerImplementation : IVolunteer
                 }
                 else
                 {
-                    adminCount = 0; // לא רלוונטי במקרה זה
+                    adminCount = 0;
                 }
 
                 if (hasCalls)
@@ -245,7 +247,7 @@ internal class VolunteerImplementation : IVolunteer
         }
     }
 
-    public async Task UpdateVolunteer(int requesterId, BO.Volunteer boVolunteer)
+    public void UpdateVolunteer(int requesterId, BO.Volunteer boVolunteer)
     {
         AdminManager.ThrowOnSimulatorIsRunning();
 
@@ -287,7 +289,7 @@ internal class VolunteerImplementation : IVolunteer
                 }
             }
 
-            await VolunteerManager.ValidateVolunteerAsync(boVolunteer, isPartial: true, requester.Password);
+            VolunteerManager.ValidateVolunteer(boVolunteer, isPartial: true, requester.Password);
 
             var doVolunteer = new DO.Volunteer
             {
@@ -297,8 +299,6 @@ internal class VolunteerImplementation : IVolunteer
                 Email = boVolunteer.Email,
                 Password = boVolunteer.Password,
                 Address = boVolunteer.Address,
-                Latitude = boVolunteer.Latitude,
-                Longitude = boVolunteer.Longitude,
                 Jobs = (DO.Jobs)boVolunteer.Jobs,
                 active = boVolunteer.IsActive,
                 MaxDistance = boVolunteer.MaxDistance,
@@ -311,8 +311,10 @@ internal class VolunteerImplementation : IVolunteer
             }
 
             VolunteerManager.Observers.NotifyItemUpdated(doVolunteer.Id);
-            System.Diagnostics.Debug.WriteLine($"[DEBUG] NotifyItemUpdated for ID={doVolunteer.Id}");
             VolunteerManager.Observers.NotifyListUpdated();
+
+            _=VolunteerManager.CompleteCoordinatesAsync(doVolunteer);
+
         }
         catch (Exception ex)
         {
@@ -337,6 +339,11 @@ internal class VolunteerImplementation : IVolunteer
         {
             throw new BO.BlException("An unexpected error occurred.", ex);
         }
+    }
+    public bool VolunteerHasCoordinates(int volunteerId)
+    {
+        var volunteer = _dal.Volunteer.Read(volunteerId);
+        return volunteer.Latitude != null && volunteer.Longitude != null;
     }
 
     #region Stage 5

@@ -228,9 +228,18 @@ public static class Initialization
 
                 DateTime minEntry = call.OpeningTime.AddMinutes(1);
                 DateTime maxEntry = call.MaximumTime ?? s_dal.Config.Clock;
+
+                // לא לאפשר לזמן כניסה לחרוג מעבר לשעון הנוכחי
+                if (maxEntry > s_dal.Config.Clock)
+                    maxEntry = s_dal.Config.Clock;
+
                 if (maxEntry <= minEntry)
-                    maxEntry = minEntry.AddMinutes(1);
-                DateTime entryTime = minEntry.AddMinutes(s_rand.Next((int)(maxEntry - minEntry).TotalMinutes));
+                    maxEntry = minEntry.AddMinutes(1); // טיפול במקרה קצה – אפשר גם להחזיר null
+
+                DateTime entryTime = minEntry.AddMinutes(
+                    s_rand.Next((int)(maxEntry - minEntry).TotalMinutes)
+                );
+
 
                 DateTime? actualEndTime = null;
                 EndType? endType = null;

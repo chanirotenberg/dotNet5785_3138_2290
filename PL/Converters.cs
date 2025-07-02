@@ -77,6 +77,52 @@ namespace PL
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class VolunteerIdToHasLocationConverter : IValueConverter
+    {
+        private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int id)
+            {
+                try
+                {
+                    return s_bl.Volunteer.VolunteerHasCoordinates(id);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
 
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+
+        public class CallIdToHasLocationConverter : IValueConverter
+        {
+            private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value is int callId)
+                {
+                    try
+                    {
+                        return s_bl.Call.CallHasCoordinates(callId);
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+                => throw new NotImplementedException();
+        }
+   
 }

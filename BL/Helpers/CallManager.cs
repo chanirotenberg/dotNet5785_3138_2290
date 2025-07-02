@@ -71,29 +71,7 @@ namespace Helpers
                 throw new BlValidationException("Verbal description is too long. Maximum length is 500 characters.");
         }
 
-        // סינכרוני: עדכון קריאה בלי הקואורדינטות
-        public static void UpdateCall(Call call)
-        {
-            if (call == null)
-                throw new BlValidationException("Call cannot be null.");
-
-            // יצירת DO.Call ממיפוי BO.Call, ללא שינוי קואורדינטות
-            DO.Call doCall = MapToDoCall(call);
-
-            lock (_lock)
-            {
-                _dal.Call.Update(doCall);
-            }
-
-            Observers.NotifyItemUpdated(doCall.Id);
-            Observers.NotifyListUpdated();
-
-            // הפעלת חישוב ועדכון הקואורדינטות אסינכרונית, לא מחכים לסיום
-            _ = UpdateCoordinatesForCallAsync(doCall);
-        }
-
-        // אסינכרוני: חישוב ועדכון קואורדינטות קריאה
-        private static async Task UpdateCoordinatesForCallAsync(DO.Call call)
+        public static async Task UpdateCoordinatesForCallAsync(DO.Call call)
         {
             if (!string.IsNullOrWhiteSpace(call.Address))
             {
@@ -113,7 +91,6 @@ namespace Helpers
                 }
                 catch (Exception ex)
                 {
-                    // טיפול בשגיאות - ניתן להרחיב להודעה למשתמש
                     Console.WriteLine($"Failed to update coordinates for call ID={call.Id}: {ex.Message}");
                 }
             }
@@ -250,22 +227,6 @@ namespace Helpers
         public static event Action? CallListUpdatedObserver;
         public static readonly Dictionary<int, Action?> SpecificCallObservers = new();
 
-        // דוגמא למיפוי BO.Call ל-DO.Call (צריך לממש לפי המחלקות שלך)
-        private static DO.Call MapToDoCall(Call call)
-        {
-            return new DO.Call()
-            {
-                Id = call.Id,
-                CallType = (DO.CallType)call.CallType,
-                VerbalDescription = call.VerbalDescription,
-                Address = call.Address,
-                Latitude = call.Latitude,
-                Longitude = call.Longitude,
-                OpeningTime = call.OpeningTime,
-                MaximumTime = call.MaximumTime,
-                // ... שדות נוספים לפי הצורך
-            };
-        }
         /// <summary>
         /// Updates all open calls that have expired between oldClock and newClock.
         /// </summary>
@@ -354,7 +315,6 @@ namespace Helpers
                 }
             }
 
-            // מחוץ ל-lock: שליחת התראות למשקיפים על כל עדכון ב assignments
             foreach (var assignmentId in updatedAssignmentIds)
             {
                 Observers.NotifyItemUpdated(assignmentId);
@@ -362,7 +322,6 @@ namespace Helpers
             }
             Observers.NotifyListUpdated();
 
-            // מחוץ ל-lock: שליחת התראות למשקיפים ספציפיים לקריאות
             foreach (var callId in updatedCallIds)
             {
                 if (SpecificCallObservers.TryGetValue(callId, out var specificCallObserver))
@@ -371,9 +330,7 @@ namespace Helpers
                 }
             }
 
-            // מחוץ ל-lock: שליחת התראה על עדכון רשימת הקריאות
             CallListUpdatedObserver?.Invoke();
-        }
-      
+        }      
     }
 }

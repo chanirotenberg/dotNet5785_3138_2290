@@ -52,7 +52,6 @@ namespace PL.Admin
         /// </summary>
         public BO.CallType calls { get; set; } = BO.CallType.None;
 
-        // שדה DispatcherOperation ייעודי למתודת ההשקפה RefreshVolunteerList
         private volatile DispatcherOperation? _refreshVolunteerListOperation = null;
 
         /// <summary>

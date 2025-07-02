@@ -46,8 +46,7 @@
             </Setter>
         </Style>
 
-        <!-- Alternating rows -->
-        <Style TargetType="DataGridRow">
+             <Style x:Key="VolunteerRowStyle" TargetType="DataGridRow">
             <Setter Property="Padding" Value="4"/>
             <Setter Property="Height" Value="45"/>
             <Setter Property="FontSize" Value="13"/>
@@ -56,6 +55,9 @@
                 <Trigger Property="ItemsControl.AlternationIndex" Value="1">
                     <Setter Property="Background" Value="#EFF2F7"/>
                 </Trigger>
+                <DataTrigger Binding="{Binding Id, Converter={StaticResource HasLocationConverter}}" Value="False">
+                    <Setter Property="Background" Value="LightCoral"/>
+                </DataTrigger>
             </Style.Triggers>
         </Style>
 
@@ -131,6 +133,7 @@
                       AlternationCount="2"
                       ItemsSource="{Binding VolunteerList}"
                       SelectedItem="{Binding SelectedVolunteer}"
+                      RowStyle="{StaticResource VolunteerRowStyle}"
                       MouseDoubleClick="lsvVolunteerList_MouseDoubleClick">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header=" " Width="50">

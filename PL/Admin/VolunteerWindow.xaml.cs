@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Threading; // שימי לב שיש להוסיף using זה
+using System.Windows.Threading;
 using BO;
 
 namespace PL.Admin
@@ -29,7 +29,6 @@ namespace PL.Admin
             }
         }
 
-        // שדה DispatcherOperation לשמירת מצב הקריאה הנוכחית ל-Dispatcher
         private volatile DispatcherOperation? _refreshVolunteerOperation = null;
 
         public VolunteerWindow(int id = 0)
@@ -40,16 +39,15 @@ namespace PL.Admin
                 : new BO.Volunteer() { Id = 0 };
 
             InitializeComponent();
-            DataContext = this;
         }
 
-        private async void btnAddUpdate_Click(object sender, RoutedEventArgs e)
+        private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (ButtonText == "Add")
                 {
-                    await s_bl.Volunteer.CreateVolunteer(CurrentVolunteer!);
+                    s_bl.Volunteer.CreateVolunteer(CurrentVolunteer!);
                     MessageBox.Show("המתנדב נוסף בהצלחה", "הוספה", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
@@ -61,7 +59,7 @@ namespace PL.Admin
                         CurrentVolunteer.Password = existing.Password;
                     }
 
-                    await s_bl.Volunteer.UpdateVolunteer(CurrentVolunteer.Id, CurrentVolunteer);
+                    s_bl.Volunteer.UpdateVolunteer(CurrentVolunteer.Id, CurrentVolunteer);
                     MessageBox.Show("המתנדב עודכן בהצלחה", "עדכון", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
@@ -71,14 +69,11 @@ namespace PL.Admin
             {
                 string userMessage = "אירעה שגיאה בעת שמירת המתנדב. ";
                 if (ex.InnerException != null)
-                    userMessage += "\n\nDetails: " + ex.InnerException.Message;
-                //else
-                //    userMessage += "\n\nDetails: " + ex.Message;
+                    userMessage += "\n\nDetails: " + ex.InnerException.Message;               
                 MessageBox.Show(userMessage, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        // מתודת ההשקפה עם השימוש ב-DispatcherOperation לפי ההוראות
+     
         private void RefreshVolunteer()
         {
             if (_refreshVolunteerOperation == null || _refreshVolunteerOperation.Status == DispatcherOperationStatus.Completed)
