@@ -1,283 +1,243 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfAssignment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Assignment>
-    <CallId>1002</CallId>
-    <VolunteerId>278830443</VolunteerId>
-    <EntryTime>2025-07-02T08:15:13</EntryTime>
+    <CallId>1019</CallId>
+    <VolunteerId>294012661</VolunteerId>
+    <EntryTime>2025-07-02T16:34:11</EntryTime>
     <ActualEndTime xsi:nil="true" />
     <EndType xsi:nil="true" />
     <Id>1000</Id>
   </Assignment>
   <Assignment>
-    <CallId>1024</CallId>
-    <VolunteerId>278830443</VolunteerId>
-    <EntryTime>2025-07-02T06:26:13</EntryTime>
-    <ActualEndTime>2025-07-02T07:21:13</ActualEndTime>
+    <CallId>1027</CallId>
+    <VolunteerId>294012661</VolunteerId>
+    <EntryTime>2025-07-02T18:04:11</EntryTime>
+    <ActualEndTime>2025-07-02T18:16:11</ActualEndTime>
     <EndType>Cared</EndType>
     <Id>1001</Id>
   </Assignment>
   <Assignment>
-    <CallId>1001</CallId>
-    <VolunteerId>278830443</VolunteerId>
-    <EntryTime>2025-07-02T02:28:13</EntryTime>
-    <ActualEndTime xsi:nil="true" />
-    <EndType xsi:nil="true" />
+    <CallId>1029</CallId>
+    <VolunteerId>294012661</VolunteerId>
+    <EntryTime>2025-07-03T00:36:11</EntryTime>
+    <ActualEndTime>2025-07-03T01:26:11</ActualEndTime>
+    <EndType>Cared</EndType>
     <Id>1002</Id>
   </Assignment>
   <Assignment>
-    <CallId>1015</CallId>
-    <VolunteerId>278830443</VolunteerId>
-    <EntryTime>2025-07-02T09:59:13</EntryTime>
-    <ActualEndTime xsi:nil="true" />
-    <EndType xsi:nil="true" />
+    <CallId>1002</CallId>
+    <VolunteerId>294012661</VolunteerId>
+    <EntryTime>2025-07-02T21:54:11</EntryTime>
+    <ActualEndTime>2025-07-02T22:16:11</ActualEndTime>
+    <EndType>AdministratorCancellation</EndType>
     <Id>1003</Id>
   </Assignment>
   <Assignment>
-    <CallId>1014</CallId>
-    <VolunteerId>278830443</VolunteerId>
-    <EntryTime>2025-07-02T04:32:13</EntryTime>
-    <ActualEndTime xsi:nil="true" />
-    <EndType xsi:nil="true" />
+    <CallId>1034</CallId>
+    <VolunteerId>294012661</VolunteerId>
+    <EntryTime>2025-07-02T15:24:11</EntryTime>
+    <ActualEndTime>2025-07-02T17:13:11</ActualEndTime>
+    <EndType>Cared</EndType>
     <Id>1004</Id>
   </Assignment>
   <Assignment>
-    <CallId>1028</CallId>
-    <VolunteerId>349467266</VolunteerId>
-    <EntryTime>2025-07-02T07:24:13</EntryTime>
-    <ActualEndTime>2025-07-02T08:38:13</ActualEndTime>
+    <CallId>1025</CallId>
+    <VolunteerId>294012661</VolunteerId>
+    <EntryTime>2025-07-03T00:42:11</EntryTime>
+    <ActualEndTime>2025-07-03T02:00:11</ActualEndTime>
     <EndType>Cared</EndType>
     <Id>1005</Id>
   </Assignment>
   <Assignment>
-    <CallId>1022</CallId>
-    <VolunteerId>349467266</VolunteerId>
-    <EntryTime>2025-07-02T07:08:13</EntryTime>
-    <ActualEndTime>2025-07-02T07:17:13</ActualEndTime>
-    <EndType>AdministratorCancellation</EndType>
+    <CallId>1003</CallId>
+    <VolunteerId>300043239</VolunteerId>
+    <EntryTime>2025-07-02T19:59:11</EntryTime>
+    <ActualEndTime>2025-07-02T20:18:11</ActualEndTime>
+    <EndType>Cared</EndType>
     <Id>1006</Id>
   </Assignment>
   <Assignment>
-    <CallId>1033</CallId>
-    <VolunteerId>349467266</VolunteerId>
-    <EntryTime>2025-07-02T05:27:13</EntryTime>
-    <ActualEndTime>2025-07-02T06:14:13</ActualEndTime>
-    <EndType>Cared</EndType>
+    <CallId>1024</CallId>
+    <VolunteerId>300043239</VolunteerId>
+    <EntryTime>2025-07-03T00:08:11</EntryTime>
+    <ActualEndTime xsi:nil="true" />
+    <EndType xsi:nil="true" />
     <Id>1007</Id>
   </Assignment>
   <Assignment>
-    <CallId>1026</CallId>
-    <VolunteerId>349467266</VolunteerId>
-    <EntryTime>2025-07-02T05:40:13</EntryTime>
-    <ActualEndTime xsi:nil="true" />
-    <EndType xsi:nil="true" />
+    <CallId>1023</CallId>
+    <VolunteerId>300043239</VolunteerId>
+    <EntryTime>2025-07-03T00:38:11</EntryTime>
+    <ActualEndTime>2025-07-03T00:55:11</ActualEndTime>
+    <EndType>Cared</EndType>
     <Id>1008</Id>
   </Assignment>
   <Assignment>
-    <CallId>1021</CallId>
-    <VolunteerId>349467266</VolunteerId>
-    <EntryTime>2025-07-02T09:27:13</EntryTime>
-    <ActualEndTime>2025-07-02T09:51:13</ActualEndTime>
-    <EndType>Cared</EndType>
+    <CallId>1006</CallId>
+    <VolunteerId>300043239</VolunteerId>
+    <EntryTime>2025-07-02T20:52:11</EntryTime>
+    <ActualEndTime>2025-07-02T21:14:11</ActualEndTime>
+    <EndType>SelfCancellation</EndType>
     <Id>1009</Id>
   </Assignment>
   <Assignment>
-    <CallId>1019</CallId>
-    <VolunteerId>349467266</VolunteerId>
-    <EntryTime>2025-07-02T06:05:13</EntryTime>
-    <ActualEndTime xsi:nil="true" />
-    <EndType xsi:nil="true" />
+    <CallId>1010</CallId>
+    <VolunteerId>300043239</VolunteerId>
+    <EntryTime>2025-07-02T21:13:11</EntryTime>
+    <ActualEndTime>2025-07-02T22:25:11</ActualEndTime>
+    <EndType>Cared</EndType>
     <Id>1010</Id>
   </Assignment>
   <Assignment>
-    <CallId>1006</CallId>
-    <VolunteerId>349467266</VolunteerId>
-    <EntryTime>2025-07-02T09:05:13</EntryTime>
-    <ActualEndTime>2025-07-02T09:30:13</ActualEndTime>
-    <EndType>SelfCancellation</EndType>
+    <CallId>1017</CallId>
+    <VolunteerId>300043239</VolunteerId>
+    <EntryTime>2025-07-02T21:20:11</EntryTime>
+    <ActualEndTime xsi:nil="true" />
+    <EndType xsi:nil="true" />
     <Id>1011</Id>
   </Assignment>
   <Assignment>
-    <CallId>1013</CallId>
-    <VolunteerId>349467266</VolunteerId>
-    <EntryTime>2025-07-02T05:09:13</EntryTime>
+    <CallId>1021</CallId>
+    <VolunteerId>300043239</VolunteerId>
+    <EntryTime>2025-07-02T20:06:11</EntryTime>
     <ActualEndTime xsi:nil="true" />
     <EndType xsi:nil="true" />
     <Id>1012</Id>
   </Assignment>
   <Assignment>
-    <CallId>1023</CallId>
-    <VolunteerId>349467266</VolunteerId>
-    <EntryTime>2025-07-02T09:23:13</EntryTime>
-    <ActualEndTime>2025-07-02T10:06:13</ActualEndTime>
-    <EndType>Cared</EndType>
+    <CallId>1005</CallId>
+    <VolunteerId>300043239</VolunteerId>
+    <EntryTime>2025-07-02T22:43:11</EntryTime>
+    <ActualEndTime xsi:nil="true" />
+    <EndType xsi:nil="true" />
     <Id>1013</Id>
   </Assignment>
   <Assignment>
-    <CallId>1032</CallId>
-    <VolunteerId>241788264</VolunteerId>
-    <EntryTime>2025-07-02T05:03:13</EntryTime>
-    <ActualEndTime>2025-07-02T06:55:13</ActualEndTime>
+    <CallId>1004</CallId>
+    <VolunteerId>239302078</VolunteerId>
+    <EntryTime>2025-07-02T16:40:11</EntryTime>
+    <ActualEndTime>2025-07-02T17:04:11</ActualEndTime>
     <EndType>Cared</EndType>
     <Id>1014</Id>
   </Assignment>
   <Assignment>
-    <CallId>1012</CallId>
-    <VolunteerId>241788264</VolunteerId>
-    <EntryTime>2025-07-02T02:46:13</EntryTime>
-    <ActualEndTime>2025-07-02T03:40:13</ActualEndTime>
-    <EndType>Cared</EndType>
+    <CallId>1030</CallId>
+    <VolunteerId>239302078</VolunteerId>
+    <EntryTime>2025-07-02T13:37:11</EntryTime>
+    <ActualEndTime xsi:nil="true" />
+    <EndType xsi:nil="true" />
     <Id>1015</Id>
   </Assignment>
   <Assignment>
-    <CallId>1003</CallId>
-    <VolunteerId>241788264</VolunteerId>
-    <EntryTime>2025-07-02T07:04:13</EntryTime>
-    <ActualEndTime>2025-07-02T08:13:13</ActualEndTime>
-    <EndType>Cared</EndType>
+    <CallId>1032</CallId>
+    <VolunteerId>239302078</VolunteerId>
+    <EntryTime>2025-07-02T22:20:11</EntryTime>
+    <ActualEndTime xsi:nil="true" />
+    <EndType xsi:nil="true" />
     <Id>1016</Id>
   </Assignment>
   <Assignment>
-    <CallId>1016</CallId>
-    <VolunteerId>241788264</VolunteerId>
-    <EntryTime>2025-07-02T06:51:13</EntryTime>
-    <ActualEndTime>2025-07-02T07:42:13</ActualEndTime>
+    <CallId>1018</CallId>
+    <VolunteerId>239302078</VolunteerId>
+    <EntryTime>2025-07-02T13:41:11</EntryTime>
+    <ActualEndTime>2025-07-02T14:53:11</ActualEndTime>
     <EndType>Cared</EndType>
     <Id>1017</Id>
   </Assignment>
   <Assignment>
-    <CallId>1000</CallId>
-    <VolunteerId>241788264</VolunteerId>
-    <EntryTime>2025-07-02T06:15:13</EntryTime>
-    <ActualEndTime>2025-07-02T08:05:13</ActualEndTime>
+    <CallId>1020</CallId>
+    <VolunteerId>239302078</VolunteerId>
+    <EntryTime>2025-07-02T23:41:11</EntryTime>
+    <ActualEndTime>2025-07-03T00:09:11</ActualEndTime>
     <EndType>Cared</EndType>
     <Id>1018</Id>
   </Assignment>
   <Assignment>
-    <CallId>1029</CallId>
-    <VolunteerId>241788264</VolunteerId>
-    <EntryTime>2025-07-02T03:53:13</EntryTime>
-    <ActualEndTime>2025-07-02T05:38:13</ActualEndTime>
+    <CallId>1009</CallId>
+    <VolunteerId>239302078</VolunteerId>
+    <EntryTime>2025-07-02T23:06:11</EntryTime>
+    <ActualEndTime>2025-07-02T23:38:11</ActualEndTime>
     <EndType>Cared</EndType>
     <Id>1019</Id>
   </Assignment>
   <Assignment>
-    <CallId>1025</CallId>
-    <VolunteerId>241788264</VolunteerId>
-    <EntryTime>2025-07-02T01:16:13</EntryTime>
-    <ActualEndTime>2025-07-02T01:29:13</ActualEndTime>
-    <EndType>AdministratorCancellation</EndType>
+    <CallId>1031</CallId>
+    <VolunteerId>239302078</VolunteerId>
+    <EntryTime>2025-07-02T23:47:11</EntryTime>
+    <ActualEndTime>2025-07-03T00:03:11</ActualEndTime>
+    <EndType>Cared</EndType>
     <Id>1020</Id>
   </Assignment>
   <Assignment>
-    <CallId>1031</CallId>
-    <VolunteerId>241788264</VolunteerId>
-    <EntryTime>2025-07-01T20:36:13</EntryTime>
-    <ActualEndTime>2025-07-01T21:35:13</ActualEndTime>
+    <CallId>1011</CallId>
+    <VolunteerId>239302078</VolunteerId>
+    <EntryTime>2025-07-02T16:49:11</EntryTime>
+    <ActualEndTime>2025-07-02T17:11:11</ActualEndTime>
     <EndType>Cared</EndType>
     <Id>1021</Id>
   </Assignment>
   <Assignment>
-    <CallId>1007</CallId>
-    <VolunteerId>268895570</VolunteerId>
-    <EntryTime>2025-07-02T09:34:13</EntryTime>
+    <CallId>1026</CallId>
+    <VolunteerId>239302078</VolunteerId>
+    <EntryTime>2025-07-03T00:31:11</EntryTime>
     <ActualEndTime xsi:nil="true" />
     <EndType xsi:nil="true" />
     <Id>1022</Id>
   </Assignment>
   <Assignment>
-    <CallId>1020</CallId>
-    <VolunteerId>268895570</VolunteerId>
-    <EntryTime>2025-07-02T08:26:13</EntryTime>
+    <CallId>1012</CallId>
+    <VolunteerId>374783371</VolunteerId>
+    <EntryTime>2025-07-02T23:01:11</EntryTime>
     <ActualEndTime xsi:nil="true" />
     <EndType xsi:nil="true" />
     <Id>1023</Id>
   </Assignment>
   <Assignment>
-    <CallId>1030</CallId>
-    <VolunteerId>268895570</VolunteerId>
-    <EntryTime>2025-07-02T06:50:13</EntryTime>
-    <ActualEndTime>2025-07-02T07:11:13</ActualEndTime>
-    <EndType>AdministratorCancellation</EndType>
+    <CallId>1033</CallId>
+    <VolunteerId>374783371</VolunteerId>
+    <EntryTime>2025-07-02T21:30:11</EntryTime>
+    <ActualEndTime>2025-07-02T22:45:11</ActualEndTime>
+    <EndType>Cared</EndType>
     <Id>1024</Id>
   </Assignment>
   <Assignment>
-    <CallId>1018</CallId>
-    <VolunteerId>268895570</VolunteerId>
-    <EntryTime>2025-07-02T02:09:13</EntryTime>
-    <ActualEndTime>2025-07-02T02:34:13</ActualEndTime>
+    <CallId>1013</CallId>
+    <VolunteerId>374783371</VolunteerId>
+    <EntryTime>2025-07-02T22:40:11</EntryTime>
+    <ActualEndTime>2025-07-03T00:14:11</ActualEndTime>
     <EndType>Cared</EndType>
     <Id>1025</Id>
   </Assignment>
   <Assignment>
-    <CallId>1008</CallId>
-    <VolunteerId>268895570</VolunteerId>
-    <EntryTime>2025-07-02T08:10:13</EntryTime>
-    <ActualEndTime>2025-07-02T09:19:13</ActualEndTime>
-    <EndType>Cared</EndType>
+    <CallId>1007</CallId>
+    <VolunteerId>374783371</VolunteerId>
+    <EntryTime>2025-07-02T14:50:11</EntryTime>
+    <ActualEndTime xsi:nil="true" />
+    <EndType xsi:nil="true" />
     <Id>1026</Id>
   </Assignment>
   <Assignment>
-    <CallId>1004</CallId>
-    <VolunteerId>268895570</VolunteerId>
-    <EntryTime>2025-07-01T21:23:13</EntryTime>
-    <ActualEndTime>2025-07-01T21:43:13</ActualEndTime>
-    <EndType>SelfCancellation</EndType>
+    <CallId>1022</CallId>
+    <VolunteerId>374783371</VolunteerId>
+    <EntryTime>2025-07-02T20:16:11</EntryTime>
+    <ActualEndTime>2025-07-02T20:40:11</ActualEndTime>
+    <EndType>AdministratorCancellation</EndType>
     <Id>1027</Id>
   </Assignment>
   <Assignment>
-    <CallId>1011</CallId>
-    <VolunteerId>268895570</VolunteerId>
-    <EntryTime>2025-07-02T07:45:13</EntryTime>
-    <ActualEndTime>2025-07-02T08:17:13</ActualEndTime>
+    <CallId>1008</CallId>
+    <VolunteerId>374783371</VolunteerId>
+    <EntryTime>2025-07-03T00:21:11</EntryTime>
+    <ActualEndTime>2025-07-03T01:27:11</ActualEndTime>
     <EndType>Cared</EndType>
     <Id>1028</Id>
   </Assignment>
   <Assignment>
-    <CallId>1034</CallId>
-    <VolunteerId>268895570</VolunteerId>
-    <EntryTime>2025-07-01T18:38:13</EntryTime>
-    <ActualEndTime>2025-07-01T18:46:13</ActualEndTime>
-    <EndType>AdministratorCancellation</EndType>
+    <CallId>1000</CallId>
+    <VolunteerId>374783371</VolunteerId>
+    <EntryTime>2025-07-02T22:48:11</EntryTime>
+    <ActualEndTime>2025-07-02T23:56:11</ActualEndTime>
+    <EndType>Cared</EndType>
     <Id>1029</Id>
-  </Assignment>
-  <Assignment>
-    <CallId>1010</CallId>
-    <VolunteerId>268895570</VolunteerId>
-    <EntryTime>2025-07-02T09:36:13</EntryTime>
-    <ActualEndTime>2025-07-02T10:05:13</ActualEndTime>
-    <EndType>Cared</EndType>
-    <Id>1030</Id>
-  </Assignment>
-  <Assignment>
-    <CallId>1009</CallId>
-    <VolunteerId>268895570</VolunteerId>
-    <EntryTime>2025-07-02T08:17:13</EntryTime>
-    <ActualEndTime>2025-07-02T08:43:13</ActualEndTime>
-    <EndType>SelfCancellation</EndType>
-    <Id>1031</Id>
-  </Assignment>
-  <Assignment>
-    <CallId>1027</CallId>
-    <VolunteerId>390039642</VolunteerId>
-    <EntryTime>2025-07-02T07:02:13</EntryTime>
-    <ActualEndTime xsi:nil="true" />
-    <EndType xsi:nil="true" />
-    <Id>1032</Id>
-  </Assignment>
-  <Assignment>
-    <CallId>1005</CallId>
-    <VolunteerId>390039642</VolunteerId>
-    <EntryTime>2025-07-02T08:37:13</EntryTime>
-    <ActualEndTime xsi:nil="true" />
-    <EndType xsi:nil="true" />
-    <Id>1033</Id>
-  </Assignment>
-  <Assignment>
-    <CallId>1017</CallId>
-    <VolunteerId>390039642</VolunteerId>
-    <EntryTime>2025-07-02T09:51:13</EntryTime>
-    <ActualEndTime>2025-07-02T10:58:13</ActualEndTime>
-    <EndType>Cared</EndType>
-    <Id>1034</Id>
   </Assignment>
 </ArrayOfAssignment>

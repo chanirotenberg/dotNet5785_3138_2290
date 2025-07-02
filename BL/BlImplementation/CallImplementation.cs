@@ -57,8 +57,10 @@ internal class CallImplementation : ICall
                             Status = (BO.CallStatus)CallManager.DetermineCallStatus(c.Id),
                             SumOfAssignments = _dal.Assignment.ReadAll(a => a.CallId == c.Id).Count()
                         };
+                       
                     }).ToList();
             }
+            CallManager.Observers.NotifyListUpdated();
 
             if (filterField.HasValue && filterValue != null)
             {
@@ -71,6 +73,8 @@ internal class CallImplementation : ICall
                     _ => calls
                 };
             }
+
+          
 
             return sortField.HasValue
                 ? calls.OrderBy(c => c.GetType().GetProperty(sortField.ToString())?.GetValue(c))

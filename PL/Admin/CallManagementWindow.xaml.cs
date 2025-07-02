@@ -33,22 +33,27 @@ namespace PL.Admin
         }
 
         private volatile DispatcherOperation? _refreshCallsOperation = null;
+        private volatile DispatcherOperation? _configObserverOperation = null;
 
-        public CallManagementWindow(int managerId)
+        public CallManagementWindow(int managerId, CallStatus? filterStatus = null)
         {
             InitializeComponent();
             _currentManagerId = managerId;
+            SelectedStatus = filterStatus; // זה מה שמבצע את הסינון הראשוני
         }
+
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadCalls();
             _bl.Call.AddObserver(RefreshCalls);
+            _bl.Admin.AddConfigObserver(ConfigObserverHandler);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
             _bl.Call.RemoveObserver(RefreshCalls);
+            _bl.Admin.RemoveConfigObserver(ConfigObserverHandler);
         }
 
         private void LoadCalls()
@@ -74,6 +79,19 @@ namespace PL.Admin
                 });
             }
         }
+
+        private void ConfigObserverHandler()
+        {
+            if (_configObserverOperation is null || _configObserverOperation.Status == DispatcherOperationStatus.Completed)
+            {
+                _configObserverOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    _configObserverOperation = null;
+                    LoadCalls(); // טוען את הקריאות מחדש לפי טווח הסיכון החדש
+                });
+            }
+        }
+
         private void Filter_Click(object sender, RoutedEventArgs e) => LoadCalls();
 
         private void CancelFilter_Click(object sender, RoutedEventArgs e)

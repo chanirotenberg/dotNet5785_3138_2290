@@ -175,7 +175,14 @@ IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBoolCon
                         IsEnabled="{Binding IsSimulatorRunning, Converter={StaticResource InverseBoolConverter}}"
 />
             </WrapPanel>
+            <GroupBox Header="קריאות לפי סטטוס" Margin="0,20,0,20" Width="300" HorizontalAlignment="Center">
+                <ListBox ItemsSource="{Binding CallCountsByStatus}" DisplayMemberPath="DisplayText"
+         SelectedItem="{Binding SelectedStatusCount, Mode=TwoWay}"/>
+
+            </GroupBox>
+
 
         </StackPanel>
+
     </ScrollViewer>
 </Window>

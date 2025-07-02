@@ -1,7 +1,9 @@
 ﻿using BO;
 using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 
@@ -60,7 +62,7 @@ namespace PL.Admin
         }
 
         public static readonly DependencyProperty IntervalProperty =
-            DependencyProperty.Register("Interval", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
+            DependencyProperty.Register("Interval", typeof(int), typeof(MainWindow), new PropertyMetadata(43200));
 
         private void clockObserver()
         {
@@ -69,6 +71,7 @@ namespace PL.Admin
                 _clockObserverOperation = Dispatcher.BeginInvoke(() =>
                 {
                     CurrentTime = s_bl.Admin.GetClock();
+                    LoadCallCounts();
                 });
             }
         }
@@ -80,6 +83,7 @@ namespace PL.Admin
                 _configObserverOperation = Dispatcher.BeginInvoke(() =>
                 {
                     RiskRange = s_bl.Admin.GetRiskRange();
+                    LoadCallCounts();
                 });
             }
         }
@@ -88,6 +92,7 @@ namespace PL.Admin
         {
             CurrentTime = s_bl.Admin.GetClock();
             RiskRange = s_bl.Admin.GetRiskRange();
+            LoadCallCounts();
             s_bl.Admin.AddClockObserver(clockObserver);
             s_bl.Admin.AddConfigObserver(configObserver);
         }
@@ -171,5 +176,42 @@ namespace PL.Admin
 
             MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
         }
+        public ObservableCollection<CallStatusCount> CallCountsByStatus { get; } = new ObservableCollection<CallStatusCount>();
+
+        public class CallStatusCount
+        {
+            public BO.CallStatus Status { get; set; }
+            public int Count { get; set; }
+            public string DisplayText => $"{Status}: {Count} קריאות";
+        }
+        private void LoadCallCounts()
+        {
+            CallCountsByStatus.Clear();
+            int[] counts = s_bl.Call.GetCallCountsByStatus();
+            var statuses = Enum.GetValues(typeof(BO.CallStatus)).Cast<BO.CallStatus>().ToArray();
+
+            for (int i = 0; i < statuses.Length && i < counts.Length; i++)
+            {
+                CallCountsByStatus.Add(new CallStatusCount { Status = statuses[i], Count = counts[i] });
+            }
+        }
+        private CallStatusCount? _selectedStatusCount;
+        public CallStatusCount? SelectedStatusCount
+        {
+            get => _selectedStatusCount;
+            set
+            {
+                if (_selectedStatusCount != value)
+                {
+                    _selectedStatusCount = value;
+                    if (value != null)
+                    {
+                        // פתיחת חלון הקריאות המסוננות
+                        new CallManagementWindow(CurrentVolunteer.Id, value.Status).Show();
+                    }
+                }
+            }
+        }
+
     }
 }

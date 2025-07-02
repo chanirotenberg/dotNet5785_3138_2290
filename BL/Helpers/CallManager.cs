@@ -227,6 +227,30 @@ namespace Helpers
         public static event Action? CallListUpdatedObserver;
         public static readonly Dictionary<int, Action?> SpecificCallObservers = new();
 
+        public static void ReevaluateAllCallStatuses()
+        {
+            var callIds = _dal.Call.ReadAll().Select(c => c.Id).ToList();
+            List<int> updatedCallIds = new();
+
+            lock (_lock)
+            {
+                foreach (var id in callIds)
+                {
+                    int previousStatus = DetermineCallStatus(id); // יקרא פעם אחת מתוך הקונפיג החדש
+                    int currentStatus = DetermineCallStatus(id);  // אותו דבר אבל אחרי שינוי RiskRange
+                    if (previousStatus != currentStatus)
+                        updatedCallIds.Add(id);
+                }
+            }
+
+            foreach (var id in updatedCallIds)
+                Observers.NotifyItemUpdated(id);
+
+            if (updatedCallIds.Count > 0)
+                Observers.NotifyListUpdated();
+        }
+
+
         /// <summary>
         /// Updates all open calls that have expired between oldClock and newClock.
         /// </summary>

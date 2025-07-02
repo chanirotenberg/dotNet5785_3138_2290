@@ -38,7 +38,6 @@ namespace PL.Volunteer
             volunteerId = volunteer.Id;
             CurrentVolunteer = volunteer;
             InitializeComponent();
-            UpdateMap();
 
             _bl.Volunteer.AddObserver(volunteerId, RefreshVolunteer);
         }
@@ -50,7 +49,6 @@ namespace PL.Volunteer
                 _refreshOperation = Dispatcher.BeginInvoke(() =>
                 {
                     CurrentVolunteer = _bl.Volunteer.GetVolunteerDetails(volunteerId);
-                    UpdateMap();
                 });
             }
         }
@@ -144,74 +142,5 @@ namespace PL.Volunteer
 
         private void Exit_Click(object sender, RoutedEventArgs e) => Close();
 
-        private void UpdateMap()
-        {
-            double volunteerLat = (double)CurrentVolunteer.Latitude;
-            double volunteerLng = (double)CurrentVolunteer.Longitude;
-
-            string mapHtml;
-
-            if (CurrentVolunteer.CallInProgress != null)
-            {
-                var callDetails = _bl.Call.GetCallDetails(CurrentVolunteer.CallInProgress.CallId);
-                double callLat = callDetails.Latitude;
-                double callLng = callDetails.Longitude;
-
-                mapHtml = $@"
-        <html>
-        <head>
-            <meta charset='utf-8' />
-            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-            <link rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css'/>
-            <script src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js'></script>
-        </head>
-        <body>
-            <div id='map' style='width:100%;height:100%;'></div>
-            <script>
-                var map = L.map('map').setView([{volunteerLat}, {volunteerLng}], 13);
-
-                L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
-                    maxZoom: 19
-                }}).addTo(map);
-
-                L.marker([{volunteerLat}, {volunteerLng}]).addTo(map)
-                    .bindPopup('Volunteer')
-                    .openPopup();
-
-                L.marker([{callLat}, {callLng}]).addTo(map)
-                    .bindPopup('Call');
-            </script>
-        </body>
-        </html>";
-            }
-            else
-            {
-                mapHtml = $@"
-        <html>
-        <head>
-            <meta charset='utf-8' />
-            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-            <link rel='stylesheet' href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css'/>
-            <script src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js'></script>
-        </head>
-        <body>
-            <div id='map' style='width:100%;height:100%;'></div>
-            <script>
-                var map = L.map('map').setView([{volunteerLat}, {volunteerLng}], 13);
-
-                L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
-                    maxZoom: 19
-                }}).addTo(map);
-
-                L.marker([{volunteerLat}, {volunteerLng}]).addTo(map)
-                    .bindPopup('Volunteer')
-                    .openPopup();
-            </script>
-        </body>
-        </html>";
-            }
-
-            MapBrowser.NavigateToString(mapHtml);
-        }
     }
 }
